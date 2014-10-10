@@ -33,8 +33,8 @@ class DOMGenerator {
   def verify(req : Model#Request, state : State[Elem]) : Boolean = {
     import state._
     req match {
-      case model.NodeRequest(Some(n), name) => elem.namespace == n && elem.label == name
-      case model.NodeRequest(None, name) => elem.namespace == null && elem.label == name
+      case model.NodeRequest(Some(n), name) => elem.namespace == n && elem.label == genString(name, state)
+      case model.NodeRequest(None, name) => elem.namespace == null && elem.label == genString(name, state)
       case model.ChainRequest(first, second) => throw new UnsupportedOperationException("Sorry no chain request on left hand side")
       case model.ConditionRequest(r, cond) => verify(r, state) && cond.check { gen =>
         genStringOpt(gen, state)
@@ -62,8 +62,8 @@ class DOMGenerator {
   def locate(req : Model#Request, state : State[Elem]) : Seq[Node] = {
     import state._
     req match {
-      case model.NodeRequest(Some(n), name) => (elem \ name) filter { e => n == e.namespace }
-      case model.NodeRequest(None, name) => (elem \ name) filter { e => e.namespace == null }
+      case model.NodeRequest(Some(n), name) => (elem \ genString(name, state)) filter { e => n == e.namespace }
+      case model.NodeRequest(None, name) => (elem \ genString(name, state)) filter { e => e.namespace == null }
       case model.ChainRequest(first, second) => locate(first, state) flatMap { 
         e => locateNode(second, State(e, model, node, vars))
       }
@@ -80,7 +80,7 @@ class DOMGenerator {
     gens.flatMap(gen => handleOne(gen, state))
   }
 
-  def genString(t : Model#TextGenerator, state : State[Elem]) : String = {
+  def genString(t : Model#TextGenerator, state : State[Node]) : String = {
     import state._
     t match {
       case ttg : model.TypedTextGenerator => throw new RuntimeException("Nested type")
@@ -110,14 +110,14 @@ class DOMGenerator {
         }
       case model.AttributeContentGenerator(n, model.NodeRequest(Some(ns),name)) => 
         (locateNode(n, state).flatMap { n =>
-          n.attribute(ns,name).getOrElse(Seq()).map(_.text).mkString("")
+          n.attribute(ns,genString(name, state)).getOrElse(Seq()).map(_.text).mkString("")
         }) match {
           case Seq() => None
           case xs => Some(xs.mkString(""))
         }
       case model.AttributeContentGenerator(n, model.NodeRequest(None,name)) => 
         (locateNode(n, state).flatMap { n => 
-          n.attribute(name).getOrElse(Seq()).map(_.text)
+          n.attribute(genString(name, state)).getOrElse(Seq()).map(_.text)
         }) match {
           case Seq() => None
           case xs => Some(xs.mkString(""))

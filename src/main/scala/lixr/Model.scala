@@ -8,8 +8,9 @@ trait Model {
   private var handlers = collection.mutable.Map[(Option[String],String),Seq[(Request,Seq[Generator])]]()
 
   case class Namespace(__url__ : String) extends Dynamic {
-    def selectDynamic(name : String) = NodeRequest(Some(__url__),name)
-    def +(name : String) = NodeRequest(Some(__url__), name)
+    def selectDynamic(name : String) = NodeRequest(Some(__url__), FixedTextGenerator(name))
+    def +(name : PlainTextGenerator) = NodeRequest(Some(__url__), name)
+    def +(name : String) = NodeRequest(Some(__url__), FixedTextGenerator(name))
   }
 
   trait Request {
@@ -24,22 +25,26 @@ trait Model {
     def when(cond : Condition) = ConditionRequest(this, cond)
     def \(request : Request) = ChainRequest(this, request)
     def att(nr : NodeRequest) = AttributeContentGenerator(this, nr)
-    def att(s : String) = AttributeContentGenerator(this, NodeRequest(None,s))
+    def att(s : PlainTextGenerator) = AttributeContentGenerator(this, NodeRequest(None,s))
+    def att(s : String) = AttributeContentGenerator(this, NodeRequest(None,FixedTextGenerator(s)))
   }
 
-  case class NodeRequest(namespace : Option[String], name : String) extends Request {
+  case class NodeRequest(namespace : Option[String], name : PlainTextGenerator) extends Request {
     def >(nr : NodeRequest) = OTripleGenerator(this, nr)
     def >(gen : TextGenerator) = DTripleGenerator(this, gen)
     def >(ng : NodeGenerator) = NTripleGenerator(this, ng)
     def <(nr : NodeRequest) = IOTripleGenerator(this, nr)
     def <(ng : NodeGenerator) = INTripleGenerator(this, ng)
-    lazy val lookup = (namespace,name)
+    lazy val lookup = name match {
+      case FixedTextGenerator(name) => (namespace,name)
+      case _ => throw new RuntimeException("Looking up non-fixed namespace")
+    }
     def toURI = URI.create(namespace.getOrElse("") + name)
   }
 
   object NodeRequest {
-    def resolveStringAsRequest(bar : String) = NodeRequest(None,bar)
-    def resolveStringAsRequest(bar : Symbol) = NodeRequest(None,bar.name)
+    def resolveStringAsRequest(bar : String) = NodeRequest(None,FixedTextGenerator(bar))
+    def resolveStringAsRequest(bar : Symbol) = NodeRequest(None,FixedTextGenerator(bar.name))
   }
 
   case class ChainRequest(first : Request, second : Request) extends Request {
@@ -237,10 +242,10 @@ trait Model {
   def when(condition : Condition)(result : Generator) = ConditionalGenerator(condition, result, None)
 
   def forall(req : Request)(body : Generator*) = ForGenerator(req, body)
-  def forall(s : String)(body : Generator*) = ForGenerator(NodeRequest(None, s), body)
-  def forall(s : Symbol)(body : Generator*) = ForGenerator(NodeRequest(None, s.name), body)
+  def forall(s : String)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s), body)
+  def forall(s : Symbol)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s.name), body)
 
-  val rdf_type = NodeRequest(Some("http://www.w3.org/1999/02/22-rdf-syntax-ns#"), "type")
+  val rdf_type = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#") + "type"
     
   implicit class StringPimps(s : String) {
     def --> (foo : Generator*) = NodeRequest.resolveStringAsRequest(s).-->(foo:_*)
