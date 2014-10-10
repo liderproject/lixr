@@ -1,0 +1,926 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2014-10-03T11:18:32Z</responseDate>
+  <request verb="ListRecords" metadataPrefix="metashare">http://127.0.0.1:8000/oai_pmh/</request>
+  <ListRecords>
+    <record>
+      <header>
+        <identifier>d7abf49c68a811e281b65cf3fcb88b70ef60c6dce745433e949a1bad011aa6bf</identifier>
+        <datestamp>2014-09-23T00:30:48Z</datestamp>
+        <setSpec>lexicalConceptualResource</setSpec>
+        <setSpec>lexicalConceptualResource:lexicon</setSpec>
+      </header>
+      <metadata>
+        <resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema" xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v3.0/META-SHARE-Resource.xsd">
+          <identificationInfo>
+            <resourceName lang="en">Dictionary of Antonyms in Bulgarian Language</resourceName>
+            <description lang="en">The Dictionary of Antonyms in Bulgarian Language ...
+</description>
+            <resourceShortName lang="en">DABL</resourceShortName>
+            <url>http://infolex.ibl.bas.bg/synomthes/antonimSearchPage.seam?cid=19</url>
+            <metaShareId>NOT_DEFINED_FOR_V2</metaShareId>
+            <identifier>823</identifier>
+          </identificationInfo>
+          <distributionInfo>
+            <availability>available-restrictedUse</availability>
+            <licenceInfo>
+              <licence>CC-BY-NC-ND</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <restrictionsOfUse>noRedistribution</restrictionsOfUse>
+              <distributionAccessMedium>accessibleThroughInterface</distributionAccessMedium>
+              <downloadLocation>http://infolex.ibl.bas.bg/synomthes/antonimSearchPage.seam?cid=19</downloadLocation>
+            </licenceInfo>
+            <iprHolder>
+              <organizationInfo>
+                <organizationName lang="en">Institute for Bulgarian Language</organizationName>
+                <organizationShortName lang="en">IBL</organizationShortName>
+                <departmentName lang="en">Department of Bulgarian Lexicology and Lexicography</departmentName>
+                <communicationInfo>
+                  <email>ibl@ibl.bas.bg</email>
+                  <url>http://ibl.bas.bg</url>
+                  <address>52 Shipchenski prohod Blvd., Bl. 17</address>
+                  <zipCode>1113</zipCode>
+                  <city>Sofia</city>
+                  <country>Bulgaria</country>
+                  <telephoneNumber>+35 92 97 92 948</telephoneNumber>
+                </communicationInfo>
+              </organizationInfo>
+            </iprHolder>
+            <availabilityStartDate>2013-01-21</availabilityStartDate>
+          </distributionInfo>
+          <contactPerson>
+            <surname lang="en">Blagoeva</surname>
+            <givenName lang="en">Diana</givenName>
+            <communicationInfo>
+              <email>d.blagoeva@ibl.bas.bg</email>
+              <url>http://www.ibl.bas.bg/en/people_en2_cv_Blagoeva.htm</url>
+              <address>52 Shipchenski Prohod Blvd., Bl. 17</address>
+              <zipCode>1113</zipCode>
+              <city>Sofia</city>
+              <country>Bulgaria</country>
+              <telephoneNumber>+35 92 97 92 948</telephoneNumber>
+              <faxNumber>+35 92 87 22 302</faxNumber>
+            </communicationInfo>
+            <position>Associate Professor</position>
+            <affiliation>
+              <organizationName lang="und">Institute for Bulgarian Language</organizationName>
+              <organizationShortName lang="und">IBL</organizationShortName>
+              <departmentName lang="und">Department of computational linguistics, Department of Bulgarian lexicology and lexicography</departmentName>
+              <communicationInfo>
+                <email>ibl@ibl.bas.bg</email>
+                <url>http://ibl.bas.bg</url>
+                <address>52 Shipchenski prohod Blvd., Bl. 17</address>
+                <zipCode>1113</zipCode>
+                <city>Sofia</city>
+                <country>Bulgaria</country>
+                <telephoneNumber>+35 92 97 92 969</telephoneNumber>
+              </communicationInfo>
+            </affiliation>
+          </contactPerson>
+          <metadataInfo>
+            <metadataCreationDate>2013-01-27</metadataCreationDate>
+            <metadataLastDateUpdated>2013-01-31</metadataLastDateUpdated>
+          </metadataInfo>
+          <versionInfo>
+            <version>1.0</version>
+            <lastDateUpdated>2013-01-10</lastDateUpdated>
+          </versionInfo>
+          <validationInfo>
+            <validated>true</validated>
+          </validationInfo>
+          <usageInfo>
+            <foreseenUseInfo>
+              <foreseenUse>humanUse</foreseenUse>
+            </foreseenUseInfo>
+            <actualUseInfo>
+              <actualUse>humanUse</actualUse>
+            </actualUseInfo>
+          </usageInfo>
+          <resourceDocumentationInfo>
+            <documentation>
+              <documentUnstructured>Blagoeva, Diana, Sia Kolkovska. „Инфолекс” – информационен лингвистичен портал за целите на българската лексикология, фразеология и лексикография. – Littera et Lingua Electronic Journal of Humanities, 2012, Fall, 10 p. ISSN: 1312-6172  http://www.slav.uni-sofia.bg/lilijournal</documentUnstructured>
+            </documentation>
+          </resourceDocumentationInfo>
+          <resourceCreationInfo>
+            <resourceCreator>
+              <organizationInfo>
+                <organizationName lang="en">Institute for Bulgarian Language</organizationName>
+                <organizationShortName lang="en">IBL</organizationShortName>
+                <departmentName lang="en">Department of Computational Linguistics</departmentName>
+                <departmentName lang="und">Department of Bulgarian Lexicology and Lexicography</departmentName>
+                <communicationInfo>
+                  <email>d.blagoeva@ibl.bas.bg</email>
+                  <url>http://ibl.bas.bg/en/index.htm</url>
+                  <address>52 Shipchenski prohod Blvd., Bl. 17</address>
+                  <zipCode>1113</zipCode>
+                  <city>Sofia</city>
+                  <country>Bulgaria</country>
+                  <telephoneNumber>+35 92 97 92 969</telephoneNumber>
+                </communicationInfo>
+              </organizationInfo>
+            </resourceCreator>
+            <fundingProject>
+              <projectName lang="en">CESAR: Central and South-East European Resources</projectName>
+              <projectShortName lang="en">CESAR</projectShortName>
+              <url>http://cesar.nytud.hu/</url>
+              <fundingType>euFunds</fundingType>
+              <projectStartDate>2011-02-01</projectStartDate>
+              <projectEndDate>2013-01-30</projectEndDate>
+            </fundingProject>
+            <fundingProject>
+              <projectName lang="en">Complex Study of Bulgarian Lexis and Phraseology as a Part of the Cultural Heritage and National Identity</projectName>
+              <fundingType>nationalFunds</fundingType>
+              <fundingCountry>Bulgaria</fundingCountry>
+            </fundingProject>
+            <creationStartDate>2009-12-17</creationStartDate>
+          </resourceCreationInfo>
+          <resourceComponentType>
+            <lexicalConceptualResourceInfo>
+              <resourceType>lexicalConceptualResource</resourceType>
+              <lexicalConceptualResourceType>lexicon</lexicalConceptualResourceType>
+              <lexicalConceptualResourceEncodingInfo>
+                <encodingLevel>semantics</encodingLevel>
+                <linguisticInformation>semantics-Relations-Antonyms</linguisticInformation>
+              </lexicalConceptualResourceEncodingInfo>
+              <lexicalConceptualResourceMediaType>
+                <lexicalConceptualResourceTextInfo>
+                  <mediaType>text</mediaType>
+                  <lingualityInfo>
+                    <lingualityType>monolingual</lingualityType>
+                  </lingualityInfo>
+                  <languageInfo>
+                    <languageId>bg</languageId>
+                    <languageName>Bulgarian</languageName>
+                    <languageScript>Cyrillic</languageScript>
+                  </languageInfo>
+                  <modalityInfo>
+                    <modalityType>writtenLanguage</modalityType>
+                  </modalityInfo>
+                  <sizeInfo>
+                    <size>3,644</size>
+                    <sizeUnit>words</sizeUnit>
+                  </sizeInfo>
+                  <characterEncodingInfo>
+                    <characterEncoding>UTF-8</characterEncoding>
+                  </characterEncodingInfo>
+                </lexicalConceptualResourceTextInfo>
+              </lexicalConceptualResourceMediaType>
+            </lexicalConceptualResourceInfo>
+          </resourceComponentType>
+        </resourceInfo>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>bee67034de6b11e2b1e400259011f6ead2a25f2425f34eb198784968d442572c</identifier>
+        <datestamp>2014-09-23T00:16:04Z</datestamp>
+        <setSpec>lexicalConceptualResource</setSpec>
+        <setSpec>lexicalConceptualResource:lexicon</setSpec>
+      </header>
+      <metadata>
+        <resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema" xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v3.0/META-SHARE-Resource.xsd">
+          <identificationInfo>
+            <resourceName lang="fr">CELEX - Base de données lexicale du hollandais - sous-ensemble "phonologie"</resourceName>
+            <resourceName lang="en">CELEX Dutch lexical database - Phonology Subset</resourceName>
+            <description lang="fr">Les données en hollandais de CELEX sont ...
+</description>
+<description lang="en">The Dutch CELEX data is derived from ...
+</description>
+            <url>http://catalog.elra.info/product_info.php?products_id=441</url>
+            <metaShareId>NOT_DEFINED_FOR_V2</metaShareId>
+            <identifier>ELRA-L0029_03</identifier>
+          </identificationInfo>
+          <distributionInfo>
+            <availability>available-restrictedUse</availability>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <availabilityStartDate>1997-09-15</availabilityStartDate>
+          </distributionInfo>
+          <contactPerson>
+            <surname lang="en-us">Valérie</surname>
+            <givenName lang="en-us">Mapelli</givenName>
+            <communicationInfo>
+              <email>mapelli@elda.org</email>
+              <url>http://www.elda.org</url>
+              <address>55-57 rue Brillat-Savarin</address>
+              <zipCode>75013</zipCode>
+              <city>Paris</city>
+              <country>France</country>
+              <telephoneNumber>+1 43 13 33 33</telephoneNumber>
+              <faxNumber>+1 43 14 33 30</faxNumber>
+            </communicationInfo>
+          </contactPerson>
+          <metadataInfo>
+            <metadataCreationDate>2005-05-12</metadataCreationDate>
+          </metadataInfo>
+          <versionInfo>
+            <version>1.0</version>
+            <lastDateUpdated>2005-10-05</lastDateUpdated>
+          </versionInfo>
+          <resourceCreationInfo>
+            <fundingProject>
+              <projectName lang="und">CELEX</projectName>
+              <fundingType>nationalFunds</fundingType>
+            </fundingProject>
+          </resourceCreationInfo>
+          <resourceComponentType>
+            <lexicalConceptualResourceInfo>
+              <resourceType>lexicalConceptualResource</resourceType>
+              <lexicalConceptualResourceType>lexicon</lexicalConceptualResourceType>
+              <lexicalConceptualResourceMediaType>
+                <lexicalConceptualResourceTextInfo>
+                  <mediaType>text</mediaType>
+                  <lingualityInfo>
+                    <lingualityType>monolingual</lingualityType>
+                  </lingualityInfo>
+                  <languageInfo>
+                    <languageId>dut/nld</languageId>
+                    <languageName>Dutch</languageName>
+                    <languageVarietyInfo>
+                      <languageVarietyType>dialect</languageVarietyType>
+                      <languageVarietyName>Flemish</languageVarietyName>
+                      <sizePerLanguageVariety>
+                        <size>2</size>
+                        <sizeUnit>gb</sizeUnit>
+                      </sizePerLanguageVariety>
+                    </languageVarietyInfo>
+                  </languageInfo>
+                  <sizeInfo>
+                    <size>no size available</size>
+                    <sizeUnit>other</sizeUnit>
+                  </sizeInfo>
+                </lexicalConceptualResourceTextInfo>
+              </lexicalConceptualResourceMediaType>
+            </lexicalConceptualResourceInfo>
+          </resourceComponentType>
+        </resourceInfo>
+      </metadata>
+    </record>
+    <record>
+      <header status="deleted">
+        <identifier>d7a1406080c211e28763000c291ecfc8fe23f83f4be242d0ae840d1472413083</identifier>
+        <datestamp>2014-09-23T00:16:04Z</datestamp>
+        <setSpec>lexicalConceptualResource</setSpec>
+        <setSpec>lexicalConceptualResource:lexicon</setSpec>
+      </header>
+    </record>
+    <record>
+      <header status="deleted">
+        <identifier>9c07c15a7ff011e28763000c291ecfc8bffaa994b9764c3cb8443e454e9fd39f</identifier>
+        <datestamp>2014-09-23T00:16:04Z</datestamp>
+        <setSpec>lexicalConceptualResource</setSpec>
+        <setSpec>lexicalConceptualResource:lexicon</setSpec>
+      </header>
+    </record>
+    <record>
+      <header>
+        <identifier>7b10d004a37611e3960f001dd8b71c190dc084e401f34fbe95921abf1ac2cc7f</identifier>
+        <datestamp>2014-09-23T00:16:04Z</datestamp>
+        <setSpec>corpus</setSpec>
+        <setSpec>corpus:text</setSpec>
+      </header>
+      <metadata>
+        <resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema" xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v3.0/META-SHARE-Resource.xsd">
+          <identificationInfo>
+            <resourceName lang="en">English-Lithuanian cross-linked collection of comparable sentences from Wikipedia</resourceName>
+            <description lang="en">Collection of comparable sentences from Wikipedia obtained with Lexacc tool developed in ACCURAT project. For each sentence pair confidence score of the alignment is assigned.</description>
+            <metaShareId>NOT_DEFINED_FOR_V2</metaShareId>
+          </identificationInfo>
+          <distributionInfo>
+            <availability>available-restrictedUse</availability>
+            <licenceInfo>
+              <licence>CC-BY</licence>
+              <restrictionsOfUse>attribution</restrictionsOfUse>
+              <distributionAccessMedium>downloadable</distributionAccessMedium>
+            </licenceInfo>
+          </distributionInfo>
+          <contactPerson>
+            <surname lang="en">-Bērziņš</surname>
+            <givenName lang="en">Aivars</givenName>
+            <sex>male</sex>
+            <communicationInfo>
+              <email>aivars.berzins@tilde.lv</email>
+              <address>Vienibas gatve 75a, Riga</address>
+              <zipCode>LV 1004</zipCode>
+              <city>Riga</city>
+              <country>Latvia</country>
+              <telephoneNumber>+371-67605001</telephoneNumber>
+              <faxNumber>+371-67605750</faxNumber>
+            </communicationInfo>
+            <position>project manager</position>
+            <affiliation>
+              <organizationName lang="en">-Tilde</organizationName>
+              <communicationInfo>
+                <email>tilde@tilde.lv</email>
+                <url>http://www.tilde.com</url>
+                <address>Vienibas gatve 75a</address>
+                <zipCode>LV 1004</zipCode>
+                <city>Riga</city>
+                <country>Latvia</country>
+                <telephoneNumber>+371-67605001</telephoneNumber>
+                <faxNumber>+371-67605750</faxNumber>
+              </communicationInfo>
+            </affiliation>
+          </contactPerson>
+          <metadataInfo>
+            <metadataCreationDate>2012-09-07</metadataCreationDate>
+            <metadataCreator>
+              <surname lang="en">-Skadiņa</surname>
+              <givenName lang="en">Inguna</givenName>
+              <sex>female</sex>
+              <communicationInfo>
+                <email>inguna.skadina@tilde.lv</email>
+                <address>Vienibas gatve 75a</address>
+                <city>Riga</city>
+                <country>Latvia</country>
+                <telephoneNumber>+371-67605001</telephoneNumber>
+                <faxNumber>+371-67605750</faxNumber>
+              </communicationInfo>
+              <position>Chief Scientific Officer</position>
+            </metadataCreator>
+            <metadataLastDateUpdated>2013-01-29</metadataLastDateUpdated>
+          </metadataInfo>
+          <versionInfo>
+            <version>final</version>
+            <lastDateUpdated>2012-06-30</lastDateUpdated>
+          </versionInfo>
+          <validationInfo>
+            <validated>true</validated>
+          </validationInfo>
+          <usageInfo>
+            <foreseenUseInfo>
+              <foreseenUse>nlpApplications</foreseenUse>
+              <useNLPSpecific>bilingualLexiconInduction</useNLPSpecific>
+              <useNLPSpecific>machineTranslation</useNLPSpecific>
+              <useNLPSpecific>namedEntityRecognition</useNLPSpecific>
+            </foreseenUseInfo>
+            <actualUseInfo>
+              <actualUse>nlpApplications</actualUse>
+              <useNLPSpecific>machineTranslation</useNLPSpecific>
+            </actualUseInfo>
+          </usageInfo>
+          <resourceComponentType>
+            <corpusInfo>
+              <resourceType>corpus</resourceType>
+              <corpusMediaType>
+                <corpusTextInfo>
+                  <mediaType>text</mediaType>
+                  <lingualityInfo>
+                    <lingualityType>multilingual</lingualityType>
+                    <multilingualityType>comparable</multilingualityType>
+                  </lingualityInfo>
+                  <languageInfo>
+                    <languageId>en</languageId>
+                    <languageName>English</languageName>
+                    <sizePerLanguage>
+                      <size>179 758</size>
+                      <sizeUnit>sentences</sizeUnit>
+                    </sizePerLanguage>
+                  </languageInfo>
+                  <languageInfo>
+                    <languageId>lt</languageId>
+                    <languageName>Lithuanian</languageName>
+                    <sizePerLanguage>
+                      <size>179 758</size>
+                      <sizeUnit>sentences</sizeUnit>
+                    </sizePerLanguage>
+                  </languageInfo>
+                  <modalityInfo>
+                    <modalityType>writtenLanguage</modalityType>
+                  </modalityInfo>
+                  <sizeInfo>
+                    <size>179 758</size>
+                    <sizeUnit>sentences</sizeUnit>
+                  </sizeInfo>
+                  <characterEncodingInfo>
+                    <characterEncoding>UTF-8</characterEncoding>
+                  </characterEncodingInfo>
+                  <creationInfo>
+                    <creationMode>automatic</creationMode>
+                    <creationModeDetails>created with ACCURAT Toolkit</creationModeDetails>
+                  </creationInfo>
+                </corpusTextInfo>
+              </corpusMediaType>
+            </corpusInfo>
+          </resourceComponentType>
+        </resourceInfo>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>d18d7c5ade6611e2b1e400259011f6ea6efb98eb962d46ff8584eef8239f4ac8</identifier>
+        <datestamp>2014-09-23T00:16:05Z</datestamp>
+        <setSpec>lexicalConceptualResource</setSpec>
+        <setSpec>lexicalConceptualResource:lexicon</setSpec>
+      </header>
+      <metadata>
+        <resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema" xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v3.0/META-SHARE-Resource.xsd">
+          <identificationInfo>
+            <resourceName lang="fr">Lexiques bilingues espagnol-anglais et anglais-espagnol (INCYTA) - Géographie, histoire, arts</resourceName>
+            <resourceName lang="en">Bilingual Spanish-English and English-Spanish lexicons (INCYTA) - Geography, History, Arts</resourceName>
+            <description lang="fr">4116 entrées, domaine Géographie, histoire, arts. Les entrées contiennent des informations morphologiques pour les différentes classes de mots. Les informations sur les termes composés sont fournies par la tête du terme (tête du syntagme).</description>
+            <description lang="en">4,116 entries for Geography, History, Arts. The entries contain morphological information for part-of-speech and inflectional class. The information on multi-word terms is provided by the headword.</description>
+            <url>http://catalog.elra.info/product_info.php?products_id=129</url>
+            <metaShareId>NOT_DEFINED_FOR_V2</metaShareId>
+            <identifier>ELRA-M0002_03</identifier>
+          </identificationInfo>
+          <distributionInfo>
+            <availability>available-restrictedUse</availability>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <availabilityStartDate>1997-01-23</availabilityStartDate>
+          </distributionInfo>
+          <contactPerson>
+            <surname lang="en-us">Valérie</surname>
+            <givenName lang="en-us">Mapelli</givenName>
+            <communicationInfo>
+              <email>mapelli@elda.org</email>
+              <url>http://www.elda.org</url>
+              <address>55-57 rue Brillat-Savarin</address>
+              <zipCode>75013</zipCode>
+              <city>Paris</city>
+              <country>France</country>
+              <telephoneNumber>+1 43 13 33 33</telephoneNumber>
+              <faxNumber>+1 43 14 33 30</faxNumber>
+            </communicationInfo>
+          </contactPerson>
+          <metadataInfo>
+            <metadataCreationDate>2005-05-12</metadataCreationDate>
+          </metadataInfo>
+          <versionInfo>
+            <version>1.0</version>
+            <lastDateUpdated>2005-02-25</lastDateUpdated>
+          </versionInfo>
+          <resourceComponentType>
+            <lexicalConceptualResourceInfo>
+              <resourceType>lexicalConceptualResource</resourceType>
+              <lexicalConceptualResourceType>lexicon</lexicalConceptualResourceType>
+              <lexicalConceptualResourceMediaType>
+                <lexicalConceptualResourceTextInfo>
+                  <mediaType>text</mediaType>
+                  <lingualityInfo>
+                    <lingualityType>monolingual</lingualityType>
+                  </lingualityInfo>
+                  <languageInfo>
+                    <languageId>eng</languageId>
+                    <languageName>English</languageName>
+                  </languageInfo>
+                  <languageInfo>
+                    <languageId>spa</languageId>
+                    <languageName>Spanish</languageName>
+                    <languageVarietyInfo>
+                      <languageVarietyType>dialect</languageVarietyType>
+                      <languageVarietyName>Castilian</languageVarietyName>
+                      <sizePerLanguageVariety>
+                        <size>2</size>
+                        <sizeUnit>gb</sizeUnit>
+                      </sizePerLanguageVariety>
+                    </languageVarietyInfo>
+                  </languageInfo>
+                  <sizeInfo>
+                    <size>no size available</size>
+                    <sizeUnit>other</sizeUnit>
+                  </sizeInfo>
+                </lexicalConceptualResourceTextInfo>
+              </lexicalConceptualResourceMediaType>
+            </lexicalConceptualResourceInfo>
+          </resourceComponentType>
+        </resourceInfo>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>f054b2a06aff11e284b6000423bfd61ccd381836ce664f3cae0507cbeb3e61f1</identifier>
+        <datestamp>2014-09-23T00:16:06Z</datestamp>
+        <setSpec>toolService</setSpec>
+        <setSpec>toolService:tool</setSpec>
+      </header>
+      <metadata>
+        <resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema" xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v3.0/META-SHARE-Resource.xsd">
+          <identificationInfo>
+            <resourceName lang="und">Summarizer</resourceName>
+            <description lang="und">Summarizer is a tool for creating short text summaries. It utilises text extraction method, i.e. the output consists of sentences from the original text. The tool uses a number of machine learning algorithms, including neural networks, linear regression, Bayesian networks and decision trees. The output sentences are chosen based on different signals, such as the length of the sentence, its position in the text structure and properties of the words it contains. The system was trained specifically for newspaper articles in Polish. It is possible, however, to adjust it for other kinds of documents and languages.</description>
+            <resourceShortName lang="und">Summarizer</resourceShortName>
+            <url>http://clip.ipipan.waw.pl/Summarizer</url>
+            <metaShareId>NOT_DEFINED_FOR_V2</metaShareId>
+            <identifier>420</identifier>
+          </identificationInfo>
+          <distributionInfo>
+            <availability>available-restrictedUse</availability>
+            <licenceInfo>
+              <licence>CC-BY</licence>
+              <restrictionsOfUse>attribution</restrictionsOfUse>
+              <distributionAccessMedium>downloadable</distributionAccessMedium>
+              <downloadLocation>http://clip.ipipan.waw.pl/Summarizer</downloadLocation>
+              <fee>free of charge</fee>
+            </licenceInfo>
+            <iprHolder>
+              <personInfo>
+                <surname lang="und">Świetlicka</surname>
+                <givenName lang="und">Joanna</givenName>
+                <communicationInfo>
+                  <email>j.swietlicka@gmail.com</email>
+                  <address>44 Reynolds House, Erasmus Street</address>
+                  <zipCode>SW1P 4HP</zipCode>
+                  <city>London</city>
+                </communicationInfo>
+              </personInfo>
+            </iprHolder>
+          </distributionInfo>
+          <contactPerson>
+            <surname lang="und">Świetlicka</surname>
+            <givenName lang="und">Joanna</givenName>
+            <communicationInfo>
+              <email>j.swietlicka@gmail.com</email>
+              <address>44 Reynolds House, Erasmus Street</address>
+              <zipCode>SW1P 4HP</zipCode>
+              <city>London</city>
+            </communicationInfo>
+          </contactPerson>
+          <metadataInfo>
+            <metadataCreationDate>2012-07-06</metadataCreationDate>
+            <metadataCreator>
+              <surname lang="und">Świetlicka</surname>
+              <givenName lang="und">Joanna</givenName>
+              <communicationInfo>
+                <email>j.swietlicka@gmail.com</email>
+                <address>44 Reynolds House, Erasmus Street</address>
+                <zipCode>SW1P 4HP</zipCode>
+                <city>London</city>
+              </communicationInfo>
+            </metadataCreator>
+            <metadataLanguageId>en</metadataLanguageId>
+            <metadataLastDateUpdated>2012-07-06</metadataLastDateUpdated>
+          </metadataInfo>
+          <resourceDocumentationInfo>
+            <documentation>
+              <documentUnstructured>Świetlicka J. Machine learning methods in automated text summarization. MSc thesis, 2010.</documentUnstructured>
+            </documentation>
+          </resourceDocumentationInfo>
+          <resourceCreationInfo>
+            <resourceCreator>
+              <personInfo>
+                <surname lang="und">Świetlicka</surname>
+                <givenName lang="und">Joanna</givenName>
+                <communicationInfo>
+                  <email>j.swietlicka@gmail.com</email>
+                  <address>44 Reynolds House, Erasmus Street</address>
+                  <zipCode>SW1P 4HP</zipCode>
+                  <city>London</city>
+                </communicationInfo>
+              </personInfo>
+            </resourceCreator>
+            <creationStartDate>2010-01-01</creationStartDate>
+          </resourceCreationInfo>
+          <resourceComponentType>
+            <toolServiceInfo>
+              <resourceType>toolService</resourceType>
+              <toolServiceType>tool</toolServiceType>
+              <languageDependent>true</languageDependent>
+              <inputInfo>
+                <mediaType>text</mediaType>
+                <modalityType>writtenLanguage</modalityType>
+              </inputInfo>
+              <outputInfo>
+                <mediaType>text</mediaType>
+                <modalityType>writtenLanguage</modalityType>
+              </outputInfo>
+              <toolServiceCreationInfo>
+                <implementationLanguage>Java</implementationLanguage>
+              </toolServiceCreationInfo>
+            </toolServiceInfo>
+          </resourceComponentType>
+        </resourceInfo>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>489c17bc252911e3a23a00259011f6ea087bd8069a8544e4a45549693b675e09</identifier>
+        <datestamp>2014-09-23T00:16:06Z</datestamp>
+        <setSpec>lexicalConceptualResource</setSpec>
+        <setSpec>lexicalConceptualResource:lexicon</setSpec>
+      </header>
+      <metadata>
+        <resourceInfo xmlns="http://www.ilsp.gr/META-XMLSchema" xsi:schemaLocation="http://www.ilsp.gr/META-XMLSchema http://metashare.ilsp.gr/META-XMLSchema/v3.0/META-SHARE-Resource.xsd">
+          <identificationInfo>
+            <resourceName lang="fr">Dictionnaire de prononciation GlobalPhone espagnol (d’Amérique latine)</resourceName>
+            <resourceName lang="en">GlobalPhone Spanish (Latin American) Pronunciation Dictionary</resourceName>
+            <description lang="fr">Les dictionnaires de prononciation GlobalPhone, ...
+</description>
+            <description lang="en">The GlobalPhone pronunciation dictionaries, ...
+</description>
+            <url>http://catalog.elra.info/product_info.php?products_id=1209</url>
+            <metaShareId>NOT_DEFINED_FOR_V2</metaShareId>
+            <identifier>ELRA-S0360</identifier>
+          </identificationInfo>
+          <distributionInfo>
+            <availability>available-restrictedUse</availability>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <fee>3000.00</fee>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <fee>600.00</fee>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <fee>3000.00</fee>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <fee>3000.00</fee>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>true</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <fee>3600.00</fee>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <fee>700.00</fee>
+              <userNature>academic</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_VAR</licence>
+              <restrictionsOfUse>commercialUse</restrictionsOfUse>
+              <fee>3600.00</fee>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <licenceInfo>
+              <licence>ELRA_END_USER</licence>
+              <restrictionsOfUse>academic-nonCommercialUse</restrictionsOfUse>
+              <fee>3600.00</fee>
+              <userNature>commercial</userNature>
+              <membershipInfo>
+                <member>false</member>
+                <membershipInstitution>ELRA</membershipInstitution>
+              </membershipInfo>
+            </licenceInfo>
+            <availabilityStartDate>2013-09-19</availabilityStartDate>
+          </distributionInfo>
+          <contactPerson>
+            <surname lang="en-us">Valérie</surname>
+            <givenName lang="en-us">Mapelli</givenName>
+            <communicationInfo>
+              <email>mapelli@elda.org</email>
+              <url>http://www.elda.org</url>
+              <address>55-57 rue Brillat-Savarin</address>
+              <zipCode>75013</zipCode>
+              <city>Paris</city>
+              <country>France</country>
+              <telephoneNumber>+1 43 13 33 33</telephoneNumber>
+              <faxNumber>+1 43 14 33 30</faxNumber>
+            </communicationInfo>
+          </contactPerson>
+          <metadataInfo>
+            <metadataCreationDate>2005-05-12</metadataCreationDate>
+          </metadataInfo>
+          <versionInfo>
+            <version>1.0</version>
+            <lastDateUpdated>2013-09-19</lastDateUpdated>
+          </versionInfo>
+          <usageInfo>
+            <actualUseInfo>
+              <actualUse>nlpApplications</actualUse>
+              <useNLPSpecific>speechRecognition</useNLPSpecific>
+            </actualUseInfo>
+          </usageInfo>
+          <resourceComponentType>
+            <lexicalConceptualResourceInfo>
+              <resourceType>lexicalConceptualResource</resourceType>
+              <lexicalConceptualResourceType>lexicon</lexicalConceptualResourceType>
+              <lexicalConceptualResourceEncodingInfo>
+                <encodingLevel>phonetics</encodingLevel>
+              </lexicalConceptualResourceEncodingInfo>
+              <lexicalConceptualResourceMediaType>
+                <lexicalConceptualResourceTextInfo>
+                  <mediaType>text</mediaType>
+                  <lingualityInfo>
+                    <lingualityType>monolingual</lingualityType>
+                  </lingualityInfo>
+                  <languageInfo>
+                    <languageId>spa</languageId>
+                    <languageName>Spanish</languageName>
+                    <languageVarietyInfo>
+                      <languageVarietyType>dialect</languageVarietyType>
+                      <languageVarietyName>Castilian</languageVarietyName>
+                      <sizePerLanguageVariety>
+                        <size>2</size>
+                        <sizeUnit>gb</sizeUnit>
+                      </sizePerLanguageVariety>
+                    </languageVarietyInfo>
+                  </languageInfo>
+                  <sizeInfo>
+                    <size>no size available</size>
+                    <sizeUnit>other</sizeUnit>
+                  </sizeInfo>
+                </lexicalConceptualResourceTextInfo>
+                <lexicalConceptualResourceAudioInfo>
+                  <mediaType>audio</mediaType>
+                  <lingualityInfo>
+                    <lingualityType>monolingual</lingualityType>
+                  </lingualityInfo>
+                  <languageInfo>
+                    <languageId>spa</languageId>
+                    <languageName>Spanish</languageName>
+                    <languageVarietyInfo>
+                      <languageVarietyType>dialect</languageVarietyType>
+                      <languageVarietyName>Castilian</languageVarietyName>
+                      <sizePerLanguageVariety>
+                        <size>2</size>
+                        <sizeUnit>gb</sizeUnit>
+                      </sizePerLanguageVariety>
+                    </languageVarietyInfo>
+                  </languageInfo>
+                  <sizeInfo>
+                    <size>no size available</size>
+                    <sizeUnit>other</sizeUnit>
+                  </sizeInfo>
+                </lexicalConceptualResourceAudioInfo>
+              </lexicalConceptualResourceMediaType>
+            </lexicalConceptualResourceInfo>
+          </resourceComponentType>
+        </resourceInfo>
+      </metadata>
+    </record>
+  </ListRecords>
+</OAI-PMH>
