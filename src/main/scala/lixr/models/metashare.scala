@@ -7,6 +7,7 @@ object Metashare extends Model {
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dct = Namespace("http://purl.org/dc/terms/")
   val foaf = Namespace("http://xmlns.com/foaf/0.1/")
+  val media = Namespace("http://www.w3.org/ns/ma-ont#")
   val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
   val msxml = Namespace("http://www.ilsp.gr/META-XMLSchema")
   val oai = Namespace("http://www.openarchives.org/OAI/2.0/")
@@ -47,6 +48,14 @@ object Metashare extends Model {
     )
     handle(metashare)
   }
+
+  def doubleMap(metashare : NodeRequest, rdf : NodeRequest) = {
+    metashare --> (
+      rdf > (content ^^ xsd.decimal)
+    )
+    handle(metashare)
+  }
+
 
   def objectMap(metashare : NodeRequest, rdf : NodeRequest, values : (String,NodeRequest)*) = {
     for((k,v) <- values) {
@@ -145,7 +154,7 @@ object Metashare extends Model {
   )
 
   msxml.contactPerson --> (
-    ms.contactPerson > node(frag("contactPerson")) (
+    dcat.contactPoint > node(frag("contactPerson")) (
       personInfoType
     )
   )
@@ -1207,6 +1216,12 @@ object Metashare extends Model {
 
   def mimeType = stringMap(msxml.mimeType, ms.mimeType)
 
+  msxml.sizeInfo --> (
+    ms.sizeInfo > node(frag("sizeInfo")) (
+      sizeInfoType
+    )
+  )
+
   // Derived from META-SHARE-LanguageMetadata.xsd
   
   msxml.characterEncodingInfo --> (
@@ -1309,6 +1324,7 @@ object Metashare extends Model {
   
   msxml.distributionInfo --> (
     ms.distributionInfo > node(frag("distributionInfo")) (
+      rdf_type > dcat.Distribution,
       objectMap(msxml.availability, ms.availability,
         "available-unrestrictedUse" -> ms.`available-unrestrictedUse`,
         "available-restrictedUse" -> ms.`available-restrictedUse`,
@@ -1341,44 +1357,45 @@ object Metashare extends Model {
   )
 
   msxml.licenceInfo --> (
-    ms.licenceInfo > node(frag("licenceInfo")) (
+    dct.rights > node(frag("licenceInfo")) (
       objectMap(msxml.licenceInfo, ms.licenceInfo,
-        "CC-BY" -> ms.`CC-BY`,
-        "CC-BY-NC" -> ms.`CC-BY-NC`,
-        "CC-BY-NC-ND" -> ms.`CC-BY-NC-ND`,
-        "CC-BY-NC-SA" -> ms.`CC-BY-NC-SA`,
-        "CC-BY-ND" -> ms.`CC-BY-ND`,
-        "CC-BY-SA" -> ms.`CC-BY-SA`,
-        "CC-ZERO" -> ms.`CC-ZERO`,
-        "MS-C-NoReD" -> ms.`MS-C-NoReD`,
-        "MS-C-NoReD-FF" -> ms.`MS-C-NoReD-FF`,
-        "MS-C-NoReD-ND" -> ms.`MS-C-NoReD-ND`,
-        "MS-C-NoReD-ND-FF" -> ms.`MS-C-NoReD-ND-FF`,
-        "MS-NC-NoReD" -> ms.`MS-NC-NoReD`,
-        "MS-NC-NoReD-FF" -> ms.`MS-NC-NoReD-FF`,
-        "MS-NC-NoReD-ND" -> ms.`MS-NC-NoReD-ND`,
-        "MS-NC-NoReD-ND-FF" -> ms.`MS-NC-NoReD-ND-FF`,
-        "MSCommons-BY" -> ms.`MSCommons-BY`,
-        "MSCommons-BY-NC" -> ms.`MSCommons-BY-NC`,
-        "MSCommons-BY-NC-ND" -> ms.`MSCommons-BY-NC-ND`,
-        "MSCommons-BY-NC-SA" -> ms.`MSCommons-BY-NC-SA`,
-        "MSCommons-BY-ND" -> ms.`MSCommons-BY-ND`,
-        "MSCommons-BY-SA" -> ms.`MSCommons-BY-SA`,
-        "CLARIN_ACA" -> ms.`CLARIN_ACA`,
-        "CLARIN_ACA-NC" -> ms.`CLARIN_ACA-NC`,
-        "CLARIN_PUB" -> ms.`CLARIN_PUB`,
-        "CLARIN_RES" -> ms.`CLARIN_RES`,
-        "ELRA_END_USER" -> ms.`ELRA_END_USER`,
-        "ELRA_EVALUATION" -> ms.`ELRA_EVALUATION`,
-        "ELRA_VAR" -> ms.`ELRA_VAR`,
-        "AGPL" -> ms.`AGPL`,
-        "ApacheLicence_2.0" -> ms.`ApacheLicence_2.0`,
-        "BSD" -> ms.`BSD`,
-        "BSD-style" -> ms.`BSD-style`,
-        "GFDL" -> ms.`GFDL`,
-        "GPL" -> ms.`GPL`,
-        "LGPL" -> ms.`LGPL`,
-        "Princeton_Wordnet" -> ms.`Princeton_Wordnet`,
+        // TODO: Find real links!
+        "CC-BY" -> prop("https://creativecommons.org/licenses/by/4.0/"),
+        "CC-BY-NC" -> prop("https://creativecommons.org/licenses/by-nc/4.0/"),
+        "CC-BY-NC-ND" -> prop("https://creativecommons.org/licenses/by-nc-nd/4.0/"),
+        "CC-BY-NC-SA" -> prop("https://creativecommons.org/licenses/by-nc-sa/4.0/"),
+        "CC-BY-ND" -> prop("https://creativecommons.org/licenses/by-nd/4.0/"),
+        "CC-BY-SA" -> prop("https://creativecommons.org/licenses/by-sa/4.0/"),
+        "CC-ZERO" -> prop("http://creativecommons.org/publicdomain/zero/1.0/"),
+        "MS-C-NoReD" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20%20NoRedistribution_v0%207.pdf"),
+        "MS-C-NoReD-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20For-a-Fee_v0%207.pdf"),
+        "MS-C-NoReD-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20NoDerivatives-v1.0.pdf"),
+        "MS-C-NoReD-ND-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20NoDerivatives%20For-a-fee-v1.0.pdf"),
+        "MS-NC-NoReD" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution-v%201.0.pdf"),
+        "MS-NC-NoReD-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20For-a-Fee-v%201.0.pdf"),
+        "MS-NC-NoReD-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20NoDerivatives-v1.0.pdf"),
+        "MS-NC-NoReD-ND-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20NoDerivatives%20For-a-fee-v%201.0.pdf"),
+        "MSCommons-BY" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BY%20v1.0.pdf"),
+        "MSCommons-BY-NC" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNC%20v1.0.pdf"),
+        "MSCommons-BY-NC-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNCND%20v1.0.pdf"),
+        "MSCommons-BY-NC-SA" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNCSA%20v1.0.pdf"),
+        "MSCommons-BY-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYND%20v1.0.pdf"),
+        "MSCommons-BY-SA" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYSA%20v1.0.pdf"),
+        "CLARIN_ACA" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-ACA-2014-10.rtf"),
+        "CLARIN_ACA-NC" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-ACA-2014-10.rtf"),
+        "CLARIN_PUB" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-PUB-2014-10.rtf"),
+        "CLARIN_RES" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-RES-2014-10.rtf"),
+        "ELRA_END_USER" -> prop("http://www.elra.info/IMG/pdf_ENDUSER_140312.pdf"),
+        "ELRA_EVALUATION" -> prop("http://www.elra.info/IMG/pdf_EVALUATION_140312.pdf"),
+        "ELRA_VAR" -> prop("http://www.elra.info/IMG/pdf_VAR_140312.pdf"),
+        "AGPL" -> prop("https://gnu.org/licenses/agpl.html"),
+        "ApacheLicence_2.0" -> prop("http://www.apache.org/licenses/LICENSE-2.0.html"),
+        "BSD" -> prop("http://opensource.org/licenses/BSD-3-Clause"),
+        "BSD-style" -> prop("http://opensource.org/licenses/BSD-2-Clause"),
+        "GFDL" -> prop("http://www.gnu.org/copyleft/fdl.html"),
+        "GPL" -> prop("http://www.gnu.org/copyleft/gpl.html"),
+        "LGPL" -> prop("https://www.gnu.org/licenses/lgpl.html"),
+        "Princeton_Wordnet" -> prop("http://wordnet.princeton.edu/wordnet/license/"),
         "proprietary" -> ms.`proprietary`,
         "underNegotiation" -> ms.`underNegotiation`,
         "other" -> ms.`other`
@@ -1407,7 +1424,7 @@ object Metashare extends Model {
         "accessibleThroughInterface" -> ms.accessibleThroughInterface,
         "other" -> ms.other
         ),
-      linkMap(msxml.downloadLocation, ms.downloadLocation),
+      linkMap(msxml.downloadLocation, dcat.downloadURL),
       linkMap(msxml.executionLocation, ms.executionLocation),
       stringMap(msxml.fee, ms.fee),
       langStringMap(msxml.attributionText, ms.attributionText),
@@ -1588,6 +1605,7 @@ object Metashare extends Model {
   // Derived from resourceTypes/Corpus.xsd
 
   msxml.corpusInfo --> (
+    dct.`type` > ms.corpus,
     ms.corpusInfo > node(frag("corpusInfo")) (
       stringMap(msxml.resourceType, ms.resourceType),
       handle(msxml.corpusMediaType)
@@ -1624,6 +1642,7 @@ object Metashare extends Model {
   )
 
   msxml.languageDescriptionInfo --> (
+    dct.`type` > ms.languageDescription,
     ms.languageDescriptionInfo > node(frag("languageDescriptionInfo")) (
       stringMap(msxml.languageDescription, ms.languageDescription),
       objectMap(msxml.languageDescriptionType, ms.languageDescriptionType,
@@ -1701,6 +1720,7 @@ object Metashare extends Model {
   // Derived from resourceTypes/lexicalConceptualResources.xsd
 
   msxml.lexicalConceptualResourceInfo --> (
+    dct.`type` > ms.lexicalConceptualResource,
     ms.lexicalConceptualResourceInfo > node(frag("lexicalConceptualResourceInfo")) (
       handle(msxml.resourceType),
       objectMap(msxml.lexicalConceptualResourceType, ms.lexicalConceptualResourceType,
@@ -1815,6 +1835,7 @@ object Metashare extends Model {
   // Derived from resourceTypes/toolService.xsd
 	
   msxml.toolServiceInfo --> (
+    dct.`type` > ms.toolService,
     ms.toolServiceInfo > node(frag("toolServiceInfo")) (
       stringMap(msxml.resourceType, ms.resourceType),
       objectMap(msxml.toolServiceType, ms.toolServiceType,
@@ -1948,6 +1969,679 @@ object Metashare extends Model {
       stringMap(msxml.creationDetails, ms.creationDetails)
     )
   ) 
+
+  // Derived from resourceTypes/mediaTypes/AudioSpecific.xsd
+  
+  msxml.audioContentInfo --> (
+    ms.audioContentInfo > node(frag("audioContentInfo")) (
+      objectMap(msxml.speechItems, ms.speechItems,
+        "isolatedWords" -> ms.isolatedWords,
+        "isolatedDigits" -> ms.isolatedDigits,
+        "naturalNumbers" -> ms.naturalNumbers,
+        "properNouns" -> ms.properNouns,
+        "applicationWords" -> ms.applicationWords,
+        "phoneticallyRichSentences" -> ms.phoneticallyRichSentences,
+        "phoneticallyRichWords" -> ms.phoneticallyRichWords,
+        "phoneticallyBalancedSentences" -> ms.phoneticallyBalancedSentences,
+        "moneyAmounts" -> ms.moneyAmounts,
+        "creditCardNumbers" -> ms.creditCardNumbers,
+        "telephoneNumbers" -> ms.telephoneNumbers,
+        "yesNoQuestions" -> ms.yesNoQuestions,
+        "vcvSequences" -> ms.vcvSequences,
+        "freeSpeech" -> ms.freeSpeech,
+        "other" -> ms.other
+        ),
+      objectMap(msxml.nonSpeechItems, ms.nonSpeechItems,
+        "notes" -> ms.notes,
+        "tempo" -> ms.tempo,
+        "sounds" -> ms.sounds,
+        "noise" -> ms.noise,
+        "music" -> ms.music,
+        "commercial " -> ms.commercial ,
+        "other" -> ms.other
+        ),
+      stringMap(msxml.textualDescription, dct.description),
+      objectMap(msxml.noiseLevel, ms.noiseLevel,
+        "low" -> ms.low,
+        "medium" -> ms.medium,
+        "high" -> ms.high
+      )
+    )
+  )
+
+  // not used?
+  msxml.audioSizeInfoType --> (
+    ms.audioSizeInfo > node(frag("audioSizeInfo")) (
+      handle(msxml.sizeInfo),
+      handle(msxml.durationOfEffectiveSpeechInfo),
+      handle(msxml.durationOfAudioInfo)
+    )
+  )
+
+  msxml.durationOfEffectiveSpeechInfo --> (
+    ms.durationOfEffectiveSpeechInfo > node(frag("durationOfEffectiveSpeechInfo")) (
+      intMap(msxml.size, ms.size),
+      objectMap(msxml.durationUnit, ms.durationUnit,
+        "hours" -> ms.hours,
+        "minutes" -> ms.minutes,
+        "seconds" -> ms.seconds
+      )
+    )
+  )
+
+  msxml.durationOfAudioInfo --> (
+    ms.durationOfAudioInfo > node(frag("durationOfAudioInfo")) (
+      intMap(msxml.size, ms.size),
+      objectMap(msxml.durationUnit, ms.durationUnit,
+        "hours" -> ms.hours,
+        "minutes" -> ms.minutes,
+        "seconds" -> ms.seconds
+      )
+    )
+  )
+
+
+  msxml.audioFormatInfo --> (
+    ms.audioFormatInfo > node(frag("audioFormatInfo")) (
+      rdf_type > media.MediaResource,
+      stringMap(msxml.mimeType, dct.format),
+      objectMap(msxml.signalEncoding, ms.signalEncoding,
+        "aLaw" -> ms.aLaw,
+        "linearPCM" -> ms.linearPCM,
+        "µ-law" -> ms.`mu-law`,
+        "ADPCM" -> ms.ADPCM,
+        "other" -> ms.other
+        ),
+      intMap(msxml.samplingRate, media.samplingRate),
+      intMap(msxml.quantization, media.averageBitRate),
+      objectMap(msxml.byteOrder, ms.byteOrder,
+        "littleEndian" -> ms.littleEndian,
+        "bigEndian" -> ms.bigEndian
+        ),
+      objectMap(msxml.signConvention, ms.signConvention,
+        "signedInteger" -> ms.signedInteger,
+        "unsignedInteger" -> ms.unsignedInteger,
+        "floatingPoint" -> ms.floatingPoint
+        ),
+      handle(msxml.compressionInfo),
+      objectMap(msxml.audioQualityMeasuresIncluded, ms.audioQualityMeasuresIncluded,
+        "SNR" -> ms.SNR,
+        "crossTalk" -> ms.crossTalk,
+        "clippingRate" -> ms.clippingRate,
+        "backgroundNoise" -> ms.backgroundNoise,
+        "other" -> ms.other
+        ),
+      intMap(msxml.numberOfTracks, media.numberOfTracks),
+      objectMap(msxml.recordingQuality, ms.recordingQuality,
+        "veryLow" -> ms.veryLow,
+        "low" -> ms.low,
+        "medium" -> ms.medium,
+        "high" -> ms.high,
+        "veryHigh" -> ms.veryHigh
+        ),
+      handle(msxml.sizePerAudioFormat)
+    )
+  )
+
+  msxml.audioClassificationInfo --> (
+    ms.audioClassificationInfo > node(frag("audioClassificationInfo")) (
+      objectMap(msxml.audioGenre, ms.audioGenre,
+        "speech" -> ms.speech,
+        "humanNonSpeech" -> ms.humanNonSpeech,
+        "noise" -> ms.noise,
+        "animalVocalizations" -> ms.animalVocalizations,
+        "song" -> ms.song,
+        "instrumentalMusic" -> ms.instrumentalMusic,
+        "other" -> ms.other
+        ),
+      objectMap(msxml.speechGenre, ms.speechGenre,
+        "broadcastNews" -> ms.broadcastNews,
+        "meeting" -> ms.meeting,
+        "lecture" -> ms.lecture,
+        "emotionalExpressive" -> ms.emotionalExpressive,
+        "airTrafficControl" -> ms.airTrafficControl,
+        "conversation" -> ms.conversation,
+        "roundtable" -> ms.roundtable,
+        "interview" -> ms.interview,
+        "debate" -> ms.debate,
+        "call-in" -> ms.`call-in`,
+        "questionAnswer" -> ms.questionAnswer,
+        "presentation" -> ms.presentation,
+        "narrative" -> ms.narrative
+        ),
+      stringMap(msxml.subject_topic, dct.subject),
+      stringMap(msxml.register, ms.register),
+      conformanceToClassificationScheme,
+      handle(msxml.sizePerAudioClassification)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/ImageSpecific.xsd
+
+  msxml.imageContentInfo --> (
+    ms.imageContentInfo > node(frag("imageContentInfo")) (
+      handle(msxml.typeOfImageContent),
+      objectMap(msxml.textIncludedInImage, ms.textIncludedInImage,
+        "captions" -> ms.captions,
+        "subtitles" -> ms.subtitles,
+        "captureTime" -> ms.captureTime,
+        "none" -> ms.none
+        ),
+      handle(msxml.staticElementInfo)
+    )
+  )
+
+  msxml.staticElementInfo --> (
+    ms.staticElementInfo > node(frag("staticElementInfo")) (
+      stringMap(msxml.typeOfElement, dct.`type`),
+      objectMap(msxml.bodyParts, ms.bodyParts,
+        "arms" -> ms.arms,
+        "face" -> ms.face,
+        "feet" -> ms.feet,
+        "hands" -> ms.hands,
+        "head" -> ms.head,
+        "legs" -> ms.legs,
+        "mouth" -> ms.mouth,
+        "wholeBody" -> ms.wholeBody,
+        "none" -> ms.none
+        ),
+      stringMap(msxml.faceViews, ms.faceViews),
+      stringMap(msxml.faceExpressions, ms.faceExpressions),
+      stringMap(msxml.artifactParts, ms.artifactParts),
+      stringMap(msxml.landscapeParts, ms.landscapeParts),
+      stringMap(msxml.personDescription, ms.personDescription),
+      stringMap(msxml.thingDescription, ms.thingDescription),
+      stringMap(msxml.organizationDescription, ms.organizationDescription),
+      stringMap(msxml.eventDescription, ms.eventDescription)
+    )
+  )
+
+  msxml.imageFormatInfo --> (
+    ms.imageFormatInfo > node(frag("imageFormatInfo")) (
+      stringMap(msxml.mimeType, dct.format),
+      stringMap(msxml.colourSpace, ms.colourSpace),
+      stringMap(msxml.colourDepth, ms.colourDepth),
+      handle(msxml.compressionInfo),
+      handle(msxml.resolutionInfo),
+      objectMap(msxml.visualModelling, ms.visualModelling,
+        "2D" -> ms.`2D`,
+        "3D" -> ms.`3D`
+        ),
+      objectMap(msxml.rasterOrVectorGraphics, ms.rasterOrVectorGraphics,
+        "raster" -> ms.raster,
+        "vector" -> ms.vector
+        ),
+      objectMap(msxml.quality, ms.quality,
+        "veryLow" -> ms.veryLow,
+        "low" -> ms.low,
+        "medium" -> ms.medium,
+        "high" -> ms.high,
+        "veryHigh" -> ms.veryHigh
+        ),
+      handle(msxml.sizePerImageFormat)
+    )
+  )
+
+  msxml.sizePerImageFormat --> (
+    ms.sizePerImageFormat > node(frag("sizePerImageFormat")) (
+      sizeInfoType
+    )
+  )
+
+  msxml.imageClassificationInfo --> (
+    ms.imageClassificationInfo > node(frag("imageClassificationInfo")) (
+      stringMap(msxml.imageGenre, ms.imageGenre),
+      stringMap(msxml.subject_topic, dct.subject),
+      conformanceToClassificationScheme,
+      handle(msxml.sizePerImageClassification)
+    )
+  )
+
+  msxml.sizePerImageClassification --> (
+    ms.sizePerImageClassification > node(frag("sizePerImageClassification")) (
+      sizeInfoType
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/TextNgramSpecific.xsd
+
+  msxml.ngramInfo --> (
+    ms.ngramInfo > node(frag("ngramInfo")) (
+      objectMap(msxml.baseItem, ms.baseItem,
+        "word" -> ms.word,
+        "syllable" -> ms.syllable,
+        "letter" -> ms.letter,
+        "phoneme" -> ms.phoneme,
+        "other" -> ms.other
+        ),
+      intMap(msxml.order, ms.order),
+      doubleMap(msxml.perplexity, ms.perplexity),
+      boolMap(msxml.isFactored, ms.isFactored),
+      stringMap(msxml.factors, ms.factors),
+      stringMap(msxml.smoothing, ms.smoothing),
+      boolMap(msxml.interpolated, ms.interpolated)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/TextNumericalSpecific.xsd
+
+  msxml.textNumericalContentInfo --> (
+    ms.textNumericalContentInfo > node(frag("textNumericalContentInfo")) (
+      stringMap(msxml.typeOfTextNumericalContent, ms.typeOfTextNumericalContent)
+    )
+  )
+
+  msxml.textNumericalFormatInfo --> (
+    ms.textNumericalFormatInfo > node(frag("textNumericalFormatInfo")) (
+      stringMap(msxml.mimeType, dct.format),
+      handle(msxml.sizePerTextNumericalFormat)
+    )
+  )
+
+  msxml.sizePerTextNumericalFormat --> (
+    ms.sizePerTextNumericalFormat > node(frag("sizePerTextNumericalFormat")) (
+      sizeInfoType
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/TextSpecific.xsd
+
+  msxml.textFormatInfo --> (
+    ms.textFormatInfo > node(frag("textFormatInfo")) (
+      stringMap(msxml.mimeType, dct.format),
+      handle(msxml.sizePerTextFormat)
+    )
+  )
+
+  msxml.sizePerTextFormat --> (
+    ms.sizePerTextFormat > node(frag("sizePerTextFormat")) (
+      sizeInfoType
+    )
+  )
+
+  msxml.textClassificationInfo --> (
+    ms.textClassificationInfo > node(frag("textClassificationInfo")) (
+      stringMap(msxml.textGenre, ms.textGenre),
+      stringMap(msxml.textType, dct.`type`),
+      stringMap(msxml.register, ms.register),
+      stringMap(msxml.subject_topic, dct.topic),
+      conformanceToClassificationScheme,
+      handle(msxml.sizePerTextClassification)
+    )
+  )
+
+  msxml.sizePerTextClassification --> (
+    ms.sizePerTextClassification > node(frag("sizePerTextClassification")) (
+      sizeInfoType
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/VideoSpecific.xsd
+
+  msxml.videoContentInfo --> (
+    ms.videoContentInfo > node(frag("videoContentInfo")) (
+      stringMap(msxml.typeOfVideoContent, dct.`type`),
+      objectMap(msxml.textIncludedInVideo, ms.textIncludedInVideo,
+        "captions" -> ms.captions,
+        "subtitles" -> ms.subtitles,
+        "none" -> ms.none
+        ),
+      handle(msxml.dynamicElementInfo)
+    )
+  )
+
+  msxml.dynamicElementInfo --> (
+    ms.dynamicElementInfo > node(frag("dynamicElementInfo")) (
+      stringMap(msxml.typeOfElement, dct.`type`),
+      objectMap(msxml.bodyParts, ms.bodyParts,
+        "arms" -> ms.arms,
+        "face" -> ms.face,
+        "feet" -> ms.feet,
+        "hands" -> ms.hands,
+        "head" -> ms.head,
+        "legs" -> ms.legs,
+        "mouth" -> ms.mouth,
+        "wholeBody" -> ms.wholeBody,
+        "none" -> ms.none
+        ),
+      stringMap(msxml.distractors, ms.distractors),
+      stringMap(msxml.interactiveMedia, ms.interactiveMedia),
+      stringMap(msxml.faceViews, ms.faceViews),
+      stringMap(msxml.faceExpressions, ms.faceExpressions),
+      stringMap(msxml.bodyMovement, ms.bodyMovement),
+      stringMap(msxml.gestures, ms.gestures),
+      stringMap(msxml.handArmMovement, ms.handArmMovement),
+      stringMap(msxml.handManipulation, ms.handManipulation),
+      stringMap(msxml.headMovements, ms.headMovements),
+      stringMap(msxml.eyeMovement, ms.eyeMovement),
+      intMap(msxml.posesPerSubject, ms.posesPerSubject)
+    )
+  )
+
+  msxml.videoFormatInfo --> (
+    ms.videoFormatInfo > node(frag("videoFormatInfo")) (
+      stringMap(msxml.mimeType, dct.format),
+      objectMap(msxml.colourSpace, ms.colourSpace,
+        "RGB" -> ms.RGB,
+        "CMYK" -> ms.CMYK,
+        "4:2:2" -> ms.`4:2:2`,
+        "YUV" -> ms.YUV
+        ),	
+      intMap(msxml.colourDepth, ms.colourDepth),
+      intMap(msxml.frameRate, ms.frameRate),
+      handle(msxml.resolutionInfo),
+      objectMap(msxml.visualModelling, ms.visualModelling,
+        "2D" -> ms.`2D`,
+        "3D" -> ms.`3D`
+        ),
+      boolMap(msxml.fidelity, ms.fidelity),
+      handle(msxml.compressionInfo),
+      handle(msxml.sizePerVideoFormat)
+    )
+  )
+  
+  msxml.sizePerVideoFormat --> (
+    ms.sizePerVideoFormat > node(frag("sizePerVideoFormat")) (
+      sizeInfoType
+    )
+  )
+
+  msxml.videoClassificationInfo --> (
+    ms.videoClassificationInfo > node(frag("videoClassificationInfo")) (
+      stringMap(msxml.videoGenre, ms.videoGenre),
+      stringMap(msxml.subject_topic, dct.subject),
+      conformanceToClassificationScheme,
+      handle(msxml.sizePerVideoClassification)
+    )
+  )
+
+  msxml.sizePerVideoClassification --> (
+    ms.sizePerVideoClassification > node(frag("sizePerVideoClassification")) (
+      sizeInfoType
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/Corpus/corpusAudioInfo.xsd
+
+  msxml.corpusAudioInfo --> (
+    ms.corpusAudioInfo > node(frag("corpusAudioInfo")) (
+      ms.mediaType > ms.audio,
+      checkAtt("mediaType","audio"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.audioSizeInfo),
+      handle(msxml.audioContentInfo),
+      handle(msxml.settingInfo),
+      handle(msxml.audioFormatInfo),
+      handle(msxml.annotationInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.audioClassificationInfo),
+      handle(msxml.recordingInfo),
+      handle(msxml.captureInfo),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/Corpus/corpusImageInfo.xsd
+
+  msxml.corpusImageInfo --> (
+    ms.corpusImageInfo > node(frag("corpusImageInfo")) (
+      ms.mediaType > ms.image,
+      checkAtt("mediaType","image"),
+      handle(msxml.modalityInfo),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.imageContentInfo),
+      handle(msxml.imageFormatInfo),
+      handle(msxml.annotationInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.imageClassificationInfo),
+      handle(msxml.captureInfo),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo)
+    )
+  )
+  
+  // Derived from resourceTypes/mediaTypes/Corpus/corpusTextInfo.xsd
+      
+  msxml.corpusTextInfo --> (
+    ms.corpusTextInfo > node(frag("corpusTextInfo")) (
+      ms.mediaType > ms.text,
+      checkAtt("mediaType","text"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.textFormatInfo),
+      handle(msxml.characterEncodingInfo),
+      handle(msxml.annotationInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.textClassificationInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/Corpus/corpusTextNgramInfo.xsd
+      
+  msxml.corpusTextNgramInfo --> (
+    ms.corpusTextNgramInfo > node(frag("corpusTextNgramInfo")) (
+      ms.mediaType > ms.textNgram,
+      checkAtt("mediaType","textNgram"),
+      handle(msxml.ngramInfo),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.textFormatInfo),
+      handle(msxml.characterEncodingInfo),
+      handle(msxml.annotationInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.textClassificationInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.creationInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/Corpus/corpusTextNumericalInfo.xsd
+  
+  msxml.corpusTextNumericalInfo --> (
+    ms.corpusTextNumericalInfo > node(frag("corpusTextNumericalInfo")) (
+      ms.mediaType > ms.textNumerical,
+      checkAtt("mediaType","textNumerical"),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.textNumericalContentInfo),
+      handle(msxml.textNumericalFormatInfo),
+      handle(msxml.recordingInfo),
+      handle(msxml.captureInfo),
+      handle(msxml.creationInfo),
+      handle(msxml.annotationInfo),
+      handle(msxml.linkToOtherMediaInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/Corpus/corpusTextVideoInfo.xsd
+  
+  msxml.corpusTextVideoInfo --> (
+    ms.corpusTextVideoInfo > node(frag("corpusTextVideoInfo")) (
+      ms.mediaType > ms.video,
+      checkAtt("mediaType","video"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.videoContentInfo),
+      handle(msxml.settingInfo),
+      handle(msxml.videoFormatInfo),
+      handle(msxml.annotationInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.videoClassificationInfo),
+      handle(msxml.recordingInfo),
+      handle(msxml.captureInfo),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/languageDescription/LanguageDescTextInfo.xsd
+
+  msxml.languageDescriptionTextInfo --> (
+    ms.languageDescriptionTextInfo > node(frag("languageDescriptionTextInfo")) (
+      ms.mediaType > ms.text,
+      checkAtt("mediaType","text"),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.textFormatInfo),
+      handle(msxml.characterEncodingInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/languageDescription/LanguageDescimageInfo.xsd
+
+  msxml.languageDescriptionImageInfo --> (
+    ms.languageDescriptionImageInfo > node(frag("languageDescriptionImageInfo")) (
+      ms.mediaType > ms.image,
+      checkAtt("mediaType","image"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.imageContentInfo),
+      handle(msxml.imageFormatInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.timeCoverageInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/languageDescription/LanguageDescvideoInfo.xsd
+
+  msxml.languageDescriptionVideoInfo --> (
+    ms.languageDescriptionVideoInfo > node(frag("languageDescriptionVideoInfo")) (
+      ms.mediaType > ms.video,
+      checkAtt("mediaType","video"),
+      handle(msxml.creationInfo),
+      handle(msxml.linkToOtherMediaInfo),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.videoContentInfo),
+      handle(msxml.videoFormatInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.timeCoverageInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/lexicalConceptualResource/lexicalConceptualResourceAudioInfo.xsd
+
+  msxml.lexicalConceptualResourceAudioInfo --> (
+    ms.lexicalConceptualResourceAudioInfo > node(frag("lexicalConceptualResourceAudioInfo")) (
+      ms.mediaType > ms.audio,
+      checkAtt("mediaType","audio"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.audioContentInfo),
+      handle(msxml.audioFormatInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.timeCoverageInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/lexicalConceptualResource/lexicalConceptualResourceImageInfo.xsd
+
+  msxml.lexicalConceptualResourceImageInfo --> (
+    ms.lexicalConceptualResourceImageInfo > node(frag("lexicalConceptualResourceImageInfo")) (
+      ms.mediaType > ms.image,
+      checkAtt("mediaType","image"),
+      handle(msxml.modalityInfo),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.imageContentInfo),
+      handle(msxml.imageFormatInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.timeCoverageInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/lexicalConceptualResource/lexicalConceptualResourceTextInfo.xsd
+  
+  msxml.lexicalConceptualResourceTextInfo --> (
+    ms.lexicalConceptualResourceTextInfo > node(frag("lexicalConceptualResourceTextInfo")) (
+      ms.mediaType > ms.text,
+      checkAtt("mediaType","text"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.textFormatInfo),
+      handle(msxml.characterEncodingInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.timeCoverageInfo),
+      handle(msxml.geographicCoverageInfo)
+    )
+  )
+
+  // Derived from resourceTypes/mediaTypes/lexicalConceptualResource/lexicalConceptualResourceVideoInfo.xsd
+
+  msxml.lexicalConceptualResourceVideoInfo --> (
+    ms.lexicalConceptualResourceVideoInfo > node(frag("lexicalConceptualResourceVideoInfo")) (
+      ms.mediaType > ms.video,
+      checkAtt("mediaType","video"),
+      handle(msxml.lingualityInfo),
+      handle(msxml.languageInfo),
+      handle(msxml.modalityInfo),
+      handle(msxml.sizeInfo),
+      handle(msxml.videoContentInfo),
+      handle(msxml.videoFormatInfo),
+      handle(msxml.domainInfo),
+      handle(msxml.geographicCoverageInfo),
+      handle(msxml.timeCoverageInfo)
+    )
+  )
+
+
+
+      
+
+	
+	
+
+
+
+  
+  
+	
+  
+
 }
 
 
