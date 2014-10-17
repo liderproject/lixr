@@ -8,9 +8,17 @@ trait Model {
   private var handlers = collection.mutable.Map[(Option[String],String),Seq[(Request,Seq[Generator])]]()
 
   case class Namespace(__url__ : String) extends Dynamic {
-    def selectDynamic(name : String) = NodeRequest(Some(__url__), FixedTextGenerator(name))
+    private val __names__ = collection.mutable.Set[String]()
+    def selectDynamic(name : String) = {
+      __names__ += name
+      NodeRequest(Some(__url__), FixedTextGenerator(name))
+    }
     def +(name : PlainTextGenerator) = NodeRequest(Some(__url__), name)
-    def +(name : String) = NodeRequest(Some(__url__), FixedTextGenerator(name))
+    def +(name : String) = {
+      __names__ += name
+      NodeRequest(Some(__url__), FixedTextGenerator(name))
+    }
+    def getAllNames = __names__.toSet
   }
 
   trait Request {

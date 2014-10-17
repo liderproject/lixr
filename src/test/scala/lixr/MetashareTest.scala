@@ -36,4 +36,7 @@ class MetashareTest extends FlatSpec with Matchers {
     val result = gen.read(in, Metashare)
   }
 
+  "namespace" should "count names" in {
+    print(Metashare.msxml.getAllNames.size)
+  }
 }
