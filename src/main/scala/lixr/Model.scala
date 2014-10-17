@@ -119,7 +119,7 @@ trait Model {
 
   case class NodeGenerator(about : TextGenerator, body : Seq[Generator]) extends Generator
 
-  case class TextAltGen(primary : TextGenerator, alt : PlainTextGenerator) extends TextGenerator
+  case class TextAltGen(primary : TextGenerator, alt : PlainTextGenerator) extends PlainTextGenerator
 
   case class ContentGenerator(node : Request) extends PlainTextGenerator
 
@@ -139,7 +139,7 @@ trait Model {
 
   case class AppendTextGenerator(left : Option[String], generator : PlainTextGenerator, right : Option[String]) extends PlainTextGenerator {
     override def +:(s : String) = AppendTextGenerator(Some(left.getOrElse("") + s), generator, right)
-    override def :+(s : String) = AppendTextGenerator(left, generator, Some(right.getOrElse("") + right))
+    override def :+(s : String) = AppendTextGenerator(left, generator, Some(right.getOrElse("") + s))
   }
 
   case class ForGenerator(req : Request, body : Seq[Generator]) extends Generator
