@@ -155,14 +155,20 @@ class DOMGenerator {
       case model.FixedTextGenerator(str) => Seq(LiteralGenResult(str))
       case model.TypedTextGenerator(str, datatype) => Seq(TypedStringResult(
         res2str(str),
-        URIGenResult(URI.create(genString(datatype, state)))))
+        URIGenResult(datatype.toURI(genString(_,state)))))
       case model.LangTextGenerator(str, lang) => Seq(LangStringResult(
         res2str(str),
         res2str(lang)
       ))
       case model.URIGenerator(uri) =>
         genStringOpt(uri, state) match {
-          case Some(s) => Seq(URIGenResult(URI.create(s)))
+          case Some(s) => try {
+            Seq(URIGenResult(URI.create(s)))
+          } catch {
+            case x : IllegalArgumentException =>
+              System.err.println("Bad URI: %s" format (s))
+              Seq(LiteralGenResult(s))
+          }
           case None => Seq()
         }
       case model.XMLTextGenerator(req) => 
@@ -178,20 +184,20 @@ class DOMGenerator {
       case model.OTripleGenerator(nr1, nr2) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
-            s, nr1.toURI, nr2.toURI))
+            s, nr1.toURI(genString(_,state)), nr2.toURI(genString(_,state))))
         case None => throw new RuntimeException("No current node")
       }
       case model.DTripleGenerator(prop, value) => node match {
         case Some(s) => 
           handleOne(value, state) map { 
             case LiteralGenResult(o) => LitTripleResult(
-              s, prop.toURI, o)
+              s, prop.toURI(genString(_,state)), o)
             case LangStringResult(o, l) => LLTripleResult(
-              s, prop.toURI, o, l)
+              s, prop.toURI(genString(_,state)), o, l)
             case TypedStringResult(o, t) => TLTripleResult(
-              s, prop.toURI, o, t.uri)
+              s, prop.toURI(genString(_,state)), o, t.uri)
             case URIGenResult(u) => ObjTripleResult(
-              s, prop.toURI, u)
+              s, prop.toURI(genString(_,state)), u)
             case _ => throw new RuntimeException("Unexpected result type in triple generation")
         }
         case None => throw new RuntimeException("No current node")
@@ -200,13 +206,13 @@ class DOMGenerator {
         case Some(s) => 
           val obj = URI.create(genString(about,state))
           ObjTripleResult(
-            s, prop.toURI, obj) +: handleOne(ng, state)
+            s, prop.toURI(genString(_,state)), obj) +: handleOne(ng, state)
         case None => throw new RuntimeException("No current node")
       }
       case model.IOTripleGenerator(prop, subj) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
-            subj.toURI, prop.toURI, s))
+            subj.toURI(genString(_,state)), prop.toURI(genString(_,state)), s))
         case None => throw new RuntimeException("No current node")
       }
       case model.INTripleGenerator(prop, ng @ model.NodeGenerator(about, body)) => node match {
@@ -214,7 +220,7 @@ class DOMGenerator {
         case Some(s) => 
           val obj = URI.create(genString(about,state))
           ObjTripleResult(
-            obj, prop.toURI, s) +: handleOne(ng, state)
+            obj, prop.toURI(genString(_,state)), s) +: handleOne(ng, state)
         case None => throw new RuntimeException("No current node")
       }
       case model.AttributeGenerator(name, text) => Seq()
@@ -235,7 +241,13 @@ class DOMGenerator {
         genStringOpt(message, state)
       }.mkString("")))
       case model.NodeGenerator(about, body) => 
-        val uri = URI.create(genString(about, state))
+        val uri = try {
+          URI.create(genString(about, state).trim())
+        } catch {
+          case x : Exception =>
+            System.err.println("Failed to generate node name @ %s" format (genString(about, state).toString))
+            URI.create("err:" + java.util.UUID.randomUUID().toString)
+        }
         body.flatMap { g =>
           handleOne(g, State(elem, model, Some(uri), vars))
         }

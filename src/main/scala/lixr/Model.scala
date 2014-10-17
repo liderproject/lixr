@@ -47,7 +47,7 @@ trait Model {
       case FixedTextGenerator(name) => (namespace,name)
       case _ => throw new RuntimeException("Looking up non-fixed namespace")
     }
-    def toURI = URI.create(namespace.getOrElse("") + name)
+    def toURI(realize : PlainTextGenerator => String) = URI.create(namespace.getOrElse("") + realize(name))
   }
 
   object NodeRequest {
@@ -75,9 +75,9 @@ trait Model {
   sealed trait TextGenerator extends Generator 
 
   trait PlainTextGenerator extends TextGenerator {
-    def ^^(nodeRequest : NodeRequest) = TypedTextGenerator(this, FixedTextGenerator(nodeRequest.toURI.toString))
-    def ^^(text : PlainTextGenerator) = TypedTextGenerator(this, text)
-    def ^^(text : String) = TypedTextGenerator(this, FixedTextGenerator(text))
+    def ^^(nodeRequest : NodeRequest) = TypedTextGenerator(this, nodeRequest)
+    def ^^(text : PlainTextGenerator) = TypedTextGenerator(this, NodeRequest(None, text))
+    def ^^(text : String) = TypedTextGenerator(this, NodeRequest(None, FixedTextGenerator(text)))
     def @@(text : PlainTextGenerator) = LangTextGenerator(this, text)
     def @@(text : String) = LangTextGenerator(this, FixedTextGenerator(text))
     def ===(target : PlainTextGenerator) : Condition = EqualityCondition(this,target)
@@ -93,7 +93,7 @@ trait Model {
 
   case class FixedTextGenerator(str : String) extends PlainTextGenerator
 
-  case class TypedTextGenerator(str : PlainTextGenerator, typ : PlainTextGenerator) extends TextGenerator 
+  case class TypedTextGenerator(str : PlainTextGenerator, typ : NodeRequest) extends TextGenerator 
 
   case class LangTextGenerator(str : PlainTextGenerator, lang : PlainTextGenerator) extends TextGenerator
 
@@ -288,6 +288,7 @@ case class URIGenResult(uri : URI) extends GenResult {
 
 trait TripleResult extends GenResult {
   lazy val asString = LiteralGenResult("")
+  protected def reformat(string : String) = string.replaceAll("\\\\","\\\\\\\\").replaceAll("\\n","\\\\n").replaceAll("\\t","\\\\t").replaceAll("\"","\\\\\"")
 }
 
 case class ObjTripleResult(subj : URI, property : URI, obj : URI) extends TripleResult {
@@ -295,17 +296,17 @@ case class ObjTripleResult(subj : URI, property : URI, obj : URI) extends Triple
 }
 
 case class LitTripleResult(subj : URI, property : URI, obj : String) extends TripleResult {
-  override def toString = "<%s> <%s> \"%s\" ." format (subj.toString, property.toString, obj)
+  override def toString = "<%s> <%s> \"%s\" ." format (subj.toString, property.toString, reformat(obj))
 }
 
 case class LLTripleResult(subj : URI, property : URI, obj : String, lang : String) extends TripleResult {
   override def toString = "<%s> <%s> \"%s\"@%s ." format (subj.toString, property.toString, 
-    obj, lang)
+    reformat(obj), lang)
 }
 
 case class TLTripleResult(subj : URI, property : URI, obj : String, datatype : URI) extends TripleResult {
   override def toString = "<%s> <%s> \"%s\"^^<%s> ." format (subj.toString, property.toString, 
-    obj, datatype.toString)
+    reformat(obj), datatype.toString)
 }
 
 case class CommentGenResult(message : String) extends GenResult {

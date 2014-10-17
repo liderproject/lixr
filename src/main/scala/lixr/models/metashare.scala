@@ -371,6 +371,12 @@ object Metashare extends Model {
     )
   )
 
+  msxml.sizePerDomain --> (
+    ms.sizePerDomain > node(frag("sizePerDomain")) (
+      sizeInfoType
+    )
+  )
+
   msxml.annotationInfo --> (
     ms.annotationInfo > node(frag("annotationInfo")) (
       annotationType,
