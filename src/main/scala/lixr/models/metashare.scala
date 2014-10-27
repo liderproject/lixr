@@ -4,6 +4,7 @@ import eu.liderproject.lixr._
 import scala.language.dynamics
 
 object Metashare extends Model {
+  val cc = Namespace("http://creativecommons.org/ns")
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dc = Namespace("http://purl.org/dc/elements/1.1/")
   val dct = Namespace("http://purl.org/dc/terms/")
@@ -12,6 +13,8 @@ object Metashare extends Model {
   val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
   val msxml = Namespace("http://www.ilsp.gr/META-XMLSchema")
   val oai = Namespace("http://www.openarchives.org/OAI/2.0/")
+  val odrl = Namespace("http://www.w3.org/ns/odrl/2/")
+  val owl = Namespace("http://www.w3.org/2002/07/owl#")
   val rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
   val swrc = Namespace("http://swrc.ontoware.org/ontology#")
   val xsd = Namespace("http://www.w3.org/2001/XMLSchema#")
@@ -62,6 +65,15 @@ object Metashare extends Model {
     for((k,v) <- values) {
       metashare.when(content === k) --> (
         rdf > v
+      )
+    }
+    handle(metashare)
+  }
+
+  def dataMap(metashare : NodeRequest, rdf : NodeRequest, values : (String,String)*) = {
+    for((k,v) <- values) {
+      metashare.when(content === k) --> (
+        rdf > (text(v) @@ "eng")
       )
     }
     handle(metashare)
@@ -1369,9 +1381,8 @@ object Metashare extends Model {
   )
 
   msxml.licenceInfo --> (
-    dc.rights > node(frag("licenceInfo")) (
-      objectMap(msxml.licenceInfo, ms.licenceInfo,
-        // TODO: Find real links!
+    dct.license > node(frag("licenceInfo")) (
+      objectMap(msxml.licenceInfo, owl.sameAs,
         "CC-BY" -> prop("https://creativecommons.org/licenses/by/4.0/"),
         "CC-BY-NC" -> prop("https://creativecommons.org/licenses/by-nc/4.0/"),
         "CC-BY-NC-ND" -> prop("https://creativecommons.org/licenses/by-nc-nd/4.0/"),
@@ -1412,7 +1423,8 @@ object Metashare extends Model {
         "underNegotiation" -> ms.`underNegotiation`,
         "other" -> ms.`other`
         ),
-      objectMap(msxml.restrictionsOfUse, ms.restrictionsOfUse,
+      handle(msxml.restrictionsOfUse),
+/*      objectMap(msxml.restrictionsOfUse, ms.restrictionsOfUse,
         "informLicensor" -> ms.informLicensor,
         "redeposit" -> ms.redeposit,
         "onlyMSmembers" -> ms.onlyMSmembers,
@@ -1424,17 +1436,17 @@ object Metashare extends Model {
         "noDerivatives" -> ms.noDerivatives,
         "noRedistribution" -> ms.noRedistribution,
         "other" -> ms.other
-        ),
-      objectMap(msxml.distributionAccessMedium, ms.distributionAccessMedium,
-        "webExecutable" -> ms.webExecutable,
-        "paperCopy" -> ms.paperCopy,
-        "hardDisk" -> ms.hardDisk,
-        "bluRay" -> ms.bluRay,
-        "DVD-R" -> ms.`DVD-R`,
-        "CD-ROM" -> ms.`CD-ROM`,
-        "downloadable" -> ms.downloadable,
-        "accessibleThroughInterface" -> ms.accessibleThroughInterface,
-        "other" -> ms.other
+        ),*/
+      dataMap(msxml.distributionAccessMedium, odrl.deliveryChannel,
+        "webExecutable" -> "Web Executable",
+        "paperCopy" -> "Paper Copy",
+        "hardDisk" -> "Hard Disk",
+        "bluRay" -> "BluRay",
+        "DVD-R" -> "DVD-R",
+        "CD-ROM" -> "CD-ROM",
+        "downloadable" -> "Downloadable",
+        "accessibleThroughInterface" -> "Accessible Through Interface",
+        "other" -> "Other"
         ),
       linkMap(msxml.downloadLocation, dcat.downloadURL),
       linkMap(msxml.executionLocation, ms.executionLocation),
@@ -1448,6 +1460,91 @@ object Metashare extends Model {
         ),
       handle(msxml.membershipInfo)
     )
+  )
+
+  msxml.restrictionsOfUse.when(content === "informLicensor") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.duty > node(frag("duty")) (
+        odrl.action > cc.Notify
+      )
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "redeposit") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.duty > node(frag("duty")) (
+        odrl.action > ms.redeposit
+      )
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "onlyMSmembers") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.constraint > node(frag("constraint")) (
+        odrl.operator > (odrl + "eq"),
+        // Is this the right property??
+        odrl.recipient > ms.onlyMSmembers
+      )
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "academic-nonCommercialUse") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.constraint > node(frag("constraint")) (
+        odrl.operator > (odrl + "eq"),
+        odrl.purpose > ms.academicUse
+      )
+    ),
+    odrl.prohibition > node(frag("prohibition")) (
+      odrl.action > cc.CommercialUse,
+      odrl.action > cc.Distribution
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "evaluationUse") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.constraint > node(frag("constraint")) (
+        // What are the triples here?
+      )
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "commercialUse") --> (
+    odrl.permission > node(frag("permission")) (
+      // Is this correct?
+      odrl.action > cc.CommercialUse
+    )
+  )
+  
+  msxml.restrictionsOfUse.when(content === "attribution") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.duty > node(frag("duty")) (
+        odrl.action > cc.Attribution
+      )
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "shareAlike") --> (
+    odrl.permission > node(frag("permission")) (
+      odrl.duty > node(frag("duty")) (
+        odrl.action > cc.ShareALike
+      )
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "noDerivatives") --> (
+    odrl.prohibition > node(frag("prohibition")) (
+      odrl.action > cc.DerivativeWorks
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "noRedistribution") --> (
+    odrl.prohibition > node(frag("prohibition")) (
+      odrl.action > cc.Reproduction
+    )
+  )
+
+  msxml.restrictionsOfUse.when(content === "other") --> (
   )
 
   msxml.licensor --> (
