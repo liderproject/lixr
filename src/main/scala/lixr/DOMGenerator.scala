@@ -6,6 +6,7 @@ import scala.xml._
 
 class DOMGenerator {
   private val xmlLiteral = URIGenResult(URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"))
+  private val frags = collection.mutable.Set[Int]()
 
   case class State[+N <: Node](elem : N, model : Model, node : Option[URI], vars : Map[String,String])
 
@@ -126,6 +127,9 @@ class DOMGenerator {
         val fragText = (frag.flatMap { f =>
           genStringOpt(f, state)
         }).mkString("")
+        // We are attempting to guarantee that the fragment is unique
+        val uniqFrag = fragText + (Stream("") ++ Stream.from(2).map(_.toString)).find(x => !frags.contains((fragText + x).hashCode)).get
+        frags.add(uniqFrag.hashCode)
         node match {
           case Some(uri) =>
             Some(new URI(uri.getScheme(), uri.getSchemeSpecificPart(), fragText).toString)
@@ -137,7 +141,7 @@ class DOMGenerator {
       case model.AppendTextGenerator(left, generator, right) =>
         // Assume left or right is Some
         Some(left.getOrElse("") + genStringOpt(generator, state).getOrElse("") + right.getOrElse(""))
-      case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccra.e" format x.toString)
+      case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
     }
   }
 

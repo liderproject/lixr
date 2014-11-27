@@ -125,7 +125,8 @@ object Metashare extends Model {
     set("resourceID",content(oai.header \ oai.identifier) or uuid) (
       handle(oai.header),
       handle(oai.metadata),
-      handle(oai.about)
+      handle(oai.about),
+      dc.source > text("META-SHARE")
     )
   )
 
@@ -186,7 +187,8 @@ object Metashare extends Model {
       stringMap(msxml.metaShareId,ms.metaShareId),
       handle(msxml.url),
       stringMap(msxml.identifier,dc.identifier)
-    )
+    ),
+    langStringMap(msxml.resourceName, dc.title)
   )
 
   msxml.url --> (

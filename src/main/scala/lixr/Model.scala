@@ -38,9 +38,19 @@ trait Model {
   }
 
   case class NodeRequest(namespace : Option[String], name : PlainTextGenerator) extends Request {
-    def >(nr : NodeRequest) = OTripleGenerator(this, nr)
-    def >(gen : TextGenerator) = DTripleGenerator(this, gen)
-    def >(ng : NodeGenerator) = NTripleGenerator(this, ng)
+    def >(nr : NodeRequest) = {
+      println("Object Property:" + this.toURI(_.toString))
+      println("Individual:" + nr.toURI(_.toString))
+      OTripleGenerator(this, nr)
+    }
+    def >(gen : TextGenerator) = {
+      println("Data Property:" + this.toURI(_.toString))
+      DTripleGenerator(this, gen)
+    }
+    def >(ng : NodeGenerator) = {
+      println("Property:" + this.toURI(_.toString))
+      NTripleGenerator(this, ng)
+    }
     def <(nr : NodeRequest) = IOTripleGenerator(this, nr)
     def <(ng : NodeGenerator) = INTripleGenerator(this, ng)
     lazy val lookup = name match {
@@ -91,7 +101,9 @@ trait Model {
     def or(alternative : PlainTextGenerator) = TextAltGen(this, alternative)
   }
 
-  case class FixedTextGenerator(str : String) extends PlainTextGenerator
+  case class FixedTextGenerator(str : String) extends PlainTextGenerator {
+    override def toString = str
+  }
 
   case class TypedTextGenerator(str : PlainTextGenerator, typ : NodeRequest) extends TextGenerator 
 
