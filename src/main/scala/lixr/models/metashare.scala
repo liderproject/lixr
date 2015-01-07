@@ -193,7 +193,7 @@ object Metashare extends Model {
 
   msxml.url --> (
     dcat.distribution > node(frag("DistURL")) (
-      dcat.accessURL > content
+      dcat.accessURL > uri(content)
     )
   )
     
