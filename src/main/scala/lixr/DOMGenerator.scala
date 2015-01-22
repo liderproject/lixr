@@ -189,7 +189,9 @@ class DOMGenerator {
         case Some(s) => 
           Seq(ObjTripleResult(
             s, nr1.toURI(genString(_,state)), nr2.toURI(genString(_,state))))
-        case None => throw new RuntimeException("No current node")
+        case None => 
+          
+          throw new RuntimeException("No current node" + gen)
       }
       case model.DTripleGenerator(prop, value) => node match {
         case Some(s) => 
@@ -204,20 +206,20 @@ class DOMGenerator {
               s, prop.toURI(genString(_,state)), u)
             case _ => throw new RuntimeException("Unexpected result type in triple generation")
         }
-        case None => throw new RuntimeException("No current node")
+        case None => throw new RuntimeException("No current node" + gen)
       }
       case model.NTripleGenerator(prop, ng @ model.NodeGenerator(about, body)) => node match {
         case Some(s) => 
           val obj = URI.create(genString(about,state))
           ObjTripleResult(
             s, prop.toURI(genString(_,state)), obj) +: handleOne(ng, state)
-        case None => throw new RuntimeException("No current node")
+        case None => throw new RuntimeException("No current node" + gen)
       }
       case model.IOTripleGenerator(prop, subj) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
             subj.toURI(genString(_,state)), prop.toURI(genString(_,state)), s))
-        case None => throw new RuntimeException("No current node")
+        case None => throw new RuntimeException("No current node" + gen)
       }
       case model.INTripleGenerator(prop, ng @ model.NodeGenerator(about, body)) => node match {
 
@@ -225,7 +227,7 @@ class DOMGenerator {
           val obj = URI.create(genString(about,state))
           ObjTripleResult(
             obj, prop.toURI(genString(_,state)), s) +: handleOne(ng, state)
-        case None => throw new RuntimeException("No current node")
+        case None => throw new RuntimeException("No current node" + gen)
       }
       case model.AttributeGenerator(name, text) => Seq()
       case model.RecursiveGenerator(request) => 
