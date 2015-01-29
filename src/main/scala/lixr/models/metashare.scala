@@ -1656,7 +1656,7 @@ object Metashare extends Model {
   
   def organizationInfoType = (
       (rdf_type > ms.OrganizationInfoType) ++
-      langStringMap(msxml.organizationInfo, ms.organizationInfoString) ++
+      langStringMap(msxml.organizationName, ms.organizationName) ++
       langStringMap(msxml.organizationShortName, ms.organizationShortName) ++
       langStringMap(msxml.departmentName, ms.departmentName) ++
       handle(msxml.communicationInfo)
@@ -1799,7 +1799,7 @@ object Metashare extends Model {
     dct.`type` > ms.corpus,
     ms.corpusInfo > node(frag("corpusInfo")) (
       rdf_type > ms.CorpusInfo,
-      stringMap(msxml.resourceType, ms.resourceTypeString),
+      ms.resourceType > ms.corpus,
       handle(msxml.corpusMediaType)
     )
   )
@@ -1838,7 +1838,7 @@ object Metashare extends Model {
     dct.`type` > ms.languageDescription,
     ms.languageDescriptionInfo > node(frag("languageDescriptionInfo")) (
       rdf_type > ms.LanguageDescriptionInfo,
-      stringMap(msxml.resourceType, ms.resourceType),
+      ms.resourceType > ms.languageDescription,
       objectMap(msxml.languageDescriptionType, ms.languageDescriptionType,
         "grammar" -> ms.grammar,
         "other" -> ms.other
@@ -2039,7 +2039,7 @@ object Metashare extends Model {
     dct.`type` > ms.toolService,
     ms.toolServiceInfo > node(frag("toolServiceInfo")) (
       rdf_type > ms.ToolServiceInfo,
-      stringMap(msxml.resourceType, ms.resourceTypeString),
+      ms.resourceType > ms.toolService,
       objectMap(msxml.toolServiceType, ms.toolServiceType,
         "tool" -> ms.tool,
         "service" -> ms.service,
@@ -2386,7 +2386,12 @@ object Metashare extends Model {
     ms.imageFormatInfo > node(frag("imageFormatInfo")) (
       rdf_type > ms.ImageFormatInfo,
       stringMap(msxml.mimeType, dc.format),
-      stringMap(msxml.colourSpace, ms.colourSpaceString),
+      objectMap(msxml.colourSpace, ms.colourSpace,
+        "RGB" -> ms.RGB,
+        "CMYK" -> ms.CMYK,
+        "4:2:2" -> ms.`4:2:2`,
+        "YUV" -> ms.YUV
+        ),	
       stringMap(msxml.colourDepth, ms.colourDepth),
       handle(msxml.compressionInfo),
       handle(msxml.resolutionInfo),
