@@ -39,16 +39,16 @@ trait Model {
 
   case class NodeRequest(namespace : Option[String], name : PlainTextGenerator) extends Request {
     def >(nr : NodeRequest) = {
-      println("Object Property:" + this.toURI(_.toString))
-      println("Individual:" + nr.toURI(_.toString))
+      //println("Object Property:" + this.toURI(_.toString))
+      //println("Individual:" + nr.toURI(_.toString))
       OTripleGenerator(this, nr)
     }
     def >(gen : TextGenerator) = {
-      println("Data Property:" + this.toURI(_.toString))
+      //println("Data Property:" + this.toURI(_.toString))
       DTripleGenerator(this, gen)
     }
     def >(ng : NodeGenerator) = {
-      println("Property:" + this.toURI(_.toString))
+      //println("Property:" + this.toURI(_.toString))
       NTripleGenerator(this, ng)
     }
     def <(nr : NodeRequest) = IOTripleGenerator(this, nr)
@@ -207,9 +207,6 @@ trait Model {
     def check(resolve : PlainTextGenerator => Option[String]) =
       !cond.check(resolve)
   }
-
-
-
 
   def getHandlers(reqURI : (Option[String],String)) = handlers.getOrElse(reqURI,Seq())
   def checkAtt(name : NodeRequest, text : TextGenerator) = AttributeGenerator(name, text)

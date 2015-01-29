@@ -4,7 +4,7 @@ import eu.liderproject.lixr._
 import scala.language.dynamics
 
 object Metashare extends Model {
-  val cc = Namespace("http://creativecommons.org/ns")
+  val cc = Namespace("http://creativecommons.org/ns/")
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dc = Namespace("http://purl.org/dc/elements/1.1/")
   val dct = Namespace("http://purl.org/dc/terms/")
@@ -25,7 +25,7 @@ object Metashare extends Model {
     )
 
     metashare --> (
-      rdf > content
+      rdf > (content @@ "und")
     )
 
     handle(metashare)
@@ -149,6 +149,7 @@ object Metashare extends Model {
   // Based on META-SHARE-Resource.xsd
 
   msxml.resourceInfo --> node(get("resourceID")) (
+    rdf_type > ms.ResourceInfo,
     handle(msxml.identificationInfo),
     handle(msxml.distributionInfo),
     handle(msxml.contactPerson),
@@ -175,6 +176,7 @@ object Metashare extends Model {
   msxml.contactPerson --> (
     dcat.contactPoint > node(frag("contactPerson")) (
       personInfoType,
+      rdf_type > ms.ContactPerson,
       rdf_type > foaf.Person
     )
   )
@@ -196,7 +198,8 @@ object Metashare extends Model {
 
   msxml.url --> (
     dcat.distribution > node(frag("DistURL")) (
-      rdf_type > dct.Distribution,
+      rdf_type > ms.URL,
+      rdf_type > dcat.Distribution,
       dcat.accessURL > content
     )
   )
@@ -259,7 +262,7 @@ object Metashare extends Model {
   )
 
   msxml.resourceCreationInfo --> (
-    ms.resourceCreation > node(frag("resourceCreation")) (
+    ms.resourceCreationInfo > node(frag("resourceCreation")) (
       rdf_type > ms.ResourceCreationInfo,
       handle(msxml.resourceCreator),
       handle(msxml.fundingProject),
@@ -304,6 +307,7 @@ object Metashare extends Model {
 
   msxml.metadataInfo --> (
     foaf.primaryTopic < node(frag("metadataInfo")) (
+      rdf_type > ms.MetadataInfo,
       rdf_type > dcat.CatalogRecord,
       dateMap(msxml.metadataCreationDate, dct.created),
       handle(msxml.metadataCreator),
@@ -418,7 +422,8 @@ object Metashare extends Model {
         "backgroundNoise" -> ms.backgroundNoise,
         "mispronunciations" -> ms.mispronunciations,
         "truncation" -> ms.truncation,
-        "discourseMarkers" -> ms.discourseMarkers
+        "discourseMarkers" -> ms.discourseMarkers,
+        "other" -> ms.other
       ),
       boolMap(msxml.annotationStandoff, ms.annotationStandoff),
       segmentationLevel,
@@ -472,6 +477,7 @@ object Metashare extends Model {
 
   msxml.relationInfo --> (
     ms.relationInfo > node(frag("relationInfo")) (
+      rdf_type > ms.RelationInfo,
       stringMap(msxml.relationType, ms.relationType),
       handle(msxml.relatedResource)
     )
@@ -483,6 +489,7 @@ object Metashare extends Model {
 
   msxml.modalityInfo --> (
     ms.modalityInfo > node(frag("modalityInfo")) (
+      rdf_type > ms.ModalityInfo,
       modalityType,
       stringMap(msxml.modalityTypeDetails, ms.modalityTypeDetails),
       handle(msxml.sizePerModality)
@@ -497,6 +504,7 @@ object Metashare extends Model {
 
   msxml.participantInfo --> (
     ms.participantInfo > node(frag("participantInfo")) (
+      rdf_type > ms.ParticipantInfo,
       rdf_type > foaf.Person,
       langStringMap(msxml.alias, ms.alias),
       objectMap(msxml.ageGroup, ms.ageGroup,
@@ -658,7 +666,7 @@ object Metashare extends Model {
         "overlapping" -> ms.overlapping,
         "other" -> ms.other
         ),
-      stringMap(msxml.interaction, ms.interation)
+      stringMap(msxml.interaction, ms.interaction)
     )
   )
 
@@ -1354,7 +1362,7 @@ object Metashare extends Model {
 
   def languageName = stringMap(msxml.languageName, ms.languageName)
 
-  def languageId = stringMap(msxml.languageName, dc.language)
+  def languageId = stringMap(msxml.languageId, dc.language)
 
   msxml.languageInfo --> (
     ms.languageInfo > node(frag("languageInfo")) (
@@ -1379,6 +1387,7 @@ object Metashare extends Model {
   
   msxml.distributionInfo --> (
     ms.distributionInfo > node(frag("distributionInfo")) (
+      rdf_type > ms.DistributionInfo,
       rdf_type > dcat.Distribution,
       objectMap(msxml.availability, ms.availability,
         "available-unrestrictedUse" -> ms.`available-unrestrictedUse`,
@@ -1498,6 +1507,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "informLicensor") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.duty > node(frag("duty")) (
         rdf_type > odrl.Duty,
@@ -1508,6 +1518,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "redeposit") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.duty > node(frag("duty")) (
         rdf_type > odrl.Duty,
@@ -1518,6 +1529,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "onlyMSmembers") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.constraint > node(frag("constraint")) (
         rdf_type > odrl.Constraint,
@@ -1530,6 +1542,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "academic-nonCommercialUse") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.constraint > node(frag("constraint")) (
         rdf_type > odrl.Constraint,
@@ -1538,6 +1551,7 @@ object Metashare extends Model {
       )
     ),
     odrl.prohibition > node(frag("prohibition")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Prohibition,
       odrl.action > cc.CommercialUse,
       odrl.action > cc.Distribution
@@ -1546,6 +1560,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "evaluationUse") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.constraint > node(frag("constraint")) (
         rdf_type > odrl.Constraint
@@ -1556,6 +1571,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "commercialUse") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       // Is this correct?
       odrl.action > cc.CommercialUse
@@ -1564,6 +1580,7 @@ object Metashare extends Model {
   
   msxml.restrictionsOfUse.when(content === "attribution") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.duty > node(frag("duty")) (
         rdf_type > odrl.Duty,
@@ -1574,6 +1591,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "shareAlike") --> (
     odrl.permission > node(frag("permission")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Permission,
       odrl.duty > node(frag("duty")) (
         rdf_type > odrl.Duty,
@@ -1584,6 +1602,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "noDerivatives") --> (
     odrl.prohibition > node(frag("prohibition")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Prohibition,
       odrl.action > cc.DerivativeWorks
     )
@@ -1591,6 +1610,7 @@ object Metashare extends Model {
 
   msxml.restrictionsOfUse.when(content === "noRedistribution") --> (
     odrl.prohibition > node(frag("prohibition")) (
+      rdf_type > ms.RestrictionsOfUse,
       rdf_type > odrl.Prohibition,
       odrl.action > cc.Reproduction
     )
@@ -1636,7 +1656,7 @@ object Metashare extends Model {
   
   def organizationInfoType = (
       (rdf_type > ms.OrganizationInfoType) ++
-      langStringMap(msxml.organizationInfo, ms.organizationInfo) ++
+      langStringMap(msxml.organizationInfo, ms.organizationInfoString) ++
       langStringMap(msxml.organizationShortName, ms.organizationShortName) ++
       langStringMap(msxml.departmentName, ms.departmentName) ++
       handle(msxml.communicationInfo)
@@ -1657,6 +1677,7 @@ object Metashare extends Model {
   )
 
   def personInfoType = 
+      (rdf_type > ms.PersonInfoType) ++
       (rdf_type > foaf.Person) ++
       langStringMap(msxml.surname, foaf.surname) ++
       langStringMap(msxml.givenName, foaf.givenName) ++
@@ -1678,6 +1699,7 @@ object Metashare extends Model {
   )
 
   def actorInfoType = (
+    (rdf_type > ms.Actor) ++ 
     handle(msxml.personInfo) ++
     handle(msxml.organizationInfo)
   )
@@ -1721,7 +1743,7 @@ object Metashare extends Model {
 
   msxml.foreseenUseInfo --> (
     ms.foreseenUseInfo > node(frag("foreseenUseInfo")) (
-      rdf_type > ms.ForseenUseInfo,
+      rdf_type > ms.ForeseenUseInfo,
       objectMap(msxml.foreseenUse, ms.foreseenUse,
         "humanUse" -> ms.humanUse,
         "nlpApplications" -> ms.nlpApplications
@@ -1774,21 +1796,21 @@ object Metashare extends Model {
   // Derived from resourceTypes/Corpus.xsd
 
   msxml.corpusInfo --> (
-    dc.`type` > ms.corpus,
+    dct.`type` > ms.corpus,
     ms.corpusInfo > node(frag("corpusInfo")) (
       rdf_type > ms.CorpusInfo,
-      stringMap(msxml.resourceType, ms.resourceType),
+      stringMap(msxml.resourceType, ms.resourceTypeString),
       handle(msxml.corpusMediaType)
     )
   )
 
   msxml.corpusMediaType --> (
-    handle(ms.corpusTextInfo),
-    handle(ms.corpusAudioInfo),
-    handle(ms.corpusVideoInfo),
-    handle(ms.corpusImageInfo),
-    handle(ms.corpusTextNumericalInfo),
-    handle(ms.corpusTextNgramInfo)
+    handle(msxml.corpusTextInfo),
+    handle(msxml.corpusAudioInfo),
+    handle(msxml.corpusVideoInfo),
+    handle(msxml.corpusImageInfo),
+    handle(msxml.corpusTextNumericalInfo),
+    handle(msxml.corpusTextNgramInfo)
   )
 
   // Derived from resourceTypes/languageDescription.xsd
@@ -1813,10 +1835,10 @@ object Metashare extends Model {
   )
 
   msxml.languageDescriptionInfo --> (
-    dc.`type` > ms.languageDescription,
+    dct.`type` > ms.languageDescription,
     ms.languageDescriptionInfo > node(frag("languageDescriptionInfo")) (
       rdf_type > ms.LanguageDescriptionInfo,
-      stringMap(msxml.languageDescription, ms.languageDescription),
+      stringMap(msxml.resourceType, ms.resourceType),
       objectMap(msxml.languageDescriptionType, ms.languageDescriptionType,
         "grammar" -> ms.grammar,
         "other" -> ms.other
@@ -1896,7 +1918,7 @@ object Metashare extends Model {
   // Derived from resourceTypes/lexicalConceptualResources.xsd
 
   msxml.lexicalConceptualResourceInfo --> (
-    dc.`type` > ms.lexicalConceptualResource,
+    dct.`type` > ms.lexicalConceptualResource,
     ms.lexicalConceptualResourceInfo > node(frag("lexicalConceptualResourceInfo")) (
       rdf_type > ms.LexicalConceptualResourceInfo,
       handle(msxml.resourceType),
@@ -2014,10 +2036,10 @@ object Metashare extends Model {
   // Derived from resourceTypes/toolService.xsd
 	
   msxml.toolServiceInfo --> (
-    dc.`type` > ms.toolService,
+    dct.`type` > ms.toolService,
     ms.toolServiceInfo > node(frag("toolServiceInfo")) (
       rdf_type > ms.ToolServiceInfo,
-      stringMap(msxml.resourceType, ms.resourceType),
+      stringMap(msxml.resourceType, ms.resourceTypeString),
       objectMap(msxml.toolServiceType, ms.toolServiceType,
         "tool" -> ms.tool,
         "service" -> ms.service,
@@ -2195,8 +2217,7 @@ object Metashare extends Model {
     )
   )
 
-  // not used?
-  msxml.audioSizeInfoType --> (
+  msxml.audioSizeInfo --> (
     ms.audioSizeInfo > node(frag("audioSizeInfo")) (
       rdf_type > ms.AudioSizeInfo,
       handle(msxml.sizeInfo),
@@ -2273,6 +2294,12 @@ object Metashare extends Model {
     )
   )
 
+  msxml.sizePerAudioFormat --> (
+    ms.sizePerAudioFormat > node(frag("sizePerAudioFormat")) (
+      sizeInfoType
+    )
+  )
+
   msxml.audioClassificationInfo --> (
     ms.audioClassificationInfo > node(frag("audioClassificationInfo")) (
       rdf_type > ms.AudioClassificationInfo,
@@ -2307,12 +2334,18 @@ object Metashare extends Model {
     )
   )
 
+  msxml.sizePerAudioClassification --> (
+    ms.sizePerAudioClassification > node(frag("sizePerAudioClassification"))(
+      sizeInfoType
+    )
+  )
+
   // Derived from resourceTypes/mediaTypes/ImageSpecific.xsd
 
   msxml.imageContentInfo --> (
     ms.imageContentInfo > node(frag("imageContentInfo")) (
       rdf_type > ms.ImageContentInfo,
-      handle(msxml.typeOfImageContent),
+      stringMap(msxml.typeOfImageContent, ms.typeOfImageContent),
       objectMap(msxml.textIncludedInImage, ms.textIncludedInImage,
         "captions" -> ms.captions,
         "subtitles" -> ms.subtitles,
@@ -2353,7 +2386,7 @@ object Metashare extends Model {
     ms.imageFormatInfo > node(frag("imageFormatInfo")) (
       rdf_type > ms.ImageFormatInfo,
       stringMap(msxml.mimeType, dc.format),
-      stringMap(msxml.colourSpace, ms.colourSpace),
+      stringMap(msxml.colourSpace, ms.colourSpaceString),
       stringMap(msxml.colourDepth, ms.colourDepth),
       handle(msxml.compressionInfo),
       handle(msxml.resolutionInfo),
@@ -2514,7 +2547,7 @@ object Metashare extends Model {
       stringMap(msxml.gestures, ms.gestures),
       stringMap(msxml.handArmMovement, ms.handArmMovement),
       stringMap(msxml.handManipulation, ms.handManipulation),
-      stringMap(msxml.headMovements, ms.headMovements),
+      stringMap(msxml.headMovement, ms.headMovement),
       stringMap(msxml.eyeMovement, ms.eyeMovement),
       intMap(msxml.posesPerSubject, ms.posesPerSubject)
     )
@@ -2682,9 +2715,9 @@ object Metashare extends Model {
 
   // Derived from resourceTypes/mediaTypes/Corpus/corpusTextVideoInfo.xsd
   
-  msxml.corpusTextVideoInfo --> (
-    ms.corpusTextVideoInfo > node(frag("corpusTextVideoInfo")) (
-      rdf_type > ms.CorpusTextVideoInfo,
+  msxml.corpusVideoInfo --> (
+    ms.corpusVideoInfo > node(frag("corpusVideoInfo")) (
+      rdf_type > ms.CorpusVideoInfo,
       ms.mediaType > ms.video,
       checkAtt("mediaType","video"),
       handle(msxml.lingualityInfo),
@@ -2792,7 +2825,7 @@ object Metashare extends Model {
 
   msxml.lexicalConceptualResourceImageInfo --> (
     ms.lexicalConceptualResourceImageInfo > node(frag("lexicalConceptualResourceImageInfo")) (
-      rdf_type > ms.LexicalConcepturalResourceImageInfo,
+      rdf_type > ms.LexicalConceptualResourceImageInfo,
       ms.mediaType > ms.image,
       checkAtt("mediaType","image"),
       handle(msxml.modalityInfo),

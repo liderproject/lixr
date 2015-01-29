@@ -37,6 +37,6 @@ class MetashareTest extends FlatSpec with Matchers {
   }
 
   "namespace" should "count names" in {
-    print(Metashare.msxml.getAllNames.size)
+    //print(Metashare.msxml.getAllNames.size)
   }
 }

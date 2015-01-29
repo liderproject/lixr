@@ -197,7 +197,7 @@ class TBX(resourceURI : String, mapping : java.io.File) extends Model {
   'termComp --> (
     ontolex.identifies > node(att("id") or ("TermComp-" +: uuid)) (
       rdf_type > ontolex.LexicalEntry,
-      rdfs.label > (content ^^ get("lang"))
+      rdfs.label > (content @@ get("lang"))
     )
   )
 
@@ -257,7 +257,13 @@ class TBX(resourceURI : String, mapping : java.io.File) extends Model {
       case objPropMappingLine(tag, attName, value, puri, _, alloweds) =>
         for(allowed <- alloweds.split(",")) {
           tag.when((att(attName) === value) and (content === allowed.trim())) --> (
-            prop(puri) > uri(indivs(allowed))
+            indivs.get(allowed) match {
+              case Some(o) =>
+                prop(puri) > uri(o)
+              case None =>
+                System.err.println("Individual value not found:" + allowed)
+                comment("Individual value not found")
+            }
           )
         }
       case dataPropMappingLine(tag, attName, value, puri, null, null) =>
@@ -271,6 +277,8 @@ class TBX(resourceURI : String, mapping : java.io.File) extends Model {
         tag.when(att(attName) === value) --> (
           prop(puri) > (content ^^ uri(att("datatype")))
         )
+      case line =>
+        System.err.println("Bad line:" + line)
     }
   }
 }
