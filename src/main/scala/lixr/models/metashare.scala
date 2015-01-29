@@ -200,7 +200,7 @@ object Metashare extends Model {
     dcat.distribution > node(frag("DistURL")) (
       rdf_type > ms.URL,
       rdf_type > dcat.Distribution,
-      dcat.accessURL > content
+      dcat.accessURL > uri(content)
     )
   )
     
