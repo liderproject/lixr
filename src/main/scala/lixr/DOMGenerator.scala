@@ -141,6 +141,13 @@ class DOMGenerator {
       case model.AppendTextGenerator(left, generator, right) =>
         // Assume left or right is Some
         Some(left.getOrElse("") + genStringOpt(generator, state).getOrElse("") + right.getOrElse(""))
+      case model.ConcatTextGenerator(ptgs) =>
+        (ptgs.flatMap {
+          case x => genStringOpt(x, state)
+        }) match {
+          case Seq() => None
+          case y => Some(y.mkString(""))
+        }
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
     }
   }

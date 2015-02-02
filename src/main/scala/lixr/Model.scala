@@ -154,6 +154,8 @@ trait Model {
     override def :+(s : String) = AppendTextGenerator(left, generator, Some(right.getOrElse("") + s))
   }
 
+  case class ConcatTextGenerator(generators : Seq[PlainTextGenerator]) extends PlainTextGenerator
+
   case class ForGenerator(req : Request, body : Seq[Generator]) extends Generator
 
   case class ConditionalGenerator(condition : Condition, result : Generator, otherwise : Option[Generator]) extends Generator {
@@ -261,6 +263,8 @@ trait Model {
   def forall(req : Request)(body : Generator*) = ForGenerator(req, body)
   def forall(s : String)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s), body)
   def forall(s : Symbol)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s.name), body)
+
+  def concat(ptgs : PlainTextGenerator*) = ConcatTextGenerator(ptgs)
 
   val rdf_type = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#") + "type"
     

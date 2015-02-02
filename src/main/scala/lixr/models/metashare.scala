@@ -146,6 +146,9 @@ object Metashare extends Model {
 
   oai.metadata --> handle(msxml.resourceInfo)
     
+  def personAsContributor = forall(msxml.personInfo)(dc.contributor > concat(content(msxml.givenName), text(" "), content(msxml.surname)))
+  def personAsCreator = forall(msxml.personInfo)(dc.creator > concat(content(msxml.givenName), text(" "), content(msxml.surname)))
+
   // Based on META-SHARE-Resource.xsd
 
   msxml.resourceInfo --> node(get("resourceID")) (
@@ -163,7 +166,249 @@ object Metashare extends Model {
     handle(msxml.resourceComponentType),
     rdfs.seeAlso > uri("http://metashare.elda.org/repository/browse/" +: get("resourceID") :+ "/"),
     rdf_type > dcat.Dataset,
-    dc.source > text("META-SHARE")
+    // Basic DC properties
+    dc.source > text("META-SHARE"),
+    forall(msxml.validationInfo) (
+      forall(msxml.validator) (
+        personAsContributor
+      )
+    ),
+    forall(msxml.resourceCreationInfo) (
+      forall(msxml.resourceCreator) (
+        personAsCreator
+      )
+    ),
+    forall(msxml.resourceComponentType) (
+      forall(msxml.corpusInfo) (
+        forall(msxml.corpusMediaType) (
+          forall(msxml.corpusVideoInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            ),
+            forall(msxml.videoClassificationInfo) (
+              forall(msxml.subject_topic) (
+                dc.subject > content
+              )
+            )
+          ),
+          forall(msxml.corpusAudioInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            ),
+            forall(msxml.audioClassificationInfo) (
+              forall(msxml.subject_topic) (
+                dc.subject > content
+              )
+            )
+          ),
+          forall(msxml.corpusImageInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            ),
+            forall(msxml.imageClassificationInfo) (
+              forall(msxml.subject_topic) (
+                dc.subject > content
+              )
+            )
+          ),
+          forall(msxml.corpusTextInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            ),
+            forall(msxml.textClassificationInfo) (
+              forall(msxml.subject_topic) (
+                dc.subject > content
+              )
+            )
+          ),
+          forall(msxml.corpusTextNgramInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            ),
+            forall(msxml.textClassificationInfo) (
+              forall(msxml.subject_topic) (
+                dc.subject > content
+              )
+            )
+          ),
+          forall(msxml.corpusTextNumericalInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          ),
+          forall(msxml.corpusVideoInfo) (
+            forall(msxml.annotationInfo) (
+              forall(msxml.annotator) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.recordingInfo) (
+              forall(msxml.recorder) (
+                personAsContributor
+              )
+            ),
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            ),
+            forall(msxml.videoClassificationInfo) (
+              forall(msxml.subject_topic) (
+                dc.subject > content
+              )
+            )
+          )
+        )
+      ),
+      forall(msxml.languageDescriptionInfo) (
+        forall(msxml.languageDescriptionMediaType) (
+          forall(msxml.languageDescriptionTextInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          ),
+          forall(msxml.languageDescriptionImageInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          ),
+          forall(msxml.languageDescriptionVideoInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          )
+        )
+      ),
+      forall(msxml.lexicalConceptualResourceInfo) (
+        forall(msxml.lexicalConceptualResourceMediaType) (
+          forall(msxml.lexicalConceptualResourceAudioInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          ),
+          forall(msxml.lexicalConceptualResourceImageInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          ),
+          forall(msxml.lexicalConceptualResourceTextInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          ),
+          forall(msxml.lexicalConceptualResourceVideoInfo) (
+            forall(msxml.languageInfo) (
+              forall(msxml.languageId) (
+                dc.language > content
+              )
+            )
+          )
+        )
+      )
+    ),
+    forall(msxml.resourceComponentType) (
+      forall(msxml.toolServiceInfo) (
+        forall(msxml.toolServiceEvaluationInfo) (
+          forall(msxml.evaluator) (
+            personAsContributor
+          )
+        )
+      )
+    ),
+    forall(msxml.identificationInfo) (
+      langStringMap(msxml.description, dc.description)
+    ),
+    forall(msxml.distributionInfo) (
+      forall(msxml.licenceInfo) (
+        forall(msxml.licence) (
+          dc.rights > content
+        )
+      )
+    )
   )
 
   msxml.resourceComponentType --> (
@@ -272,7 +517,7 @@ object Metashare extends Model {
   )
 
   msxml.resourceCreator --> (
-    dc.creator > node(frag("resourceCreator")) (
+    dct.creator > node(frag("resourceCreator")) (
       actorInfoType
     )
   )
@@ -322,7 +567,7 @@ object Metashare extends Model {
   )
 
   msxml.metadataCreator --> (
-    dc.creator > node(frag("metadataCreator")) (
+    dct.creator > node(frag("metadataCreator")) (
       actorInfoType
     )
   )
@@ -1425,7 +1670,7 @@ object Metashare extends Model {
   msxml.licenceInfo --> (
     dct.license > node(frag("licenceInfo")) (
       rdf_type > ms.LicenceInfo,
-      objectMap(msxml.licenceInfo, owl.sameAs,
+      objectMap(msxml.licence, owl.sameAs,
         "CC-BY" -> prop("https://creativecommons.org/licenses/by/4.0/"),
         "CC-BY-NC" -> prop("https://creativecommons.org/licenses/by-nc/4.0/"),
         "CC-BY-NC-ND" -> prop("https://creativecommons.org/licenses/by-nc-nd/4.0/"),
