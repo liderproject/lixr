@@ -6,7 +6,8 @@ import scala.xml._
 
 class DOMGenerator {
   private val xmlLiteral = URIGenResult(URI.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"))
-  private val frags = collection.mutable.Set[Int]()
+  private val frags = collection.mutable.Set[String]()
+  private val elem2frag = collection.mutable.Map[Node, String]()
 
   case class State[+N <: Node](elem : N, model : Model, node : Option[URI], vars : Map[String,String])
 
@@ -127,14 +128,22 @@ class DOMGenerator {
         val fragText = (frag.flatMap { f =>
           genStringOpt(f, state)
         }).mkString("")
-        // We are attempting to guarantee that the fragment is unique
-        val uniqFrag = fragText + (Stream("") ++ Stream.from(2).map(_.toString)).find(x => !frags.contains((fragText + x).hashCode)).get
-        frags.add(uniqFrag.hashCode)
         node match {
           case Some(uri) =>
-            Some(new URI(uri.getScheme(), uri.getSchemeSpecificPart(), fragText).toString)
+            val ssp = uri.getSchemeSpecificPart()
+            elem2frag.get(state.elem) match {
+              case Some(uniqFrag) => 
+                Some(new URI(uri.getScheme(), ssp, uniqFrag).toString)
+              case None => 
+                // We are attempting to guarantee that the fragment is unique
+                val uniqFrag = fragText + (Stream("") ++ Stream.from(2).map(_.toString)).
+                  find(x => !frags.contains(ssp + fragText + x)).get
+                frags.add(ssp + uniqFrag)
+                elem2frag.put(state.elem, uniqFrag)
+                Some(new URI(uri.getScheme(), ssp, uniqFrag).toString)
+            }
           case None =>
-            Some(URI.create("#"+fragText).toString)
+            throw new IllegalArgumentException("No node")
         }
       case model.URIGenerator(uri) => genStringOpt(uri, state)
       case model.GetVariable(name) => vars.get(name)
