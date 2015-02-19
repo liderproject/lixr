@@ -1,0 +1,561 @@
+aboutType	Data "about" the record must be expressed in XML that is compliant with an XML Schema defined by a community.
+accessTool	The name or the identifier or the url of the tool used to access a resource (e.g. a corpus workbench)
+actorInfoType	Used to bring persons and organizations (in whatever role they may have with regard to the resource, e.g., resource creator, IPR holder, etc.)
+actualUse	Classification of the actual use of the resource
+actualUseDetails	Reports on the usage of the resource in free text
+actualUseInfo	Groups information on how the resource has already been used
+actualUseInfoType	Groups information on how the resource has already been used
+address	The street and the number of the postal address of a person or organization
+affiliation	Groups information on organization to whomtheperson is affiliated
+ageGroup	The age group to which the participant belongs
+ageOfPersons	The age range of the group of participants; repeat the element if needed
+ageRangeEnd	End of age range of the group of participants
+ageRangeStart	Start of age range of the group of participants
+age	The age of the participant
+alias	The name of the person used instead of the real one
+annotatedElements	Specifies the elements annotated in each annotation level
+annotationEndDate	The date in which the annotation process has ended
+annotationFormat	Specifies the format that is used in the annotation process since often the mime type will not be sufficient for machine processing
+annotationInfo	Groups information on the annotated part(s) of a resource
+annotationInfo	Groups information on the annotated part(s) of a resource
+annotationInfoType	Groups information on the annotated part(s) of a resource
+annotationManual	A bibliographic reference or ms:httpURI link to the annotation manual
+annotationModeDetails	Provides further information on annotation process 
+annotationMode	Indicates whether the resource is annotated manually or by automatic processes
+annotationStandoff	Indicates whether the annotation is created inline or in a stand-off fashion
+annotationStartDate	The date in which the annotation process has started
+annotationTool	The name, the identifier or the url of the tool used for the annotation of the resource
+annotationType	Specifies the annotation level of the resource or the annotation type a tool/ service requires or produces as an output
+annotator	Groups information on the annotators of the specific annotation type
+artifactParts	Indicates the parts of the artifacts represented in the image corpus
+attachedLexiconPosition	Indicates the position of the lexicon, if attached to the grammar
+attributionText	The text that must be quoted for attribution purposes when using a resource - for cases where a resource is provided with a restriction on attribution
+audience	Indication of the intended audience size
+audioClassificationInfo	Groups together information on audio type/genre of the resource
+audioClassificationInfoType	Groups together information on audio type/genre of the resource
+audioContentInfo	Groups together information on the contents of the audio part of a resource
+audioContentInfoType	Groups together information on the contents of the audio part of a resource
+audioFormatInfo	Groups together information on the format of the audio part of a resource
+audioFormatInfoType	Groups together information on the format of the audio part of a resource
+audioGenre	A first indication of type of sounds recorded
+audioQualityMeasuresIncluded	Specifies the audio quality measures
+audioSizeInfo	SizeInfo Element for Audio parts of a resource
+audioSizeInfoType	SizeInfo Element for Audio parts of a resource
+author	The name(s) of the author(s), in the format described in the document
+availabilityEndDate	Specifies the end date of availability of a resource - only for cases where a resource is available for a restricted time period.
+availability	Specifies the availability status of the resource; restrictionsOfUse can be further used to indicate the specific terms of availability
+availabilityStartDate	Specifies the start date of availability of a resource - only for cases where a resource is available for a restricted time period.
+baseItem	Type of item that is represented in the n-gram resource
+bodyMovement	Indicates the body parts that move in the video part of the resource
+bodyParts	The body parts visible in the video or image part of the resource
+bodyParts	The body parts visible in the video or image part of the resource
+bookTitle	The title of a book, part of which is being cited
+byteOrder	The byte order of 2 or more bytes sample
+captureInfo	Groups together information on the capture of the audio or video part of a corpus
+captureInfoType	Groups together information on the capture of the audio or video part of a corpus
+capturingDetails	Provides further information on the capturing method and procedure
+capturingDeviceTypeDetails	Provides further information on the capturing device
+capturingDeviceType	The transducers through which the data is captured
+capturingEnvironment	Type of capturing environment
+characterEncodingInfo	Groups together information on character encoding of the resource
+characterEncodingInfoType	Groups together information on character encoding of the resource
+characterEncoding	The name of the character encoding used in the resource or accepted by the tool/service
+city	The name of the city, town or village as mentioned in the postal address of a person or organization 
+colourDepth	The number of bits used to represent the colour of a single pixel
+colourDepth	The number of bits used to represent the colour of a single pixel
+colourSpace	Defines the colour space for the video
+colourSpace	Defines the colour space for the video
+communicationInfo	Groups information on communication details of a person or an organization
+communicationInfoType	Groups information on communication details of a person or an organization
+compatibleLexiconType	Type of (external) lexicon that can be used with the grammar
+compressionInfo	Groups together information on the compression status and method of a resource
+compressionInfoType	Groups together information on the compression status and method of a resource
+compressionLoss	Whether there is loss due to compression
+compressionName	The name of the compression applied
+compression	Whether the audio, video or image is compressed or not
+conference	The name of the conference in which the document has been presented
+conformanceToClassificationScheme	Specifies the external classification schemes
+conformanceToStandardsBestPractices	Specifies the standards or the best practices to which the tagset used for the annotation conforms 
+contactPerson	Groups information on the person(s) that is/are responsible for providing further information regarding the resource
+conversationalType	Specifies the conversational type of the resource
+corpusAudioInfo	Groups together information on the audio module of a corpus
+corpusAudioInfoType	Groups together information on the audio module of a corpus
+corpusImageInfo	Groups together information on the image component of a resource
+corpusImageInfoType	Groups together information on the image component of a resource
+corpusInfo	Groups together information on corpora of all media types
+corpusInfoType	Groups together information on corpora of all media types 
+corpusMediaType	Used to specify the media type specific to corpora and group together the relevant information
+corpusTextInfo	Groups together information on the text component of a resource
+corpusTextInfoType	Groups together information on the text component of a resource
+corpusTextNgramInfo	Groups together information required for n-gram resources; information can be provided both as regards features drawn from the source corpus (e.g. language coverage, size, format, domains etc.) and features pertaining to the n-gram output itself (e.g. range of n-grams, type of item included, etc.)
+corpusTextNgramInfoType	Groups together information required for n-gram resources; information can be provided both as regards features drawn from the source corpus (e.g. language coverage, size, format, domains etc.) and features pertaining to the n-gram output itself (e.g. range of n-grams, type of item included, etc.)
+corpusTextNumericalInfo	Groups together information on the textNumerical component of a corpus. It is used basically for the textual representation of measurements and observations linked to sensorimotor recordings
+corpusTextNumericalInfoType	Groups together information on the textNumerical component of a corpus. It is used basically for the textual representation of measurements and observations linked to sensorimotor recordings
+corpusVideoInfo	Groups together information on the video component of a corpus
+corpusVideoInfoType	Groups together information on the video component of a corpus
+country	The name of the country mentioned in the postal address of a person or organization as defined in the list of values of ISO 3166
+creationDetails	Provides additional information on the creation of a tool or service
+creationEndDate	The date in which the creation process was completed
+creationInfo	Groups together information on the resource creation (e.g. for corpora, selection of texts/audio files/ video files etc. and structural encoding thereof; for lexica, construction of lemma list etc.)
+creationInfoType	Groups together information on the resource creation (e.g. for corpora, selection of texts/audio files/ video files etc. and structural encoding thereof; for lexica, construction of lemma list etc.)
+creationModeDetails	Provides further information on the creation methods and processes
+creationMode	Specifies whether the resource is created automatically or in a manual or interactive mode 
+creationStartDate	The date in which the creation process was started
+creationTool	The name, the identifier or the url of the tool used in the creation process
+departmentName	The name of the department or unit (e.g. specific university faculty/department, department/unit of a research organization or private company etc.)
+derivedResource	The name, the identifier or the url of the outcome or product of the resource.
+description	Provides the description of the resource in prose; the element can be repeated for the different language versions using the "lang" attribute to specify the language.
+descriptionType	The descriptionType is used for the description element in Identify and for setDescription element in ListSets. Content must be compliant with an XML Schema defined by a  community.
+dialectAccentOfPersons	Provides information on the dialect of the group of participants
+dialectAccent	Provides information on the dialect of the participant
+distractors	Any distractors visible in the resource
+distributionAccessMedium	Specifies the medium (channel) used for delivery or providing access to the resource
+distributionInfo	Groups information on the distribution of the resource
+distributionInfoType	Groups information on the distribution of the resource
+distributionRightsHolder	Groups information on a person or an organization that holds the distribution rights. The range and scope of distribution rights is defined in the distribution agreement. The distributor in most cases only has a limited licence to distribute the work and collect royalties on behalf of the licensor or the IPR holder and cannot give to any recipient of the work permissions that exceed the scope of the distribution agreement (e.g. to allow uses of the work that are not defined in the distribution agreement)
+documentationInfoType	Used to bring together information on documents (as a structured bibliographic record or in an unstructured format) and free text descriptions
+documentationInfo	Used to bring together information on documents (as a structured bibliographic record or in an unstructured format) and free text descriptions
+documentation	Refers to papers, manuals, reports etc. describing the resource
+documentInfoType	Groups information on all the documents resporting on various aspects of the resource (creation, usage etc.), published or unpublished; it is used in various places of the metadata schema depending on its role (e.g. usage report, validation report, annotation manual etc.)
+documentLanguageId	The id of the language the document is written in; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+documentLanguageName	The name of the language the document is written in; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+documentList	METASHARE core element
+documentType	Specifies the type of the document provided with or related to the resource
+documentUnstructured	Used either as a free text description or as an unstructured (free form) presentation of a bibliographic record; alternative to the structured presentation of a document (cf. documentInfo)
+doi	A digital object identifier assigned to the document
+domainInfo	Groups together information on domains represented in the resource; can be repeated for parts of the resource with distinct domain
+domainInfoType	Groups together information on domains represented in the resource; can be repeated for parts of the resource with distinct domain
+domain	Specifies the application domain of the resource or the tool/service
+downloadLocation	Any url where the resource can be downloaded from
+durationOfAudioInfo	Groups together information on the size of audio parts; for silences, music etc.
+durationOfAudioInfoType	Groups together information on the size of audio parts; for silences, music etc.
+durationOfEffectiveSpeechInfo	Groups together information on the duration of effective speech
+durationOfEffectiveSpeechInfoType	Groups together information on the duration of effective speech
+durationUnit	Specification of the unit of size that is used when providing information on the size of a resource
+durationUnit	Specification of the unit of size that is used when providing information on the size of a resource
+dynamicElementInfo	Groups information on the dynamic elements that are represented in the video part of the resource
+edition	The edition of a book
+editor	The name of the editor as mentioned in the document
+educationLevel	Provides information on the education level of the participant
+email	The email address of a person or an organization
+encodingLevel	Information on the contents of the lexicalConceptualResource as regards the linguistic level of analysis
+encodingLevel	Information on the linguistic levels covered by the resource (grammar or lexical/conceptual resource)
+evaluated	Indicates whether the tool or service has been evaluated
+evaluationCriteria	Defines the criteria of the evaluation of a tool
+evaluationDetails	Provides further information on the evaluation process of a tool or service
+evaluationLevel	Indicates the evaluation level
+evaluationMeasure	Defines whether the evaluation measure is human or automatic
+evaluationReport	A bibliographical record of or link to a report describing the evaluation process, tool, method etc. of the tool or service
+evaluationTool	The name or id or url of the tool used for the evaluation of the tool or service
+evaluationType	Indicates the evaluation type
+evaluator	Groups information on person or organization that evaluated the tool or service
+eventDescription	Provides description of any events represented in the image corpus
+executionLocation	Any url where the service providing access to a resource is being executed
+externalRef	Another resource to which the lexicalConceptualResource is linked (e.g. link to a wordnet or ontology)
+extratextualInformation	An indication of the extratextual information contained in the lexicalConceptualResouce; can be used as an alternative to audio, image, videos etc. for cases where these are not considered an important part of the lcr
+extraTextualInformationUnit	The unit of the extratextual information contained in the lexical conceptual resource
+eyeMovement	Indicates the movement of the eyes visible in the resource
+faceExpressions	Indicates the facial expressions visible in the resource
+faceExpressions	Indicates the facial expressions visible in the resource
+faceViews	Indicates the view of the face(s) that appear in the video or on the image part of the resource
+faceViews	Indicates the view of the face(s) that appear in the video or on the image part of the resource
+factors	The list of factors that have been used for the n-gram model
+faxNumber	The fax number of a person or an organization; recommended format: +_international code_city code_number
+fee	Specifies the costs that are required to access the resource, a fragment of the resource or to use a tool or service
+fidelity	Defines whether blur is present in the moving sequences
+foreseenUse	Classification of the intended use of the resource
+foreseenUseInfo	Groups information on the use for which the resource is created
+foreseenUseInfoType	Groups information on the use for which the resource is created
+formalism	Reference (name, bibliographic reference or link to url) for the formalism used for the creation/enrichment of the resource (grammar or tool/service)
+formalism	Reference (name, bibliographic reference or link to url) for the formalism used for the creation/enrichment of the resource (grammar or tool/service)
+frameRate	The number of frames per second
+funder	The full name of the funder of the project 
+fundingCountry	The name of the funding country, in case of national funding as mentioned in ISO3166
+fundingProject	Groups information on the project that has funded the resource
+fundingType	Specifies the type of funding of the project
+geographicCoverageInfo	Groups information on geographic classification of the resource
+geographicCoverageInfoType	Groups information on geographic classification of the resource
+geographicCoverage	The geographic region that the content of a resource is about; for countries, recommended use of ISO-3166
+geographicDistributionOfPersons	Gives information on the geographic distribution of the participants
+gestures	Indicates the type of gestures visible in the resource
+givenName	The given name (first name) of a person related to the resource; initials can also be used
+grammaticalPhenomenaCoverage	An indication of the grammatical phenomena covered by the grammar
+	Groups information on the textual part of the lexical/conceptual resource
+	Groups together all information relevant to the text module of a language description (e.g. format, languages, size etc.); it is obligatory for all language descriptions
+	Groups together information on the text component of a resource
+handArmMovement	Indicates the movement of hands and/or arms visible in the resource
+handManipulation	Gives information on the manipulation of objects by hand
+headerType	A header has a unique identifier, a datestamp, and setSpec(s) in case the item from which the record is disseminated belongs to set(s). the header can carry a deleted status indicating that the record is deleted.
+headMovement	Indicates the movements of the head visible in the resource
+hearingImpairmentOfPersons	Whether the group of participants contains persons with hearing impairments
+hearingImpairment	Provides information on any hearing impairment the participant may have
+height	Provides information on the height of the participant in cm
+identificationInfo	Groups together information needed to identify the resource
+identificationInfoType	Groups together information needed to identify the resource
+identifier	A reference to the resource like a pid or an internal identifier used by the resource provider
+imageClassificationInfo	Groups together information on image type/genre of the resource
+imageClassificationInfoType	Groups information on the classification of the image corpus
+imageContentInfo	Groups together information on the contents of the image part of a resource
+imageContentInfoType	Groups together information on the contents of the image part of a resource
+imageFormatInfo	Groups together information on the format of the image part of a resource
+imageFormatInfoType	Groups information on the format of the image component of the resource 
+imageGenre	A first indication of the genre of images
+implementationLanguage	The programming languages needed for allowing user contributions, or for running the tools, in case no executables are available
+inputInfo	Groups together information on the requirements set on the input resource of a tool or service
+inputInfoType	Groups together information on the requirements set on the input resource of a tool or service
+interaction	Specifies the parts that interact in an audio or video component
+interactiveMedia	Any interactive media visible in the resource
+interactivity	Indicates the level of conversational interaction between speakers (for audio component) or participants (for video component)
+interannotatorAgreement	Provides information on the interannotator agreement and the methods/metrics applied 
+interpolated	Interpolated language models are constructed by 2 or more corpora. Each corpus is represented in the model according to a predefined weight.
+intraannotatorAgreement	Provides information on the intra-annotator agreement and the methods/metrics applied  
+iprHolder	Groups information on a person or an organization who holds the full Intellectual Property Rights (Copyright, trademark etc) that subsist in the resource. The IPR holder could be different from the creator that may have assigned the rights to the IPR holder (e.g. an author as a creator assigns her rights to the publisher who is the IPR holder) and the distributor that holds a specific licence (i.e. a permission) to distribute the work within the META-SHARE network.
+ISBN	The International Standard Book Number
+isFactored	Specifies whether the model is factored or not
+ISSN	The International Standard Serial Number used to identify a journal
+journal	A journal name. Abbreviations could also be provided
+keywords	The keyword(s) for indexing and classification of the document
+landscapeParts	landscape parts represented in the image corpus
+languageDependent	Indicates whether the operation of the tool or service is language dependent or not
+languageDescriptionEncodingInfo	Groups together information on the contents of the LanguageDescriptions
+languageDescriptionEncodingInfoType	Groups together information on the contents of the LanguageDescriptions
+languageDescriptionImageInfo	Groups together all information relevant to the image module of a language description (e.g. format, languages, size etc.), if there are any (e.g. for sign language grammars)
+languageDescriptionImageInfoType	Groups together all information relevant to the image module of a language description (e.g. format, languages, size etc.), if there are any (e.g. for sign language grammars)
+languageDescriptionInfo	Groups together information on language descriptions (grammars)
+languageDescriptionInfoType	Groups together information on language descriptions (grammars)
+languageDescriptionMediaType	Groups information on the media type-specific components for language descriptions
+languageDescriptionOperationInfo	Groups together information on the operation requirements of the Language Descriptions
+languageDescriptionOperationInfoType	Groups together information on the operation requirements of the Language Descriptions
+languageDescriptionPerformanceInfo	Groups together information on the performance of the Language Descriptions
+languageDescriptionPerformanceInfoType	Groups together information on the performance of the Language Descriptions
+languageDescriptionTextInfo	Groups together all information relevant to the text module of a language description (e.g. format, languages, size etc.); it is obligatory for all language descriptions
+languageDescriptionTextInfoType	Groups together all information relevant to the text module of a language description (e.g. format, languages, size etc.); it is obligatory for all language descriptions
+languageDescriptionType	The type of the language description
+languageDescriptionVideoInfo	Groups together all information relevant to the video parts of a language description (e.g. format, languages, size etc.), if there are any (e.g. for sign language grammars)
+languageDescriptionVideoInfoType	Groups together all information relevant to the video parts of a language description (e.g. format, languages, size etc.), if there are any (e.g. for sign language grammars)
+languageId	The identifier of the language that is included in the resource or supported by the tool/service; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+languageInfo	Groups information on the languages represented in the resource
+languageInfoType	Groups information on the languages represented in the resource 
+languageName	A human understandable name of the language that is used in the resource or supported by the tool/service; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+languageScript	Specifies the writing system used to represent the language in form of a four letter code as it is defined in ISO-15924
+languageVarietyInfo	Groups information on language varieties occurred in the resource (e.g. dialects)
+languageVarietyInfoType	Groups information on language varieties occurred in the resource (e.g. dialects)
+languageVarietyName	The name of the language variety that occurs in the resource or is supported by a tool/service
+languageVarietyType	Specifies the type of the language variety that occurs in the resource or is supported by a tool/service
+lastDateUpdated	Date of the last update of the version of the resource
+lexicalConceptualResourceAudioInfo	Groups information on the audio part of the lexical/conceptual resource
+lexicalConceptualResourceAudioInfoType	Groups information on the audio part of the lexical/conceptual resource
+lexicalConceptualResourceEncodingInfo	Groups all information regarding the contents of lexical/conceptual resources
+lexicalConceptualResourceEncodingInfoType	Groups all information regarding the contents of lexical/conceptual resources
+lexicalConceptualResourceImageInfo	Groups information on the image part of the lexical/conceptual resource
+lexicalConceptualResourceImageInfoType	Groups information on the image part of the lexical/conceptual resource
+lexicalConceptualResourceInfo	Groups together information specific to lexical/conceptual resources
+lexicalConceptualResourceInfoType	Groups together information specific to lexical/conceptual resources
+lexicalConceptualResourceMediaType	Restriction of mediaType for lexicalConceptualResources
+lexicalConceptualResourceTextInfo	Groups information on the textual part of the lexical/conceptual resource
+lexicalConceptualResourceTextInfoType	Groups information on the textual part of the lexical/conceptual resource
+lexicalConceptualResourceType	Specifies the subtype of lexicalConceptualResource
+lexicalConceptualResourceVideoInfo	Groups information on the video part of the lexical conceptual resource
+lexicalConceptualResourceVideoInfoType	Groups information on the video part of the lexical conceptual resource
+licenceInfo	Groups information on licences for the resource; can be repeated to allow for different modes of access and restrictions of use (e.g. free for academic use, on-a-fee basis for commercial use, download of a sample for free use etc.)
+licenceInfoType	Groups information on licences for the resource; can be repeated to allow for different modes of access and restrictions of use (e.g. free for academic use, on-a-fee basis for commercial use, download of a sample for free use etc.)
+licence	The licence of use for the resource; for an overview of licences, please visit: http://www.meta-net.eu/meta-share/licenses
+licensor	Groups information on the person who is legally eligible to licence and actually licenses the resource. The licensor could be different from the creator, the distributor or the IP rightsholder. The licensor has the necessary rights or licences to license the work and is the party that actually licenses the resource that enters the META-SHARE network. She will have obtained the necessary rights or licences from the IPR holder and she may have a distribution agreement with a distributor that disseminates the work under a set of conditions defined in the specific licence and collects revenue on the licensor's behalf. The attribution of the creator, separately from the attribution of the licensor, may be part of the licence under which the resource is distributed (as e.g. is the case with Creative Commons Licences)
+lingualityInfo	Groups information on the number of languages of the resource part and of the way they are combined to each other
+lingualityInfoType	Groups information on the number of languages of the resource part and of the way they are combined to each other
+lingualityType	Indicates whether the resource includes one, two or more languages
+linguisticInformation	A more detailed account of the linguistic information contained in the lexicalConceptualResource
+linkToOtherMediaInfo	Groups information on the way different media of the resource interact with or link to each other. To be used for multimodal resources or for resources representing sensorimotor data
+linkToOtherMediaInfoType	Groups information on the way different media of the resource interact with or link to each other. To be used for multimodal resources or for resources representing sensorimotor data
+mediaTypeDetails	Provides further information on the way the media types are linked and/or synchronized with each other within the same resource
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a 				distinctive set of features. A resource may consist of parts attributed to different types of media.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+mediaType	Specifies the media type of the resource and basically corresponds to the physical medium of the content representation. Each media type is described through a distinctive set of features. A resource may consist of parts attributed to different types of media. A tool/service may take as input/output more than one different media types.
+membershipInfo	The conditions imposed by the user being member of some association/institution (e.g., ELRA, LDC) distributing the resource. This indicates the availability conditions (and prices) for users who are members or not
+membershipInfoType	The conditions imposed by the user being member of some association/institution (e.g., ELRA, LDC) distributing the resource. This indicates the availability conditions (and prices) for users who are members or not.
+membershipInstitution	This lists the different institutions releasing the resources and establishing membership conditions
+member	Whether the user is a member or not
+metadataCreationDate	The date of creation of this metadata description (automatically inserted by the MetaShare software)
+metadataCreator	Groups information on the person that has created the metadata record
+metadataInfo	Groups information on the metadata record itself
+metadataInfoType	Groups information on the metadata record itself
+metadataLanguageId	The identifier of the language in which the metadata description is written; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+metadataLanguageName	The name of the language in which the metadata description is written; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+metadataLastDateUpdated	The date of the last updating of the metadata record (automatically inserted by the MetaShare software)
+metadataType	Metadata must be expressed in XML that complies with another XML Schema (namespace=#other). Metadata must be  explicitly qualified in the response.
+metaShareId	An unambiguous referent to the resource within META-SHARE; it reflects to the unique system id provided automatically by the MetaShare software
+mimeType	The mime-type of the resource which is a formalized specifier for the format included or a mime-type that the tool/service accepts; value to be taken from a subset of the official mime types of the Internet Assigned Numbers Authority (http://www.iana.org/)
+mimeType	The mime-type of the resource which is a formalized specifier for the format included or a mime-type that the tool/service accepts; value to be taken from a subset of the official mime types of the Internet Assigned Numbers Authority (http://www.iana.org/)
+mimeType	The mime-type of the resource which is a formalized specifier for the format included or a mime-type that the tool/service accepts; value to be taken from a subset of the official mime types of the Internet Assigned Numbers Authority (http://www.iana.org/)
+modalityInfo	Groups information on the modalities represented in the resource
+modalityInfoType	Groups information on the modalities represented in the resource
+modalityTypeDetails	Provides further information on modalities
+modalityType	Specifies the type of the modality represented in the resource or processed by a tool/service
+multilingualityTypeDetails	Provides further information on multilinguality of a resource in free text
+multilingualityType	Indicates whether the corpus is parallel, comparable or mixed
+naturality	Specifies the level of naturality for multimodal/multimedia resources
+ngramInfo	Groups information specific to n-gram resources (e.g. range of n-grams, base item etc.)
+ngramInfoType	Groups information specific to n-gram resources (e.g. range of n-grams, base item etc.)
+noiseLevel	Specifies the  level of background noise
+nonSpeechItems	Specifies the distinct elements that maybe included in the audio corpus
+numberOfPersons	The number of the persons participating in the audio or video part of the resource
+numberOfTracks	Specifies the number of audio channels
+numberOfTrainedSpeakers	The number of participants that have been trained for the specific task
+operatingSystem	The operating system on which the tool will be running
+order	The maximum number of items in the sequence
+organizationDescription	Provides description of the organizations that may appear in the image corpus
+organizationInfo	Groups information on organizations related to the resource
+organizationInfoType	Groups information on organizations related to the resource
+organizationName	The full name of an organization
+organizationShortName	The short name (abbreviation, acronym etc.) used for an organization
+originalMetadataLink	A link to the original metadata record, in cases of harvesting
+originalMetadataSchema	Refers to the metadata schema originally used for the description of the resource
+originalSource	The name, the identifier or the url of thethe original resources that were at the base of the creation process of the resource
+originalSource	The name, the identifier or the url of thethe original resources that were at the base of the creation process of the resource
+originOfPersons	The language origin of the group of participants
+origin	The language origin of the participant
+otherMedia	Specifies the media types that are linked to the media type described within the same resource
+output	Indicates whether the output of the operation of the grammar is a statement of grammaticality (grammatical/ungrammatical) or structures (interpretation of the input)
+outputInfo	Groups together information on the requirements set on the output of a tool or service
+outputInfoType	Groups together information on the requirements set on the output of a tool or service
+pages	One or more page numbers or range of page numbers
+participantInfo	Groups information on the individual person(s) participating in the audio, video, sensorimotor (textNumerical) part of the resource
+participantInfoType	Groups information on the person(s) participating in the audio, video, sensorimotor (textNumerical) part of the resource
+perplexity	Derived from running on test set taken from the same corpus
+personDescription	Provides descriptive features for the persons represented in the image corpus
+personInfo	Groups information relevant to personsrelated to the resource; to be used mainly for contact persons, resource creators, validators, annotators etc. for whom personal data can be provided
+personInfoType	Groups information relevant to persons related to the resource; to be used mainly for contact persons, resource creators, validators, annotators etc. for whom personal data can be provided
+personSourceSetInfo	Groups information on the persons (speakers, video participants, etc.) in the audio and video parts of the resource
+personSourceSetInfoType	Groups information on the persons (speakers, video participants, etc.) in the audio andvideoparts of the resource
+placeOfBirth	The place in which the participant has been born
+placeOfChildhood	The place in which the participant lived as a child
+placeOfLiving	The participant's place of living
+placeOfSecondEducation	Specifies the place of the secondary education of the participant
+posesPerSubject	The number of poses per subject that participates in the video part of the resource
+position	The position or the title of a person if affiliated to an organization 
+profession	Provides information on the participant's profession
+projectEndDate	The end date of a project related to the resources
+projectID	An unambiguous referent to a project related to the resource
+projectInfo	Groups information on a project related to the resource(e.g. a project the resource has been used in; a funded project that led to the resource creation etc.)
+projectInfoType	Groups information on a project related to the resource(e.g. a project the resource has been used in; a funded project that led to the resource creation etc.)
+projectName	The full name of a project related to the resource
+projectShortName	A short name or abbreviation of a project related to the resource
+projectStartDate	The starting date of a project related to the resource
+publisher	The name of the publisher
+quality	Specifies the quality level of image resource
+quantization	The number of bits for each audio sample
+rasterOrVectorGraphics	Indicates if the image is stored as raster or vector graphics
+recorder	Information on the recorder(s) of the audio or video part of the resource
+recordingDeviceTypeDetails	Free text description of the recoding device
+recordingDeviceType	The nature of the recording platform hardware and the storage medium
+recordingEnvironment	Where the recording took place
+recordingInfo	Groups together information on the recording of the audio or video part of a resource
+recordingInfoType	Groups together information on the recording of the audio or video part of a resource
+recordingPlatformSoftware	The software used for the recording platform
+recordingQuality	Indication of the audio or video recording quality
+recordType	A record has a header, a metadata part, and an optional about container
+region	The name of the region, county or department as mentioned in the postal address of a person or organization
+register	For corpora that have already been using register classification
+register	For corpora that have already been using register classification
+relatedLexiconInfo	Groups together information on requirements for lexica set by the LanguageDescriptions
+relatedLexiconInfoType	Groups together information on requirements for lexica set by the LanguageDescriptions
+relatedLexiconType	Indicates the position of the lexica that must or can be used with the grammar
+relatedResource	The full name, the identifier or the url of the related resource
+relationInfoType	Groups information on the relations of the resource being described with other resources
+relationType	Specifies the type of relation not covered by the ones proposed by META-SHARE
+requestType	Define requestType, indicating the protocol request that  led to the response. Element content is BASE-URL, attributes are arguments  of protocol request, attribute-values are values of arguments of protocol  request
+requiredHardware	Hardware required for running a tool and/or computational grammar
+requiredLRs	If for running a tool and/or computational grammar, specific LRs (e.g. a grammar, a list of words etc.) are required
+requiredSoftware	Additional software required for running a tool and/or computational grammar
+resolutionInfo	Groups together information on the image resolution
+resolutionInfoType	Groups together information on the image resolution
+resolutionStandard	The standard to which  the resolution conforms
+resourceAssociatedWith	Refers to another resource that the resource described uses for its operation
+resourceComponentType	Used for distinguishing between resource types
+resourceCreationInfo	Groups information on the creation procedure of a resource
+resourceCreationInfoType	Groups information on the creation procedure of a resource
+resourceCreator	Groups information on the person or the organization that has created the resource
+resourceDocumentationInfo	Groups together information on any document describing the resource
+resourceDocumentationInfoType	Groups together information on any document describing the resource
+resourceInfo	Groups together all information required for the description of language resources
+resourceInfoType	Groups together all information required for the description of language resources
+resourceName	The full name by which the resource is known; the element can be repeated for the different language versions using the "lang" attribute to specify the language.
+resourceShortName	The short form (abbreviation, acronym etc.) used to identify the resource; the element can be repeated for the different language versions using the "lang" attribute to specify the language.
+resourceType	Specifies the type of the resource being described
+resourceType	Specifies the type of the resource being described
+resourceType	Specifies the type of the resource being described
+resourceType	The type of the resource that a tool or service takes as input or produces as output
+resourceType	The type of the resource that a tool or service takes as input or produces as output
+resourceType	The type of the resource that a tool or service takes as input or produces as output
+restrictionsOfUse	Specifies the restrictions imposed by the licence
+resumptionTokenType	A resumptionToken may have 3 optional attributes and can be used in ListSets, ListIdentifiers, ListRecords responses.
+revision	Provides an account of the revisions in free text or a link to a document with revisions
+revision	Provides an account of the revisions in free text or a link to a document with revisions
+robustness	Free text statement on the robustness of the grammar (how well the grammar can cope with misspelt/unknown etc. input, i.e. whether it can produce even partial interpretations of the input)
+runningEnvironmentDetails	Provides further information on the running environment
+runningEnvironmentInfo	Groups together information on the running environment of a tool or a language description
+runningEnvironmentInfoType	Groups together information on the running environment of a tool or a language description
+runningTime	Gives information on the running time of a tool or service
+samplesLocation	A url with samples of the resource or, in the case of tools, of samples of the output
+samplingRate	Specifies the format of files contained in the resource in Hertz
+scenarioType	Indicates the task defined for the conversation or the interaction of participants
+sceneIllumination	Information on the illumination of the scene
+segmentationLevel	Specifies the segmentation unit in terms of which the resource has been segmented or the level of segmentation a tool/service requires/outputs
+sensorTechnology	Specifies either the type of image sensor or the sensing method used in the camera or the image-capture device
+series	The name of a series or set of books. When citing an entire book, the title field gives its title and an optional series field gives the name of a series or multi-volume set in which the book is published
+settingInfo	Groups together information on the setting of the audio and/or video part of a resource
+settingInfoType	Groups together information on the setting of the audio and/or video part of a resource
+sexOfPersons	The gender of the group of participants
+sex	The gender of a person related to or participating in the resource
+sex	The gender of a person related to or participating in the resource
+shallowness	Free text statement on the shallowness of the grammar (how deep the syntactic analysis performed by the grammar can be)
+signalEncoding	Specifies the  encoding the audio type uses
+signConvention	Binary representation of numbers
+sizeHeight	The frame height in pixels
+sizeInfo	Groups information on the size of the resource or of resource parts
+sizeInfoType	Groups information on the size of the resource or of resource parts
+sizePerAnnotation	Provides information on size for the annotated parts of the resource
+sizePerAudioClassification	The size of the audio subparts of the resource in terms of classification criteria
+sizePerAudioFormat	Used to give info on size of parts of a resource that differ as to the format
+sizePerCharacterEncoding	Provides information on the size of the resource parts with different character encoding
+sizePerDomain	Specifies the size of resource parts per domain
+sizePerGeographicCoverage	Provides information on size per geographically distinct section of the resource
+sizePerImageClassification	Provides information on size of parts with different image classification
+sizePerImageFormat	Used to give info on size of parts of a resource that differ as to the format
+sizePerLanguage	Provides information on the size per language component
+sizePerLanguageVariety	Provides information on the size per language variety component
+sizePerModality	Provides information on the size per modality component
+sizePerTextClassification	Provides information on size of resource parts with different text classification
+sizePerTextFormat	Provides information on the size of the resource parts with different format
+sizePerTextNumericalFormat	Gives information on the size of textNumerical resource parts with different format
+sizePerTimeCoverage	Provides information on size per time period represented in the resource
+sizePerValidation	Specifies the size of the validated part of a resource
+sizePerVideoClassification	Used to give info on size of parts with different video classification
+sizePerVideoFormat	Used to give info on size of parts of a resource that differ as to the format
+size	Specifies the size of the resource with regard to the SizeUnit measurement in form of a number
+size	Specifies the size of the resource with regard to the SizeUnit measurement in form of a number
+size	Specifies the size of the resource with regard to the SizeUnit measurement in form of a number
+sizeUnit	Specifies the unit that is used when providing information on the size of the resource or of resource parts
+sizeWidth	The frame width in pixels
+smokingHabits	Provides information on whether the participants smokes and on his/her smoking habits in general
+smoothing	The technique used for giving unseen items some probability
+sourceChannelDetails	The details of the channel equipment used (brand, type etc.)
+sourceChannel	Information on the source channel
+sourceChannelName	The name of the specific source recorded
+sourceChannelType	Type of the source channel
+source	Refers to the catalogue or repository from which the metadata has been originated
+speakingImpairmentOfPersons	Whether the group of participants contains persons withwith speakingimpairments
+speakingImpairment	Provides information on any speaking impairment the participant may have
+speechGenre	The conventionalized discourse of the content of the resource, based on extra-linguistic and internal linguistic criteria; the values here are intended only for speech
+speechInfluences	Specifies the factors influencing speech
+speechItems	Specifies the distinct elements that are pronounced and annotated as such
+staticElementInfo	Groups information on the static element visible on the images
+subject_topic	For corpora that have already been using subject classification
+subject_topic	For corpora that have already been using subject classification
+subject_topic	For corpora that have already been using subject classification
+subject_topic	For corpora that have already been using subject classification
+surname	The surname (family name) of a person related to the resource
+sycnhronizedWithImage	Whether text or textNumerical media type is synchronized with image within the same resource
+synchronizedWithAudio	Whether text, video or textNumerical media type is synchronized with audio within the same resource
+synchronizedWithTextNumerical	Whether video or audio media type is synchronized with the textNumerical (representation of sensorimotor measurements) within the same resource 
+synchronizedWithText	Whether video, text and textNumerical media type is synchronized with text within the same resource
+synchronizedWithVideo	Whether text or textNumerical media type is synchronized with video within the same resource
+tagset	A name or a url reference to the tagset used in the annotation of the resource or used by the tool/service
+tagsetLanguageId	The identifier of the tagset language; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+tagsetLanguageName	The name of the tagset language; an autocompletion mechanism with values from the ISO 639 is provided in the editor, but the values can be subsequently edited for further specification (according to the IETF BCP47 guidelines)
+targetResourceInfoType	Groups information on the resource related to the one being described; can be an identifier, a resource name or a URL
+targetResourceNameURI	The full name or a url to a resource related to the one being described; to be used for identifiers also for this version
+task	An indication of the task performed by the grammar
+telephoneNumber	The telephone number of a person or an organization; recommended format: +_international code_city code_number
+textClassificationInfo	Groups together information on text type/genre of the resource
+textClassificationInfoType	Groups together information on text type/genre of the resource
+textFormatInfo	Groups information on the text format(s) of a resource
+textFormatInfoType	Groups information on the text format(s) of a resource
+textGenre	Genre: The conventionalized discourse or text types of the content of the resource, based on extra-linguistic and internal linguistic criteria
+textIncludedInImage	Provides information on the type of text that may be on the image
+textIncludedInVideo	Indicates if text is present in or in conjunction with the video
+textNumericalContentInfo	Groups information on the content of the textNumerical part of the resource
+textNumericalContentInfoType	Groups information on the content of the textNumerical part of the resource
+textNumericalFormatInfo	Groups information on the format(s) of the textNumerical part of the resource
+textNumericalFormatInfo	Groups information on the format(s) of the textNumerical part of the resource
+textNumericalFormatInfoType	Groups information on the format(s) of the textNumerical part of the resource
+textType	Specifies the type of the text according to a text type classification
+textualDescription	The legend of the soundtrack
+theoreticModel	Name of the theoretic model applied for the creation/enrichment of the resource, and/or reference (URL or bibliographic reference) to informative material about the theoretic model used
+theoreticModel	Name of the theoretic model applied for the creation/enrichment of the resource, and/or reference (URL or bibliographic reference) to informative material about the theoretic model used
+theoreticModel	Name of the theoretic model applied for the creation or enrichment of the resource, and/or a reference (URL or bibliographic reference) to informative material about the theoretic model used
+	The type of objects or people that represented in the video or image part of the resource
+	The type of objects or people that represented in the video or image part of the resource 
+thingDescription	Provides description of the things represented in the image corpus
+timeCoverageInfo	Groups together information on time classification of the resource
+timeCoverageInfoType	Groups together information on time classification of the resource
+timeCoverage	The time period that the content of a resource is about
+title	The title of the document reporting on the resource
+toolDocumentationType	Specifies the type of documentation for tool or service
+toolServiceCreationInfo	Groups together information on the creation of a tool or service
+toolServiceCreationInfoType	Groups together information on the creation of a tool or service
+toolServiceEvaluationInfo	Groups together information on the evaluation status of a tool or service
+toolServiceEvaluationInfoType	Groups together information on the evaluation status of a tool or service
+toolServiceInfo	Groups together elements required for the description of tools and services
+toolServiceInfoType	The type of the resource that a tool or service takes as input or produces as output
+toolServiceOperationInfo	Groups together information on the operation of a tool or service
+toolServiceOperationInfoType	Groups together information on the operation of a tool or service
+toolServiceSubtype	Specifies the subtype of tool or service
+toolServiceType	Specifies the type of the tool or service
+trainedSpeaker	Provides information on whether the participant is trained in a specific task
+typeOfElement	The type of objects or people that represented in the video or image part of the resource
+typeOfElement	The type of objects or people that represented in the video or image part of the resource 
+typeOfImageContent	The main types of object or people represented in the image corpus
+typeOfTextNumericalContent	Specifies the content that is represented in the textNumerical part of the resource
+typeOfVideoContent	Main type of object or people represented in the video
+updateFrequency	Specifies the frequency with which the resource is updated
+url	A URL used as homepage of an entity (e.g. of a person, organization, resource etc.) and/or where an entity (e.g.LR, document etc.) is located
+url	A URL used as homepage of an entity (e.g. of a person, organization, resource etc.) and/or where an entity (e.g.LR, document etc.) is located
+url	A URL used as homepage of an entity (e.g. of a person, organization, resource etc.) and/or where an entity (e.g.LR, document etc.) is located
+url	A URL used as homepage of an entity (e.g. of a person, organization, resource etc.) and/or where an entity (e.g.LR, document etc.) is located
+usageInfo	Groups information on usage of the resource (both intended and actual use)
+usageInfoType	Groups information on usage of the resource (both intended and actual use)
+usageProject	Groups information on the project in which the resource has been used
+usageReport	Reports on the research papers documenting the usage of a resource, either in a structured form or in free text
+useNLPSpecific	Specifies the NLP application for which the resource iscreated or the application in which it has actually been used.
+userNature	The conditions imposed by the nature of the user (for instance, a research use may have different implications depending on this)
+validated	Specifies the validation status of the resource
+validationExtentDetails	Provides information on size or other details of partially validated data; to be used if only part of the resource has been validated and as an alternative to SizeInfo if the validated part cannot be counted otherwise
+validationExtent	The resource coverage in terms of validated data
+validationInfo	Groups information on validation of a resource; it can be repeated to allow for different validations (e.g. formal validation of the whole resource; content validation of one part of the resource etc.). 
+validationInfoType	Groups information on validation of a resource; it can be repeated to allow for different validations (e.g. formal validation of the whole resource; content validation of one part of the resource etc.). 
+validationModeDetails	Textual field for additional information on validation
+validationMode	Specifies the validation methodology applied
+validationReport	A short account of the validation details or a bibliographic reference to a document with detailed information on the validation process and results
+validationTool	The name, the identifier or the url of the tool used for the validation of the resource
+validationType	Specifies the type of the validation that have been performed 
+validator	Groups information on the person(s) or the organization(s) that validated the resource
+version	Any string, usually a number, that identifies the version of a resource 
+versionInfo	Groups information on a specific version or release of the resource
+versionInfoType	Groups information on a specific version or release of the resource
+videoClassificationInfo	Groups together information on video genre of the resource
+videoClassificationInfoType	Groups together information on video genre of the resource
+videoContentInfo	Groups together information on the contents of the video part of a resource
+videoContentInfoType	Groups together information on the contents of the video part of a resource
+videoFormatInfo	Groups information on the format(s) of a resource; repeated if parts of the resource are in different formats
+videoFormatInfoType	Groups information on the format(s) of a resource; repeated if parts of the resource are in different formats
+videoGenre	A first indication of type of video recorded
+visualModelling	The dimensional form applied on video or image corpus
+visualModelling	The dimensional form applied on video or image corpus
+vocalTractConditions	Provides information on the vocal tract conditions that may influence the speech of the participant
+volume	Specifies the volume of a journal or multivolume book
+weightedGrammar	Indicates whether the grammar contains numerical weights (incl. probabilities)
+weight	Provides information on the weight of the participant
+year	The year of publication or, for an unpublished work, the year it was written
+zipCode	The zip code of the postal address of a person or organization 
