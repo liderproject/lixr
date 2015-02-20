@@ -2139,7 +2139,7 @@ object Metashare extends Model {
         "anaphora" -> ms.anaphora,
         "other" -> ms.other
         ),
-      handle(msxml.weightedGrammar)
+      boolMap(msxml.weightedGrammar, ms.weightedGrammar)
     )
   )
 
