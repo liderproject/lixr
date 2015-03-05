@@ -32,15 +32,38 @@ class DOMGenerator {
     }
   }
 
+  def conditionEvalNode(x : Any, state : State[Node]) : Option[Any] = x match {
+    case gen : state.model.PlainTextGenerator =>
+      genStringOpt(gen, state)
+    case req : state.model.Request =>
+      val nodes = locateNode(req, state)
+      if(!nodes.isEmpty) {
+        Some(nodes)
+      } else {
+        None
+      }
+  }
+
+  def conditionEval(x : Any, state : State[Elem]) : Option[Any] = x match {
+    case gen : state.model.PlainTextGenerator =>
+      genStringOpt(gen, state)
+    case req : state.model.Request =>
+      val nodes = locate(req, state)
+      if(!nodes.isEmpty) {
+        Some(nodes)
+      } else {
+        None
+      }
+  }
+
+
   def verify(req : Model#Request, state : State[Elem]) : Boolean = {
     import state._
     req match {
       case model.NodeRequest(Some(n), name) => elem.namespace == n && elem.label == genString(name, state)
       case model.NodeRequest(None, name) => elem.namespace == null && elem.label == genString(name, state)
       case model.ChainRequest(first, second) => throw new UnsupportedOperationException("Sorry no chain request on left hand side")
-      case model.ConditionRequest(r, cond) => verify(r, state) && cond.check { gen =>
-        genStringOpt(gen, state)
-      }
+      case model.ConditionRequest(r, cond) => verify(r, state) && cond.check(conditionEval(_, state))
       case model.current => false
     }
   }
@@ -52,9 +75,7 @@ class DOMGenerator {
       case _ => req match {
         case model.current => Seq(elem)
         case model.ConditionRequest(r, cond) => locateNode(r,state) filter {
-          n2 => cond.check { gen =>
-            genStringOpt(gen, state)
-          }
+          n2 => cond.check(conditionEvalNode(_, state))
         }
         case _ => Seq()
       }
@@ -70,9 +91,7 @@ class DOMGenerator {
         e => locateNode(second, State(e, model, node, vars))
       }
       case model.ConditionRequest(r, cond) => locate(r, state) filter {
-        elem => cond.check { gen =>
-          genStringOpt(gen, State(elem, model, node, vars))
-        }
+        elem => cond.check(conditionEval(_, state))
       }
       case model.current => Seq(elem)
     }
@@ -157,6 +176,8 @@ class DOMGenerator {
           case Seq() => None
           case y => Some(y.mkString(""))
         }
+      case model.SubstringTextGenerator(ptg, from, to) =>
+        genStringOpt(ptg, state).map(_.substring(from, to))
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
     }
   }
@@ -231,6 +252,22 @@ class DOMGenerator {
             s, prop.toURI(genString(_,state)), obj) +: handleOne(ng, state)
         case None => throw new RuntimeException("No current node" + gen)
       }
+      case model.ConditionalTripleGenerator(prop, cond) => node match {
+        case Some(s) =>
+          handleOne(cond, state) map { 
+            case LiteralGenResult(o) => LitTripleResult(
+              s, prop.toURI(genString(_,state)), o)
+            case LangStringResult(o, l) => LLTripleResult(
+              s, prop.toURI(genString(_,state)), o, l)
+            case TypedStringResult(o, t) => TLTripleResult(
+              s, prop.toURI(genString(_,state)), o, t.uri)
+            case URIGenResult(uri) => ObjTripleResult(
+              s, prop.toURI(genString(_,state)), uri)
+            case other => FailGenResult("Non-literal returned by conditional")
+          }
+        case None =>
+          throw new RuntimeException("No current node " + gen)
+      }
       case model.IOTripleGenerator(prop, subj) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
@@ -281,8 +318,8 @@ class DOMGenerator {
             throw new RuntimeException("Variable %s requested but not set" format name)
         }
       case model.ConditionalGenerator(cond, value, otherwise) =>
-        if(cond.check(genStringOpt(_, state))) {
-          handleOne(value, state)
+        if(cond.check(conditionEval(_, state))) {
+          value.flatMap(handleOne(_, state))
         } else {
           otherwise match {
             case Some(o) => handleOne(o, state)

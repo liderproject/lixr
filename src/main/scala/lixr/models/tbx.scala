@@ -12,7 +12,6 @@ class TBX(resourceURI : String, mapping : java.io.File) extends Model {
   val rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
   val skos = Namespace("http://www.w3.org/2004/02/skos/core#")
   val tbx = Namespace("http://tbx2rdf.lider-project.eu/tbx#")
-  val xsd = Namespace("http://www.w3.org/2001/XMLSchema#")
 
   'martif --> (
     node(resourceURI) (

@@ -194,10 +194,17 @@ class OntologyExtractor(root : Seq[(Model#Request, Seq[Model#Generator])], model
         clazz.getOrElse(TopClass)
       ) +: velems
 
-    case ConditionalGenerator(_, r, Some(o)) =>
-      handle(clazz, r) ++ handle(clazz, o)
-    case ConditionalGenerator(_, r, None) =>
-      handle(clazz, r)
+  //  case ConditionalGenerator(_, r, Some(o)) =>
+  //    handle(clazz, r) ++ handle(clazz, o)
+  //  case ConditionalGenerator(_, r, None) =>
+  //    handle(clazz, r)
+    case ConditionalGenerator(_, r, o) => 
+      o match {
+        case Some(o) =>
+          r.flatMap(handle(clazz, _)) ++ handle(clazz, o)
+        case None =>
+          r.flatMap(handle(clazz, _))
+      }
     case GeneratorList(f, s) =>
       handle(clazz, f) ++ handle(clazz, s)
     case SetVariable(_, _, context) =>

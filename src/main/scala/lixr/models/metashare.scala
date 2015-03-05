@@ -3,7 +3,7 @@ package eu.liderproject.lixr.models
 import eu.liderproject.lixr._
 import scala.language.dynamics
 
-object Metashare extends Model {
+object Metashare extends ModelWithMappings {
   val cc = Namespace("http://creativecommons.org/ns/")
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dc = Namespace("http://purl.org/dc/elements/1.1/")
@@ -14,95 +14,7 @@ object Metashare extends Model {
   val msxml = Namespace("http://www.ilsp.gr/META-XMLSchema")
   val oai = Namespace("http://www.openarchives.org/OAI/2.0/")
   val odrl = Namespace("http://www.w3.org/ns/odrl/2/")
-  val owl = Namespace("http://www.w3.org/2002/07/owl#")
-  val rdfs = Namespace("http://www.w3.org/2000/01/rdf-schema#")
   val swrc = Namespace("http://swrc.ontoware.org/ontology#")
-  val xsd = Namespace("http://www.w3.org/2001/XMLSchema#")
-
-  def langStringMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare.when(current.att("lang").exists) --> (
-      rdf > (content @@ current.att("lang"))
-    )
-
-    metashare --> (
-      rdf > (content @@ "und")
-    )
-
-    handle(metashare)
-  }
-
-  def stringMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare --> (
-      rdf > content
-    )
-
-    handle(metashare)
-  }
-
-  def boolMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare --> (
-      rdf > (content ^^ xsd.boolean)
-    )
-    handle(metashare)
-  }
-
-  def intMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare --> (
-      rdf > (content ^^ xsd.int)
-    )
-    handle(metashare)
-  }
-
-  def doubleMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare --> (
-      rdf > (content ^^ xsd.decimal)
-    )
-    handle(metashare)
-  }
-
-
-  def objectMap(metashare : NodeRequest, rdf : NodeRequest, values : (String,NodeRequest)*) = {
-    for((k,v) <- values) {
-      metashare.when(content === k) --> (
-        rdf > v
-      )
-    }
-    handle(metashare)
-  }
-
-  def dataMap(metashare : NodeRequest, rdf : NodeRequest, values : (String,String)*) = {
-    for((k,v) <- values) {
-      metashare.when(content === k) --> (
-        rdf > (text(v) @@ "eng")
-      )
-    }
-    handle(metashare)
-  }
-
-  def dateMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare --> (
-      rdf > (content ^^ xsd.date)
-    )
-    handle(metashare)
-  }
-
-  def linkMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare --> (
-      rdf > uri(content(rdf))
-    )
-    handle(metashare)
-  }
-
-  def yearMap(metashare : NodeRequest, rdf : NodeRequest) = {
-    metashare.when(content matches "\\d{3,4}") --> (
-      rdf > (content ^^ xsd.gYear)
-    )
-    metashare --> (
-      fail(text("Badly formatted year "), content)
-    )
-    handle(metashare)
-  }
-
 
   oai.`OAI-PMH` --> (
     handle(oai.responseDate),
@@ -135,7 +47,7 @@ object Metashare extends Model {
 
   oai.header --> (
     node(get("resourceID") :+ "#Header") (
-      rdf_type > dcat.CatalogRecord,
+      a > dcat.CatalogRecord,
       dateMap(oai.datestamp, dct.issued),
       stringMap(oai.setSpec, ms.setSpec),
       foaf.primaryTopic > node(get("resourceID"))()
@@ -1668,6 +1580,7 @@ object Metashare extends Model {
 
   // Yes Metashare does spell it licence!
   msxml.licenceInfo --> (
+    linkMap(msxml.downloadLocation, dcat.downloadURL),
     dct.license > node(frag("licenceInfo")) (
       rdf_type > ms.LicenceInfo,
       objectMap(msxml.licence, owl.sameAs,
@@ -1736,7 +1649,6 @@ object Metashare extends Model {
         "accessibleThroughInterface" -> "Accessible Through Interface",
         "other" -> "Other"
         ),
-      linkMap(msxml.downloadLocation, dcat.downloadURL),
       linkMap(msxml.executionLocation, ms.executionLocation),
       stringMap(msxml.fee, ms.fee),
       langStringMap(msxml.attributionText, ms.attributionText),

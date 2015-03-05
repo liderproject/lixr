@@ -4,6 +4,8 @@ import java.net.URI
 import scala.language.dynamics
 
 trait Model {
+  val xsd = Namespace("http://www.w3.org/2001/XMLSchema#")
+
   // The map containing the data
   private var handlers = collection.mutable.Map[(Option[String],String),Seq[(Request,Seq[Generator])]]()
 
@@ -30,11 +32,12 @@ trait Model {
         handlers(lookup) :+= (this,foo.toSeq)
       }
     }
-    def when(cond : Condition) = ConditionRequest(this, cond)
+    def when(cond : Condition[Any]) = ConditionRequest(this, cond)
     def \(request : Request) = ChainRequest(this, request)
     def att(nr : NodeRequest) = AttributeContentGenerator(this, nr)
     def att(s : PlainTextGenerator) = AttributeContentGenerator(this, NodeRequest(None,s))
     def att(s : String) = AttributeContentGenerator(this, NodeRequest(None,FixedTextGenerator(s)))
+    def isEmpty = NegationCondition(ExistenceCondition(this))
   }
 
   case class NodeRequest(namespace : Option[String], name : PlainTextGenerator) extends Request {
@@ -50,6 +53,12 @@ trait Model {
     def >(ng : NodeGenerator) = {
       //println("Property:" + this.toURI(_.toString))
       NTripleGenerator(this, ng)
+    }
+    def >[G <: Generator](cg : ConditionalGenerator[G]) = {
+      ConditionalTripleGenerator(this, cg)
+    }
+    def >(value : Boolean) = {
+      DTripleGenerator(this, (text(value.toString) ^^ xsd.boolean))
     }
     def <(nr : NodeRequest) = IOTripleGenerator(this, nr)
     def <(ng : NodeGenerator) = INTripleGenerator(this, ng)
@@ -69,7 +78,7 @@ trait Model {
     def lookup = first.lookup
   }
 
-  case class ConditionRequest(req : Request, cond : Condition) extends Request {
+  case class ConditionRequest(req : Request, cond : Condition[Any]) extends Request {
     def lookup = req.lookup
   }
 
@@ -90,15 +99,16 @@ trait Model {
     def ^^(text : String) = TypedTextGenerator(this, NodeRequest(None, FixedTextGenerator(text)))
     def @@(text : PlainTextGenerator) = LangTextGenerator(this, text)
     def @@(text : String) = LangTextGenerator(this, FixedTextGenerator(text))
-    def ===(target : PlainTextGenerator) : Condition = EqualityCondition(this,target)
-    def ===(target : String) : Condition = EqualityCondition(this, FixedTextGenerator(target))
-    def !==(target : PlainTextGenerator) : Condition = InequalityCondition(this,target)
-    def !==(target : String) : Condition = InequalityCondition(this, FixedTextGenerator(target))
-    def matches(regex : String) : Condition = RegexCondition(this, regex)
-    def exists : Condition = ExistenceCondition(this)
-    def +:(s : String) = AppendTextGenerator(Some(s),this,None)
-    def :+(s : String) = AppendTextGenerator(None, this, Some(s))
+    def ===(target : PlainTextGenerator) : Condition[PlainTextGenerator] = EqualityCondition(this,target)
+    def ===(target : String) : Condition[PlainTextGenerator] = EqualityCondition(this, FixedTextGenerator(target))
+    def !==(target : PlainTextGenerator) : Condition[PlainTextGenerator] = InequalityCondition(this,target)
+    def !==(target : String) : Condition[PlainTextGenerator] = InequalityCondition(this, FixedTextGenerator(target))
+    def matches(regex : String) : Condition[PlainTextGenerator] = RegexCondition(this, regex)
+    def exists : Condition[PlainTextGenerator] = ExistenceCondition(this)
+    def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(s),this,None)
+    def :+(s : String) : PlainTextGenerator = AppendTextGenerator(None, this, Some(s))
     def or(alternative : PlainTextGenerator) = TextAltGen(this, alternative)
+    def substring(from : Int, to : Int) = SubstringTextGenerator(this, from, to)
   }
 
   case class FixedTextGenerator(str : String) extends PlainTextGenerator {
@@ -120,6 +130,8 @@ trait Model {
   case class IOTripleGenerator(prop : NodeRequest, value : NodeRequest) extends Generator 
 
   case class INTripleGenerator(prop : NodeRequest, value : NodeGenerator) extends Generator 
+
+  case class ConditionalTripleGenerator[G <: Generator](prop : NodeRequest, value : ConditionalGenerator[G]) extends Generator
 
   case class AttributeGenerator(name : NodeRequest, text : TextGenerator) extends Generator
 
@@ -150,63 +162,67 @@ trait Model {
   case class GetVariable(name : String) extends PlainTextGenerator
 
   case class AppendTextGenerator(left : Option[String], generator : PlainTextGenerator, right : Option[String]) extends PlainTextGenerator {
-    override def +:(s : String) = AppendTextGenerator(Some(left.getOrElse("") + s), generator, right)
-    override def :+(s : String) = AppendTextGenerator(left, generator, Some(right.getOrElse("") + s))
+    override def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(left.getOrElse("") + s), generator, right)
+    override def :+(s : String) : PlainTextGenerator = AppendTextGenerator(left, generator, Some(right.getOrElse("") + s))
   }
 
   case class ConcatTextGenerator(generators : Seq[PlainTextGenerator]) extends PlainTextGenerator
 
+  case class SubstringTextGenerator(generator : PlainTextGenerator, to : Int, from : Int) extends PlainTextGenerator
+
   case class ForGenerator(req : Request, body : Seq[Generator]) extends Generator
 
-  case class ConditionalGenerator(condition : Condition, result : Generator, otherwise : Option[Generator]) extends Generator {
-    def or(condition2 : Condition)(result2 : Generator) = 
+  case class ConditionalGenerator[G <: Generator](condition : Condition[Any], result : Seq[G], otherwise : Option[G]) extends Generator {
+    def or(condition2 : Condition[Any])(result2 : G*) = 
       ConditionalGenerator(condition, result, 
         Some(ConditionalGenerator(condition2, result2, None)))
-    def otherwise(result2 : Generator) = 
+    def otherwise(result2 : G) = 
       ConditionalGenerator(condition, result, Some(result2))
   }
 
-  trait Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) : Boolean
-    def and(c2 : Condition) = ConjunctionCondition(this, c2)
-    def or(c2 : Condition) = DisjunctionCondition(this, c2)
+  trait Condition[+A] {
+    def check(resolve : A => Option[Any]) : Boolean
+    def and[C >: A](c2 : Condition[C]) : Condition[C] = ConjunctionCondition(this, c2)
+    def or[C >: A](c2 : Condition[C]) : Condition[C] = DisjunctionCondition(this, c2)
   }
 
-  def not(c : Condition) = NegationCondition(c)
+  def not[A](c : Condition[A]) = NegationCondition(c)
 
-  case class EqualityCondition(lhs : PlainTextGenerator, rhs : PlainTextGenerator) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) = {
+  case class EqualityCondition[A](lhs : A, rhs : A) extends Condition[A] {
+    def check(resolve : A => Option[Any]) = {
       resolve(lhs) == resolve(rhs)
     }
   }
 
-  case class InequalityCondition(lhs : PlainTextGenerator, rhs : PlainTextGenerator) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) = resolve(lhs) != resolve(rhs)
+  case class InequalityCondition[A](lhs : A, rhs : A) extends Condition[A] {
+    def check(resolve : A => Option[Any]) = resolve(lhs) != resolve(rhs)
   }
 
-  case class RegexCondition(target : PlainTextGenerator, pattern : String) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) = resolve(target) match {
-      case Some(s) => s.matches(pattern)
+  case class RegexCondition(target : PlainTextGenerator, pattern : String) 
+      extends Condition[PlainTextGenerator] {
+    def check(resolve : PlainTextGenerator => Option[Any]) = resolve(target) match {
+      case Some(s : String) => s.matches(pattern)
+      case Some(_) => false
       case None => false
     }
   }
 
-  case class ExistenceCondition(target : PlainTextGenerator) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) = resolve(target) != None
+  case class ExistenceCondition[A](target : A) extends Condition[A] {
+    def check(resolve : A => Option[Any]) = resolve(target) != None
   }
 
-  case class ConjunctionCondition(left : Condition, right : Condition) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) = 
+  case class ConjunctionCondition[A](left : Condition[A], right : Condition[A]) extends Condition[A] {
+    def check(resolve : A => Option[Any]) = 
       left.check(resolve) && right.check(resolve)
   }
 
-  case class DisjunctionCondition(left : Condition, right : Condition) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) = 
+  case class DisjunctionCondition[A](left : Condition[A], right : Condition[A]) extends Condition[A] {
+    def check(resolve : A => Option[Any]) = 
       left.check(resolve) || right.check(resolve)
   }
 
-  case class NegationCondition(cond : Condition) extends Condition {
-    def check(resolve : PlainTextGenerator => Option[String]) =
+  case class NegationCondition[A](cond : Condition[A]) extends Condition[A] {
+    def check(resolve : A => Option[Any]) =
       !cond.check(resolve)
   }
 
@@ -258,7 +274,7 @@ trait Model {
 
   def get(name : String) = GetVariable(name)
 
-  def when(condition : Condition)(result : Generator) = ConditionalGenerator(condition, result, None)
+  def when[G <: Generator](condition : Condition[Any])(result : G*) = ConditionalGenerator[G](condition, result, None)
 
   def forall(req : Request)(body : Generator*) = ForGenerator(req, body)
   def forall(s : String)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s), body)
@@ -267,15 +283,16 @@ trait Model {
   def concat(ptgs : PlainTextGenerator*) = ConcatTextGenerator(ptgs)
 
   val rdf_type = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#") + "type"
+  val a = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#") + "type"
     
   implicit class StringPimps(s : String) {
     def --> (foo : Generator*) = NodeRequest.resolveStringAsRequest(s).-->(foo:_*)
-    def when (condition : Condition) = NodeRequest.resolveStringAsRequest(s).when(condition)
+    def when (condition : Condition[Any]) = NodeRequest.resolveStringAsRequest(s).when(condition)
   }
   
   implicit class SymbolPimps(s : Symbol) {
     def --> (foo : Generator*) = NodeRequest.resolveStringAsRequest(s.name).-->(foo:_*)
-    def when(cond : Condition) = NodeRequest.resolveStringAsRequest(s.name).when(cond)
+    def when(cond : Condition[Any]) = NodeRequest.resolveStringAsRequest(s.name).when(cond)
   }
 
 }
