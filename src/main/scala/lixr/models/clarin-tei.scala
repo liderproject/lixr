@@ -9,7 +9,7 @@ object ClarinTEI extends Clarin {
   cmd.Components --> handle(cmd.teiHeader)
 
   cmd.teiHeader --> (
-  	handle(cmd.fileDesc),
+  	handle(cmd.fileDesc)
   )
 
   cmd.fileDesc --> (
@@ -20,7 +20,7 @@ object ClarinTEI extends Clarin {
   	tei.titleStmt > node(frag("titleStmt")) (
   	  handle(cmd.title),
   	  handle(cmd.author),
-  	  handle(cmd.editor),
+  	  handle(cmd.editor)
   	)
   )
 
@@ -29,15 +29,15 @@ object ClarinTEI extends Clarin {
   	  a > tei.TitleStmt,
   	  rdf.value > content,
   	  stringAttMap(current, "type", tei.titleType),
-  	  stringAttMap(current, "level", tei.titleLevel),
-  	  intAttMap(current, "n", tei.titleN)
+  	  stringAttMap(current, "level", tei.titleLevel)//,
+  	  //intAttMap(current, "n", tei.titleN)
   	)
   )
 
   cmd.author --> (
   	tei.author > node(frag("author")) (
   	  a > foaf.Person,
-  	  handle(cmd.persName),
+  	  handle(cmd.persName)
   	)
   )
 
@@ -69,7 +69,7 @@ object ClarinTEI extends Clarin {
 	).or(att("type") === "URLWeb")(
 	  tei.URLWeb > content
 	).or(att("type") === "URLXML")(
-	  tei..URLXML > content
+	  tei.URLXML > content
 	).or(att("type") === "URLText")(
 	  tei.URLText > content
 	).or(att("type") === "URLHTML")(
@@ -86,7 +86,7 @@ object ClarinTEI extends Clarin {
   )
 
   cmd.editor --> (
-  	mods.editor > node(frag("editor")) (
+  	tei.editor > node(frag("editor")) (
   	  a > foaf.Person,
   	  handle(cmd.persName),
   	  stringMap(cmd.role, tei.role)

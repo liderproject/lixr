@@ -139,7 +139,7 @@ class ClarinMods extends Clarin {
     )
   )
 
-  cmd.originInfo --> ( // Maybe CaptureInfo
+  cmd.originInfo --> (
     mods.originInfo > node(frag("originInfo")) (
       langStringMap(cmd.publisher, dc.publisher),
       dateMap(cmd.dateIssued, dc.issued),
@@ -160,16 +160,16 @@ class ClarinMods extends Clarin {
     )
   )
 
-  cmd.language --> ( // Maybe LanguageInfo
-    mods.language > node(frag("language")) (
-      langStringMap(cmd.languageTerm, mods.languageTerm),
-      langStringMap(cmd.scriptTerm, mods.scriptTerm),
+  cmd.language --> (
+    ms.languageInfo > node(frag("language")) (
+      langStringMap(cmd.languageTerm, ms.languageName),
+      langStringMap(cmd.scriptTerm, ms.languageScript),
       stringAttMap(current, "displayLabel", rdfs.label),
       stringAttMap(current, "altRepGroup", mods.titleAltRepGroup)
     )
   )
 
-  cmd.physicalDescription --> ( // Maybe MediaInfo
+  cmd.physicalDescription --> (
     mods.physicalDescription > node(frag("physicalDescription")) (
       langStringMap(cmd.form, mods.form),
       stringMap(cmd.reformattingQuality, mods.reformattingQuality),
@@ -373,7 +373,7 @@ class ClarinMods extends Clarin {
     )
   )
 
-  cmd.recordInfo --> ( // RecordInfo?
+  cmd.recordInfo --> (
     mods.recordInfo > node(frag("recordInfo")) (
       langStringMap(cmd.recordContentSource, dc.source),
       dateMap(cmd.recordCreationDate, dc.created),
@@ -387,10 +387,10 @@ class ClarinMods extends Clarin {
     )
   )
 
-  cmd.languageOfCataloging --> ( // Maybe LanguageInfo
-    mods.language > node(frag("language")) (
-      langStringMap(cmd.languageTerm, mods.languageTerm),
-      langStringMap(cmd.scriptTerm, mods.scriptTerm),
+  cmd.languageOfCataloging --> (
+    ms.languageInfo > node(frag("language")) (
+      langStringMap(cmd.languageTerm, ms.languageName),
+      langStringMap(cmd.scriptTerm, ms.languageScript),
       stringMap(cmd.total, mods.total),
       langStringMap(cmd.list, mods.list),
       stringAttMap(current, "displayLabel", rdfs.label),

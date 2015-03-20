@@ -77,7 +77,7 @@ trait ModelWithMappings extends Model {
   def objectMap(node : NodeRequest, rdf : NodeRequest, values : (String,NodeRequest)*) = {
     assert(values.size > 1)
     forall(node) {
-      var gen : ConditionalGenerator[Generator] = when(content === values.head._1)(
+      var gen : ConditionalGenerator = when(content === values.head._1)(
         rdf > values.head._2
       )
       for((k,v) <- values.tail) {
@@ -97,7 +97,7 @@ trait ModelWithMappings extends Model {
   def dataMap(node : NodeRequest, rdf : NodeRequest, values : (String,String)*) = {
     assert(values.size > 1)
     forall(node) {
-      var gen : ConditionalGenerator[Generator] = when(content === values.head._1)(
+      var gen : ConditionalGenerator = when(content === values.head._1)(
         rdf > text(values.head._2)
       )
       for((k, v) <- values.tail) {
