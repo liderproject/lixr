@@ -6,7 +6,15 @@ import java.io.File
 object Main {
   def loadModelFromFile(fileName : String) = Eval[Model](new File(fileName))
 
-  def main(args : Array[String]) {
+  def main(_args : Array[String]) {
+    var args = collection.mutable.Buffer(_args:_*)
+    for(a <- args) {
+      if(a.startsWith("-D")) {
+        val Array(p, v) = a.drop(2).split("=")
+        System.setProperty(p, v)
+      }
+    }
+    args = args.filterNot(_.startsWith("-D"))
     if(args.length < 2) {
       System.err.println("Usage: java -jar lixr.jar <model> <file> params...")
       System.exit(-1)

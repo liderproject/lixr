@@ -104,6 +104,7 @@ trait Model {
     def !==(target : PlainTextGenerator) : Condition[PlainTextGenerator] = InequalityCondition(this,target)
     def !==(target : String) : Condition[PlainTextGenerator] = InequalityCondition(this, FixedTextGenerator(target))
     def matches(regex : String) : Condition[PlainTextGenerator] = RegexCondition(this, regex)
+    def replace(regex : String, regex2 : String) : PlainTextGenerator = RegexReplace(this, regex, regex2)
     def exists : Condition[PlainTextGenerator] = ExistenceCondition(this)
     def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(s),this,None)
     def :+(s : String) : PlainTextGenerator = AppendTextGenerator(None, this, Some(s))
@@ -114,6 +115,8 @@ trait Model {
   case class FixedTextGenerator(str : String) extends PlainTextGenerator {
     override def toString = str
   }
+
+  case class RegexReplace(base : PlainTextGenerator, regex : String, replaceRegex : String) extends PlainTextGenerator
 
   case class TypedTextGenerator(str : PlainTextGenerator, typ : NodeRequest) extends TextGenerator 
 

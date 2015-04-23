@@ -178,6 +178,8 @@ class DOMGenerator {
         }
       case model.SubstringTextGenerator(ptg, from, to) =>
         genStringOpt(ptg, state).map(_.substring(from, to))
+      case model.RegexReplace(base, regex, replaceRegex) =>
+        genStringOpt(base, state).map(_.replaceAll(regex, replaceRegex))
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
     }
   }
@@ -336,10 +338,18 @@ class DOMGenerator {
   }
 
   def read(in : InputStream, model : Model) = {
-    process(State(XML.load(in), model, None, Map()))
+    if(System.getProperty("lixr.trim") == "true") {
+      process(State(Utility.trim(XML.load(in)).asInstanceOf[Elem], model, None, Map()))
+    } else {
+      process(State(XML.load(in), model, None, Map()))
+    }
   }
 
   def read(in : Reader, model : Model) = {
-    process(State(XML.load(in), model, None, Map()))
+    if(System.getProperty("lixr.trim") == "true") {
+      process(State(Utility.trim(XML.load(in)).asInstanceOf[Elem], model, None, Map()))
+    } else {
+      process(State(XML.load(in), model, None, Map()))
+    }
   }
 }
