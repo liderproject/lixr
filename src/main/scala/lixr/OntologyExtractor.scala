@@ -475,15 +475,21 @@ object OntologyExtractor {
       System.err.println("Usage:\nsbt run \"modelClass csv|owl|dot descriptions prefix outFile\"\n")
       System.exit(-1)
     }
-    val model : Ontology = args(0) match {
-      case "metashare" => 
-        OntologyExtractor(models.Metashare, 
-          "http://www.ilsp.gr/META-XMLSchema","resourceInfo").ontology
-      case _ =>
-        System.err.println("Unknown model")
+    val baseModel = try {
+      Main.loadModelFromFile(args(0))
+    } catch {
+      case x : Exception =>
+        x.printStackTrace()
+        System.err.println()
+        System.err.println("Could not load %s as \"%s\"" format (args(0), 
+          x.getMessage()))
         System.exit(-1)
         null
     }
+
+    // TODO: Make this generic
+    val model : Ontology = OntologyExtractor(baseModel, 
+          "http://www.ilsp.gr/META-XMLSchema","resourceInfo").ontology
 
     val descriptions = io.Source.fromFile(args(2)).getLines.map(_.split("\t")).toSeq.groupBy(_(0)).mapValues(_.toList.map(_.drop(1).mkString("\t")))
     val prefix = args(3)
