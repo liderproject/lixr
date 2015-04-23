@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ ! -e target/scala-2.10/lixr-assembly-0.1.jar ]
+then
+    sbt assembly
+fi
+
+java -jar target/scala-2.10/lixr-assembly-0.1.jar $@

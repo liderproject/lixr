@@ -4,10 +4,10 @@ import org.scalatest._
 import java.net.URI
 
 class OntologyExtractorTest extends WordSpec with Matchers {
+  import testmodels._
   var tbxModel : Ontology = null
   "The TBX model" should {
     "load" in {
-      val tbx = new models.TBX("", new java.io.File("src/test/resources/mappings.blank"))
       tbxModel = OntologyExtractor(tbx, 'martif).ontology
       /*for(e <- tbxModel.entities) {
         println(e) 
@@ -37,7 +37,7 @@ class OntologyExtractorTest extends WordSpec with Matchers {
   "The MetaShare model" should {
     var metashareModel : Ontology = null
     "load" in {
-      metashareModel = OntologyExtractor(models.Metashare, 
+      metashareModel = OntologyExtractor(Metashare, 
         "http://www.ilsp.gr/META-XMLSchema","resourceInfo").ontology
     }
     "contain an individual named other of type SpeechInfluences" in {

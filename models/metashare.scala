@@ -1,9 +1,7 @@
-package eu.liderproject.lixr.models
-
 import eu.liderproject.lixr._
 import scala.language.dynamics
 
-object Metashare extends ModelWithMappings {
+new ModelWithMappings {
   val cc = Namespace("http://creativecommons.org/ns/")
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dc = Namespace("http://purl.org/dc/elements/1.1/")
