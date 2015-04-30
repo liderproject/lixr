@@ -21,6 +21,8 @@ object ClarinTEI extends Clarin {
   	  handle(cmd.title),
   	  handle(cmd.author),
   	  handle(cmd.editor),
+  	  handle(cmd.respStmt),
+  	  handle(cmd.orgName),
   	)
   )
 
@@ -86,10 +88,32 @@ object ClarinTEI extends Clarin {
   )
 
   cmd.editor --> (
-  	mods.editor > node(frag("editor")) (
+  	tei.editor > node(frag("editor")) (
   	  a > foaf.Person,
   	  handle(cmd.persName),
   	  stringMap(cmd.role, tei.role)
+  	)
+  )
+
+  cmd.respStmt --> (
+  	tei.respStmt > node(frag("respStmt")) (
+  	  a > foaf.Person,
+  	  handle(cmd.persName)
+  	)
+  )
+
+  cmd.orgName --> (
+  	forall(cmd.orgName)(
+  	  when(att("type") === "project") (
+  	    tei.project > node(frag("project")) (
+  	      rdf.value > content,
+  	      handle(parent \ cmd.idno)
+  	    )
+  	  ).or(att("type") === "hostingInstitution") (
+  	    tei.hostingInstitution > node(frag("hostingInstitution")) (
+  	      rdf.value > content,
+  	      handle(parent \ cmd.idno)
+  	  )
   	)
   )
 }
