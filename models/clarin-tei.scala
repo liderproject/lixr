@@ -1,15 +1,13 @@
-package eu.liderproject.lixr.models
+import eu.liderproject.lixr.Clarin
 
-import eu.liderproject.lixr._
-
-object ClarinTEI extends Clarin {
+new Clarin {
   val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
   val tei = cmd
 
   cmd.Components --> handle(cmd.teiHeader)
 
   cmd.teiHeader --> (
-  	handle(cmd.fileDesc),
+  	handle(cmd.fileDesc)
   )
 
   cmd.fileDesc --> (
@@ -20,9 +18,13 @@ object ClarinTEI extends Clarin {
   	tei.titleStmt > node(frag("titleStmt")) (
   	  handle(cmd.title),
   	  handle(cmd.author),
+<<<<<<< HEAD:src/main/scala/lixr/models/clarin-tei.scala
   	  handle(cmd.editor),
   	  handle(cmd.respStmt),
   	  handle(cmd.orgName),
+=======
+  	  handle(cmd.editor)
+>>>>>>> fcf13c7044b90793e67ca8e7ba28e3f2045b12f8:models/clarin-tei.scala
   	)
   )
 
@@ -31,15 +33,15 @@ object ClarinTEI extends Clarin {
   	  a > tei.TitleStmt,
   	  rdf.value > content,
   	  stringAttMap(current, "type", tei.titleType),
-  	  stringAttMap(current, "level", tei.titleLevel),
-  	  intAttMap(current, "n", tei.titleN)
+  	  stringAttMap(current, "level", tei.titleLevel)//,
+  	  //intAttMap(current, "n", tei.titleN)
   	)
   )
 
   cmd.author --> (
   	tei.author > node(frag("author")) (
   	  a > foaf.Person,
-  	  handle(cmd.persName),
+  	  handle(cmd.persName)
   	)
   )
 
@@ -71,7 +73,7 @@ object ClarinTEI extends Clarin {
 	).or(att("type") === "URLWeb")(
 	  tei.URLWeb > content
 	).or(att("type") === "URLXML")(
-	  tei..URLXML > content
+	  tei.URLXML > content
 	).or(att("type") === "URLText")(
 	  tei.URLText > content
 	).or(att("type") === "URLHTML")(
@@ -94,6 +96,7 @@ object ClarinTEI extends Clarin {
   	  stringMap(cmd.role, tei.role)
   	)
   )
+<<<<<<< HEAD:src/main/scala/lixr/models/clarin-tei.scala
 
   cmd.respStmt --> (
   	tei.respStmt > node(frag("respStmt")) (
@@ -117,3 +120,6 @@ object ClarinTEI extends Clarin {
   	)
   )
 }
+=======
+}
+>>>>>>> fcf13c7044b90793e67ca8e7ba28e3f2045b12f8:models/clarin-tei.scala

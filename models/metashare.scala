@@ -1,16 +1,14 @@
-package eu.liderproject.lixr.models
-
 import eu.liderproject.lixr._
 import scala.language.dynamics
 
-object Metashare extends ModelWithMappings {
+new ModelWithMappings {
   val cc = Namespace("http://creativecommons.org/ns/")
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dc = Namespace("http://purl.org/dc/elements/1.1/")
   val dct = Namespace("http://purl.org/dc/terms/")
   val foaf = Namespace("http://xmlns.com/foaf/0.1/")
   val media = Namespace("http://www.w3.org/ns/ma-ont#")
-  val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
+  val ms = Namespace("http://purl.org/net/def/metashare#")
   val msxml = Namespace("http://www.ilsp.gr/META-XMLSchema")
   val oai = Namespace("http://www.openarchives.org/OAI/2.0/")
   val odrl = Namespace("http://www.w3.org/ns/odrl/2/")
@@ -64,7 +62,7 @@ object Metashare extends ModelWithMappings {
   // Based on META-SHARE-Resource.xsd
 
   msxml.resourceInfo --> node(get("resourceID")) (
-    rdf_type > ms.ResourceInfo,
+    rdf_type > ms.LanguageResource,
     handle(msxml.identificationInfo),
     handle(msxml.distributionInfo),
     handle(msxml.contactPerson),
@@ -341,34 +339,23 @@ object Metashare extends ModelWithMappings {
   // Based on META-SHARE-BaseTypes.xsd
 
   msxml.identificationInfo --> (
-    ms.identificationInfo > node(frag("identificationInfo")) (
-      rdf_type > ms.IdentificationInfo,
-      langStringMap(msxml.resourceName,dc.title),
-      langStringMap(msxml.description,dc.description),
-      langStringMap(msxml.resourceShortName,ms.resourceShortName),
-      stringMap(msxml.metaShareId,ms.metaShareId),
-      handle(msxml.url),
-      stringMap(msxml.identifier,dc.identifier)
-    ),
-    langStringMap(msxml.resourceName, dc.title)
+    langStringMap(msxml.resourceName,dc.title),
+    langStringMap(msxml.description,dc.description),
+    langStringMap(msxml.resourceShortName,ms.resourceShortName),
+    stringMap(msxml.metaShareId,ms.metaShareId),
+    handle(msxml.url),
+    stringMap(msxml.identifier,dc.identifier)
   )
 
   msxml.url --> (
-    dcat.distribution > node(frag("DistURL")) (
-      rdf_type > ms.URL,
-      rdf_type > dcat.Distribution,
-      dcat.accessURL > uri(content)
-    )
+    ms.url > uri(content)
   )
     
   msxml.versionInfo --> (
-    ms.versionInfo > node(frag("versionInfo")) (
-      rdf_type > ms.VersionInfo,
-      stringMap(msxml.version, dct.hasVersion),
-      stringMap(msxml.revision, ms.revision),
-      dateMap(msxml.lastDateUpdated, dct.modified),
-      stringMap(msxml.updateFrequency, ms.updateFrequency)
-    )
+    stringMap(msxml.version, dct.hasVersion),
+    stringMap(msxml.revision, ms.revision),
+    dateMap(msxml.lastDateUpdated, dct.modified),
+    stringMap(msxml.updateFrequency, ms.updateFrequency)
   )
 
   msxml.validationInfo --> (
@@ -419,13 +406,10 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.resourceCreationInfo --> (
-    ms.resourceCreationInfo > node(frag("resourceCreation")) (
-      rdf_type > ms.ResourceCreationInfo,
-      handle(msxml.resourceCreator),
-      handle(msxml.fundingProject),
-      dateMap(msxml.creationStartDate,ms.creationStartDate),
-      dateMap(msxml.creationEndDate,ms.creationEndDate)
-    )
+    handle(msxml.resourceCreator),
+    handle(msxml.fundingProject),
+    dateMap(msxml.creationStartDate,ms.creationStartDate),
+    dateMap(msxml.creationEndDate,ms.creationEndDate)
   )
 
   msxml.resourceCreator --> (
@@ -441,17 +425,14 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.creationInfo --> (
-    ms.creationInfo > node(frag("creationInfo")) (
-      rdf_type > ms.CreationInfo,
-      handle(msxml.originalSource),
-      objectMap(msxml.creationMode, ms.creationMode,
-        "manual" -> ms.manual,
-        "automatic" -> ms.automatic,
-        "mixed" -> ms.mixed,
-        "interactive" -> ms.interactive),
-      stringMap(msxml.creationModeDetails, ms.creationModeDetails),
-      handle(msxml.creationTool)
-    )
+    handle(msxml.originalSource),
+    objectMap(msxml.creationMode, ms.creationMode,
+      "manual" -> ms.manual,
+      "automatic" -> ms.automatic,
+      "mixed" -> ms.mixed,
+      "interactive" -> ms.interactive),
+    stringMap(msxml.creationModeDetails, ms.creationModeDetails),
+    handle(msxml.creationTool)
   )
 
   msxml.originalSource --> (
@@ -530,23 +511,20 @@ object Metashare extends ModelWithMappings {
   )
 
   def documentationInfoType = ( 
-    (rdf_type > ms.DocumentationInfoType) ++
+    (rdf_type > ms.Documentation) ++
     handle(msxml.documentUnstructured) ++
     handle(msxml.documentInfo)
   )
 
   msxml.resourceDocumentationInfo --> (
-    ms.resourceDocumentationInfo > node(frag("resourceDocumentationInfo")) (
-      rdf_type > ms.ResourceDocumentationInfo,
-      handle(msxml.documentation),
-      linkMap(msxml.samplesLocation, ms.samplesLocation),
-      objectMap(msxml.toolDocumentationType, ms.toolDocumentationType,
-        "online" -> ms.online,
-        "manual" -> ms.manual,
-        "helpFunctions" -> ms.helpFunctions,
-        "none" -> ms.none,
-        "other" -> ms.other)      
-    )
+    handle(msxml.documentation),
+    linkMap(msxml.samplesLocation, ms.samplesLocation),
+    objectMap(msxml.toolDocumentationType, ms.toolDocumentationType,
+      "online" -> ms.online,
+      "manual" -> ms.manual,
+      "helpFunctions" -> ms.helpFunctions,
+      "none" -> ms.none,
+      "other" -> ms.other)      
   )
 
   msxml.documentation --> (
@@ -683,7 +661,9 @@ object Metashare extends ModelWithMappings {
       stringMap(msxml.speakingImpairment, ms.speakingImpairment),
       stringMap(msxml.hearingImpairment, ms.hearingImpairment),
       stringMap(msxml.smokingHabits, ms.smokingHabits),
-      stringMap(msxml.vocalTractConditions, ms.vocalTractConditions),
+      objectMap(msxml.vocalTractConditions, ms.vocalTractConditions,
+        "dentalProsthesis" -> ms.dentalProsthesis,
+        "other" -> ms.other),
       stringMap(msxml.profession, ms.profession),
       intMap(msxml.height, ms.height),
       intMap(msxml.weight, ms.weight),
@@ -694,154 +674,142 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.captureInfo --> (
-    ms.captureInfo > node(frag("captureInfo")) (
-      rdf_type > ms.CaptureInfo,
-      objectMap(msxml.capturingDeviceType, ms.capturingDeviceType,
-        "studioEquipment" -> ms.studioEquipment,
-        "microphone" -> ms.microphone,
-        "closeTalkMicrophone" -> ms.closeTalkMicrophone,
-        "farfieldMicrophone" -> ms.farfieldMicrophone,
-        "lavalierMicrophone" -> ms.lavalierMicrophone,
-        "microphoneArray" -> ms.microphoneArray,
-        "embeddedMicrophone" -> ms.embeddedMicrophone,
-        "largeMembraneMicrophone" -> ms.largeMembraneMicrophone,
-        "laryngograph" -> ms.laryngograph,
-        "telephoneFixed" -> ms.telephoneFixed,
-        "telephoneMobile" -> ms.telephoneMobile,
-        "telephoneIP" -> ms.telephoneIP,
-        "camera" -> ms.camera,
-        "webcam" -> ms.webcam,
-        "other" -> ms.other
-        ),
-      stringMap(msxml.capturingDeviceTypeDetails, ms.capturingDeviceTypeDetails),
-      stringMap(msxml.capturingDetails, ms.capturingDetails),
-      objectMap(msxml.capturingEnvironment, ms.capturingEnvironment,
-        "complex" -> ms.complex,
-        "plain" -> ms.plain
-        ),
-      stringMap(msxml.sensorTechnology, ms.sensorTechnology),
-      objectMap(msxml.sceneIllumination, ms.sceneIllumination,
-        "daylight" -> ms.daylight,
-        "fix" -> ms.fix,
-        "multipleSources" -> ms.multipleSources,
-        "singleSource" -> ms.singleSource,
-        "variable" -> ms.variable,
-        "other" -> ms.other
-        ),
-      handle(msxml.personSourceSetInfo)
-    )
+    objectMap(msxml.capturingDeviceType, ms.capturingDeviceType,
+      "studioEquipment" -> ms.studioEquipment,
+      "microphone" -> ms.microphone,
+      "closeTalkMicrophone" -> ms.closeTalkMicrophone,
+      "farfieldMicrophone" -> ms.farfieldMicrophone,
+      "lavalierMicrophone" -> ms.lavalierMicrophone,
+      "microphoneArray" -> ms.microphoneArray,
+      "embeddedMicrophone" -> ms.embeddedMicrophone,
+      "largeMembraneMicrophone" -> ms.largeMembraneMicrophone,
+      "laryngograph" -> ms.laryngograph,
+      "telephoneFixed" -> ms.telephoneFixed,
+      "telephoneMobile" -> ms.telephoneMobile,
+      "telephoneIP" -> ms.telephoneIP,
+      "camera" -> ms.camera,
+      "webcam" -> ms.webcam,
+      "other" -> ms.other
+      ),
+    stringMap(msxml.capturingDeviceTypeDetails, ms.capturingDeviceTypeDetails),
+    stringMap(msxml.capturingDetails, ms.capturingDetails),
+    objectMap(msxml.capturingEnvironment, ms.capturingEnvironment,
+      "complex" -> ms.complex,
+      "plain" -> ms.plain
+      ),
+    stringMap(msxml.sensorTechnology, ms.sensorTechnology),
+    objectMap(msxml.sceneIllumination, ms.sceneIllumination,
+      "daylight" -> ms.daylight,
+      "fix" -> ms.fix,
+      "multipleSources" -> ms.multipleSources,
+      "singleSource" -> ms.singleSource,
+      "variable" -> ms.variable,
+      "other" -> ms.other
+      ),
+    handle(msxml.personSourceSetInfo)
   )
 
   msxml.personSourceSetInfo --> (
-    ms.personSourceSetInfo > node(frag("personSourceSetInfo")) (
-      rdf_type > ms.PersonSourceSetInfo,
-      intMap(msxml.numberOfPersons, ms.numberOfPersons),
-      objectMap(msxml.ageOfPersons, ms.ageOfPersons,
-        "child" -> ms.child,
-        "teenager" -> ms.teenager,
-        "adult" -> ms.adult,
-        "elderly" -> ms.elderly
-        ),
-      intMap(msxml.ageRangeStart, ms.ageRangeStart),
-      intMap(msxml.ageRangeEnd, ms.ageRangeEnd),
-      objectMap(msxml.sexOfPersons, ms.sexOfPersons,
-        "male" -> ms.male,
-        "female" -> ms.female,
-        "mixed" -> ms.mixed,
-        "unknown" -> ms.unknown
-        ),
-      objectMap(msxml.originOfPersons, ms.originOfPersons,
-        "native" -> ms.native,
-        "nonNative" -> ms.nonNative,
-        "mixed" -> ms.mixed,
-        "unknown" -> ms.unknown
-        ),
-      stringMap(msxml.dialectAccentOfPersons, ms.dialectAccentOfPersons),
-      stringMap(msxml.geographicDistributionOfPersons, ms.geographicDistributionOfPersons),
-      objectMap(msxml.hearingImpairmentOfPersons, ms.hearingImpairmentOfPersons,
-        "yes" -> ms.yes,
-        "no" -> ms.no,
-        "mixed" -> ms.mixed
-        ),
-      objectMap(msxml.speakingImpairmentOfPersons, ms.speakingImpairmentOfPersons,
-        "yes" -> ms.yes,
-        "no" -> ms.no,
-        "mixed" -> ms.mixed
-        ),
-      intMap(msxml.numberOfTrainedSpeakers, ms.numberOfTrainedSpeakers),
-      objectMap(msxml.speechInfluences, ms.speechInfluences,
-        "alcohol" -> ms.alcohol,
-        "sleepDeprivation" -> ms.sleepDeprivation,
-        "hyperbaric" -> ms.hyperbaric,
-        "medication" -> ms.medication,
-        "other" -> ms.other
-        ),
-      handle(msxml.participantInfo)
-    )
+    intMap(msxml.numberOfPersons, ms.numberOfPersons),
+    objectMap(msxml.ageOfPersons, ms.ageOfPersons,
+      "child" -> ms.child,
+      "teenager" -> ms.teenager,
+      "adult" -> ms.adult,
+      "elderly" -> ms.elderly
+      ),
+    intMap(msxml.ageRangeStart, ms.ageRangeStart),
+    intMap(msxml.ageRangeEnd, ms.ageRangeEnd),
+    objectMap(msxml.sexOfPersons, ms.sexOfPersons,
+      "male" -> ms.male,
+      "female" -> ms.female,
+      "mixed" -> ms.mixed,
+      "unknown" -> ms.unknown
+      ),
+    objectMap(msxml.originOfPersons, ms.originOfPersons,
+      "native" -> ms.native,
+      "nonNative" -> ms.nonNative,
+      "mixed" -> ms.mixed,
+      "unknown" -> ms.unknown
+      ),
+    stringMap(msxml.dialectAccentOfPersons, ms.dialectAccentOfPersons),
+    stringMap(msxml.geographicDistributionOfPersons, ms.geographicDistributionOfPersons),
+    objectMap(msxml.hearingImpairmentOfPersons, ms.hearingImpairmentOfPersons,
+      "yes" -> ms.yes,
+      "no" -> ms.no,
+      "mixed" -> ms.mixed
+      ),
+    objectMap(msxml.speakingImpairmentOfPersons, ms.speakingImpairmentOfPersons,
+      "yes" -> ms.yes,
+      "no" -> ms.no,
+      "mixed" -> ms.mixed
+      ),
+    intMap(msxml.numberOfTrainedSpeakers, ms.numberOfTrainedSpeakers),
+    objectMap(msxml.speechInfluences, ms.speechInfluences,
+      "alcohol" -> ms.alcohol,
+      "sleepDeprivation" -> ms.sleepDeprivation,
+      "hyperbaric" -> ms.hyperbaric,
+      "medication" -> ms.medication,
+      "other" -> ms.other
+      ),
+    handle(msxml.participantInfo)
   )
 
   msxml.settingInfo --> (
-    ms.settingInfo > node(frag("settingInfo")) (
-      rdf_type > ms.SettingInfo,
-      objectMap(msxml.naturality, ms.naturality,
-        "natural" -> ms.natural,
-        "planned" -> ms.planned,
-        "semiPlanned" -> ms.semiPlanned,
-        "readSpeech" -> ms.readSpeech,
-        "spontaneous" -> ms.spontaneous,
-        "elicited" -> ms.elicited,
-        "assisted" -> ms.assisted,
-        "prompted" -> ms.prompted,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.conversationalType, ms.conversationalType,
-        "monologue" -> ms.monologue,
-        "dialogue" -> ms.dialogue,
-        "multilogue" -> ms.multilogue
-        ),
-      objectMap(msxml.scenarioType, ms.scenarioType,
-        "frogStory" -> ms.frogStory,
-        "pearStory" -> ms.pearStory,
-        "mapTask" -> ms.mapTask,
-        "onlineEducationalGame" -> ms.onlineEducationalGame,
-        "pearStory" -> ms.pearStory,
-        "rolePlay" -> ms.rolePlay,
-        "wordGame" -> ms.wordGame,
-        "wizardOfOz" -> ms.wizardOfOz,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.audience, ms.audience,
-        "no" -> ms.no,
-        "few" -> ms.few,
-        "some" -> ms.some,
-        "largePublic" -> ms.largePublic
-        ),
-      objectMap(msxml.interactivity, ms.interactivity,
-        "interactive" -> ms.interactive,
-        "nonInteractive" -> ms.nonInteractive,
-        "semiInteractive" -> ms.semiInteractive,
-        "overlapping" -> ms.overlapping,
-        "other" -> ms.other
-        ),
-      stringMap(msxml.interaction, ms.interaction)
-    )
+    objectMap(msxml.naturality, ms.naturality,
+      "natural" -> ms.natural,
+      "planned" -> ms.planned,
+      "semiPlanned" -> ms.semiPlanned,
+      "readSpeech" -> ms.readSpeech,
+      "spontaneous" -> ms.spontaneous,
+      "elicited" -> ms.elicited,
+      "assisted" -> ms.assisted,
+      "prompted" -> ms.prompted,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.conversationalType, ms.conversationalType,
+      "monologue" -> ms.monologue,
+      "dialogue" -> ms.dialogue,
+      "multilogue" -> ms.multilogue
+      ),
+    objectMap(msxml.scenarioType, ms.scenarioType,
+      "frogStory" -> ms.frogStory,
+      "pearStory" -> ms.pearStory,
+      "mapTask" -> ms.mapTask,
+      "onlineEducationalGame" -> ms.onlineEducationalGame,
+      "pearStory" -> ms.pearStory,
+      "rolePlay" -> ms.rolePlay,
+      "wordGame" -> ms.wordGame,
+      "wizardOfOz" -> ms.wizardOfOz,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.audience, ms.audience,
+      "no" -> ms.no,
+      "few" -> ms.few,
+      "some" -> ms.some,
+      "largePublic" -> ms.largePublic
+      ),
+    objectMap(msxml.interactivity, ms.interactivity,
+      "interactive" -> ms.interactive,
+      "nonInteractive" -> ms.nonInteractive,
+      "semiInteractive" -> ms.semiInteractive,
+      "overlapping" -> ms.overlapping,
+      "other" -> ms.other
+      ),
+    stringMap(msxml.interaction, ms.interaction)
   )
 
   msxml.runningEnvironmentInfo --> (
-    ms.runningEnvironmentInfo > node(frag("runningEnvironmentInfo")) (
-      rdf_type > ms.RunningEnvironmentInfo,
-      handle(msxml.requiredSoftware),
-      objectMap(msxml.requiredHardware, ms.requiredHardware,
-        "graphicCard" -> ms.graphicCard,
-        "microphone" -> ms.microphone,
-        "ocrSystem" -> ms.ocrSystem,
-        "specialHardwareEquipment" -> ms.specialHardwareEquipment,
-        "none" -> ms.none,
-        "other" -> ms.other
-        ),
-      handle(msxml.requiredLRs),
-      stringMap(msxml.runningEnvironmentDetails, ms.runningEnvironmentDetails)
-    )
+    handle(msxml.requiredSoftware),
+    objectMap(msxml.requiredHardware, ms.requiredHardware,
+      "graphicCard" -> ms.graphicCard,
+      "microphone" -> ms.microphone,
+      "ocrSystem" -> ms.ocrSystem,
+      "specialHardwareEquipment" -> ms.specialHardwareEquipment,
+      "none" -> ms.none,
+      "other" -> ms.other
+      ),
+    handle(msxml.requiredLRs),
+    stringMap(msxml.runningEnvironmentDetails, ms.runningEnvironmentDetails)
   )
 
   msxml.requiredSoftware --> (
@@ -853,59 +821,56 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.recordingInfo --> (
-    ms.recordingInfo > node(frag("recordingInfo")) (
-      rdf_type > ms.RecordingInfo,
-      objectMap(msxml.recordingDeviceType, ms.recordingDeviceType,
-        "hardDisk" -> ms.hardDisk,
-        "dv" -> ms.dv,
-        "tapeVHS" -> ms.tapeVHS,
-        "flash" -> ms.flash,
-        "DAT" -> ms.DAT,
-        "soundBlasterCard" -> ms.soundBlasterCard,
-        "other" -> ms.other
-        ),
-      stringMap(msxml.recordingDeviceTypeDetails, ms.recordingDeviceTypeDetails),
-      stringMap(msxml.recordingPlatformSoftware, ms.recordingPlatformSoftware),
-      objectMap(msxml.recordingEnvironment, ms.recordingEnvironment,
-        "office" -> ms.office,
-        "inCar" -> ms.inCar,
-        "studio" -> ms.studio,
-        "conferenceRoom" -> ms.conferenceRoom,
-        "lectureRoom" -> ms.lectureRoom,
-        "industrial" -> ms.industrial,
-        "transport" -> ms.transport,
-        "openPublicPlace" -> ms.openPublicPlace,
-        "closedPublicPlace" -> ms.closedPublicPlace,
-        "anechoicChamber" -> ms.anechoicChamber,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.sourceChannel, ms.sourceChannel,
-        "internet" -> ms.internet,
-        "radio" -> ms.radio,
-        "tv" -> ms.tv,
-        "telephone" -> ms.telephone,
-        "laryngograph" -> ms.laryngograph,
-        "airflow" -> ms.airflow,
-        "EMA" -> ms.EMA,
-        "webCam" -> ms.webCam,
-        "camcorder" -> ms.camcorder,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.sourceChannelType, ms.sourceChannelType,
-        "ISDN" -> ms.ISDN,
-        "GSM" -> ms.GSM,
-        "3G" -> ms.`3G`,
-        "CDMA" -> ms.CDMA,
-        "DVB-T" -> ms.T,
-        "DVB-S" -> ms.S,
-        "DVB-C" -> ms.C,
-        "VOIP" -> ms.VOIP,
-        "other" -> ms.other
-        ),
-      stringMap(msxml.sourceChannelName, ms.sourceChannelName),
-      stringMap(msxml.sourceChannelDetails, ms.sourceChannelDetails),
-      handle(msxml.recorder)
-    )
+    objectMap(msxml.recordingDeviceType, ms.recordingDeviceType,
+      "hardDisk" -> ms.hardDisk,
+      "dv" -> ms.dv,
+      "tapeVHS" -> ms.tapeVHS,
+      "flash" -> ms.flash,
+      "DAT" -> ms.DAT,
+      "soundBlasterCard" -> ms.soundBlasterCard,
+      "other" -> ms.other
+      ),
+    stringMap(msxml.recordingDeviceTypeDetails, ms.recordingDeviceTypeDetails),
+    stringMap(msxml.recordingPlatformSoftware, ms.recordingPlatformSoftware),
+    objectMap(msxml.recordingEnvironment, ms.recordingEnvironment,
+      "office" -> ms.office,
+      "inCar" -> ms.inCar,
+      "studio" -> ms.studio,
+      "conferenceRoom" -> ms.conferenceRoom,
+      "lectureRoom" -> ms.lectureRoom,
+      "industrial" -> ms.industrial,
+      "transport" -> ms.transport,
+      "openPublicPlace" -> ms.openPublicPlace,
+      "closedPublicPlace" -> ms.closedPublicPlace,
+      "anechoicChamber" -> ms.anechoicChamber,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.sourceChannel, ms.sourceChannel,
+      "internet" -> ms.internet,
+      "radio" -> ms.radio,
+      "tv" -> ms.tv,
+      "telephone" -> ms.telephone,
+      "laryngograph" -> ms.laryngograph,
+      "airflow" -> ms.airflow,
+      "EMA" -> ms.EMA,
+      "webCam" -> ms.webCam,
+      "camcorder" -> ms.camcorder,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.sourceChannelType, ms.sourceChannelType,
+      "ISDN" -> ms.ISDN,
+      "GSM" -> ms.GSM,
+      "3G" -> ms.`3G`,
+      "CDMA" -> ms.CDMA,
+      "DVB-T" -> ms.`DVB-T`,
+      "DVB-S" -> ms.`DVB-S`,
+      "DVB-C" -> ms.`DVB-C`,
+      "VOIP" -> ms.VOIP,
+      "other" -> ms.other
+      ),
+    stringMap(msxml.sourceChannelName, ms.sourceChannelName),
+    stringMap(msxml.sourceChannelDetails, ms.sourceChannelDetails),
+    handle(msxml.recorder)
   )
 
   msxml.recorder --> (
@@ -928,25 +893,22 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.compressionInfo --> (
-    ms.compressionInfo > node(frag("compressionInfo")) (
-      rdf_type > ms.CompressionInfo,
-      boolMap(msxml.compression, ms.compression),
-      objectMap(msxml.compressionName, ms.compressionName,
-        "mpg" -> ms.mpg,
-        "avi" -> ms.avi,
-        "mov" -> ms.mov,
-        "flac" -> ms.flac,
-        "shorten" -> ms.shorten,
-        "mp3" -> ms.mp3,
-        "oggVorbis" -> ms.oggVorbis,
-        "atrac" -> ms.atrac,
-        "aac" -> ms.aac,
-        "mpeg" -> ms.mpeg,
-        "realAudio" -> ms.realAudio,
-        "other" -> ms.other
-        ),
-      boolMap(msxml.compressionLoss, ms.compressionLoss)
-    )
+    boolMap(msxml.compression, ms.compression),
+    objectMap(msxml.compressionName, ms.compressionName,
+      "mpg" -> ms.mpg,
+      "avi" -> ms.avi,
+      "mov" -> ms.mov,
+      "flac" -> ms.flac,
+      "shorten" -> ms.shorten,
+      "mp3" -> ms.mp3,
+      "oggVorbis" -> ms.oggVorbis,
+      "atrac" -> ms.atrac,
+      "aac" -> ms.aac,
+      "mpeg" -> ms.mpeg,
+      "realAudio" -> ms.realAudio,
+      "other" -> ms.other
+      ),
+    boolMap(msxml.compressionLoss, ms.compressionLoss)
   )
 
   msxml.linkToOtherMediaInfo --> (
@@ -1026,7 +988,7 @@ object Metashare extends ModelWithMappings {
   // Derived from META-SHARE-SimpleTypes.xsd
   
   def sizeInfoType = {
-    (rdf_type > ms.SizeInfoType) ++
+    (rdf_type > ms.Size) ++
     stringMap(msxml.size, ms.size) ++
     objectMap(msxml.sizeUnit, ms.sizeUnit,
       "terms" -> ms.terms,
@@ -1481,21 +1443,18 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.lingualityInfo --> (
-    ms.lingualityInfo > node(frag("lingualityInfo")) (
-      rdf_type > ms.LingualityInfo,
-      objectMap(msxml.lingualityType, ms.lingualityType,
-        "monolingual" -> ms.monolingual,
-        "bilingual" -> ms.bilingual,
-        "multilingual" -> ms.multilingual
-        ),
-      objectMap(msxml.multilingualityType, ms.multilingualityType,
-        "parallel" -> ms.parallel,
-        "comparable" -> ms.comparable,
-        "multilingualSingleText" -> ms.multilingualSingleText,
-        "other" -> ms.other
-        ),
-      stringMap(msxml.multilingualityTypeDetails, ms.multilingualityTypeDetails)
-    )
+    objectMap(msxml.lingualityType, ms.lingualityType,
+      "monolingual" -> ms.monolingual,
+      "bilingual" -> ms.bilingual,
+      "multilingual" -> ms.multilingual
+      ),
+    objectMap(msxml.multilingualityType, ms.multilingualityType,
+      "parallel" -> ms.parallel,
+      "comparable" -> ms.comparable,
+      "multilingualSingleText" -> ms.multilingualSingleText,
+      "other" -> ms.other
+      ),
+    stringMap(msxml.multilingualityTypeDetails, ms.multilingualityTypeDetails)
   )
 
   msxml.languageVarietyInfo --> (
@@ -1543,13 +1502,11 @@ object Metashare extends ModelWithMappings {
   // Derived from META-SHARE-LicenseMetadata.xsd
   
   msxml.distributionInfo --> (
-    ms.distributionInfo > node(frag("distributionInfo")) (
-      rdf_type > ms.DistributionInfo,
-      rdf_type > dcat.Distribution,
+    dcat.distribution > node(frag("distribution")) (
       objectMap(msxml.availability, ms.availability,
         "available-unrestrictedUse" -> ms.`available-unrestrictedUse`,
         "available-restrictedUse" -> ms.`available-restrictedUse`,
-        "notAvailableThroughMetaShare" -> ms.notAvailableThroughMetaShare,
+        "notAvailableThroughMetaShare" -> ms.availableThroughOtherDistributors,
         "underNegotiation" -> ms.underNegotiation
         ),
       handle(msxml.licenceInfo),
@@ -1624,8 +1581,8 @@ object Metashare extends ModelWithMappings {
         "underNegotiation" -> ms.`underNegotiation`,
         "other" -> ms.`other`
         ),
-      handle(msxml.restrictionsOfUse),
-/*      objectMap(msxml.restrictionsOfUse, ms.restrictionsOfUse,
+      //handle(msxml.restrictionsOfUse),
+      objectMap(msxml.restrictionsOfUse, ms.conditionsOfUse,
         "informLicensor" -> ms.informLicensor,
         "redeposit" -> ms.redeposit,
         "onlyMSmembers" -> ms.onlyMSmembers,
@@ -1637,7 +1594,7 @@ object Metashare extends ModelWithMappings {
         "noDerivatives" -> ms.noDerivatives,
         "noRedistribution" -> ms.noRedistribution,
         "other" -> ms.other
-        ),*/
+      ),
       dataMap(msxml.distributionAccessMedium, odrl.deliveryChannel,
         "webExecutable" -> "Web Executable",
         "paperCopy" -> "Paper Copy",
@@ -1662,119 +1619,119 @@ object Metashare extends ModelWithMappings {
     )
   )
 
-  msxml.restrictionsOfUse.when(content === "informLicensor") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.duty > node(frag("duty")) (
-        rdf_type > odrl.Duty,
-        odrl.action > cc.Notify
-      )
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "redeposit") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.duty > node(frag("duty")) (
-        rdf_type > odrl.Duty,
-        odrl.action > ms.redeposit
-      )
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "onlyMSmembers") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.constraint > node(frag("constraint")) (
-        rdf_type > odrl.Constraint,
-        odrl.operator > (odrl + "eq"),
-        // Is this the right property??
-        odrl.recipient > ms.onlyMSmembers
-      )
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "academic-nonCommercialUse") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.constraint > node(frag("constraint")) (
-        rdf_type > odrl.Constraint,
-        odrl.operator > (odrl + "eq"),
-        odrl.purpose > ms.academicUse
-      )
-    ),
-    odrl.prohibition > node(frag("prohibition")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Prohibition,
-      odrl.action > cc.CommercialUse,
-      odrl.action > cc.Distribution
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "evaluationUse") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.constraint > node(frag("constraint")) (
-        rdf_type > odrl.Constraint
-        // What are the triples here?
-      )
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "commercialUse") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      // Is this correct?
-      odrl.action > cc.CommercialUse
-    )
-  )
-  
-  msxml.restrictionsOfUse.when(content === "attribution") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.duty > node(frag("duty")) (
-        rdf_type > odrl.Duty,
-        odrl.action > cc.Attribution
-      )
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "shareAlike") --> (
-    odrl.permission > node(frag("permission")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Permission,
-      odrl.duty > node(frag("duty")) (
-        rdf_type > odrl.Duty,
-        odrl.action > cc.ShareALike
-      )
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "noDerivatives") --> (
-    odrl.prohibition > node(frag("prohibition")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Prohibition,
-      odrl.action > cc.DerivativeWorks
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "noRedistribution") --> (
-    odrl.prohibition > node(frag("prohibition")) (
-      rdf_type > ms.RestrictionsOfUse,
-      rdf_type > odrl.Prohibition,
-      odrl.action > cc.Reproduction
-    )
-  )
-
-  msxml.restrictionsOfUse.when(content === "other") --> (
-  )
+//  msxml.restrictionsOfUse.when(content === "informLicensor") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.duty > node(frag("duty")) (
+//        rdf_type > odrl.Duty,
+//        odrl.action > cc.Notify
+//      )
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "redeposit") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.duty > node(frag("duty")) (
+//        rdf_type > odrl.Duty,
+//        odrl.action > ms.redeposit
+//      )
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "onlyMSmembers") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.constraint > node(frag("constraint")) (
+//        rdf_type > odrl.Constraint,
+//        odrl.operator > (odrl + "eq"),
+//        // Is this the right property??
+//        odrl.recipient > ms.onlyMSmembers
+//      )
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "academic-nonCommercialUse") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.constraint > node(frag("constraint")) (
+//        rdf_type > odrl.Constraint,
+//        odrl.operator > (odrl + "eq"),
+//        odrl.purpose > ms.academicUse
+//      )
+//    ),
+//    odrl.prohibition > node(frag("prohibition")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Prohibition,
+//      odrl.action > cc.CommercialUse,
+//      odrl.action > cc.Distribution
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "evaluationUse") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.constraint > node(frag("constraint")) (
+//        rdf_type > odrl.Constraint
+//        // What are the triples here?
+//      )
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "commercialUse") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      // Is this correct?
+//      odrl.action > cc.CommercialUse
+//    )
+//  )
+//  
+//  msxml.restrictionsOfUse.when(content === "attribution") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.duty > node(frag("duty")) (
+//        rdf_type > odrl.Duty,
+//        odrl.action > cc.Attribution
+//      )
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "shareAlike") --> (
+//    odrl.permission > node(frag("permission")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Permission,
+//      odrl.duty > node(frag("duty")) (
+//        rdf_type > odrl.Duty,
+//        odrl.action > cc.ShareALike
+//      )
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "noDerivatives") --> (
+//    odrl.prohibition > node(frag("prohibition")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Prohibition,
+//      odrl.action > cc.DerivativeWorks
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "noRedistribution") --> (
+//    odrl.prohibition > node(frag("prohibition")) (
+//      rdf_type > ms.ConditionsOfUse,
+//      rdf_type > odrl.Prohibition,
+//      odrl.action > cc.Reproduction
+//    )
+//  )
+//
+//  msxml.restrictionsOfUse.when(content === "other") --> (
+//  )
 
   msxml.licensor --> (
     ms.licensor > node(frag("licensor")) (
@@ -1791,18 +1748,15 @@ object Metashare extends ModelWithMappings {
   // Derived from META-SHARE-RoleTypes.xsd
 
   msxml.communicationInfo --> (
-    ms.communicationInfo > node(frag("communicationInfo")) (
-      rdf_type > ms.CommunicationInfo,
-      stringMap(msxml.email, ms.email),
-      linkMap(msxml.url, ms.url),
-      stringMap(msxml.address, ms.address),
-      stringMap(msxml.zipCode, ms.zipCode),
-      stringMap(msxml.city, ms.city),
-      stringMap(msxml.region, ms.region),
-      stringMap(msxml.country, ms.country),
-      stringMap(msxml.telephoneNumber, ms.telephoneNumber),
-      stringMap(msxml.faxNumber, ms.faxNumber)
-    )
+    stringMap(msxml.email, ms.email),
+    linkMap(msxml.url, ms.url),
+    stringMap(msxml.address, ms.address),
+    stringMap(msxml.zipCode, ms.zipCode),
+    stringMap(msxml.city, ms.city),
+    stringMap(msxml.region, ms.region),
+    stringMap(msxml.country, ms.country),
+    stringMap(msxml.telephoneNumber, ms.telephoneNumber),
+    stringMap(msxml.faxNumber, ms.faxNumber)
   )
 
   msxml.organizationInfo --> (
@@ -1812,7 +1766,7 @@ object Metashare extends ModelWithMappings {
   )
   
   def organizationInfoType = (
-      (rdf_type > ms.OrganizationInfoType) ++
+      (rdf_type > ms.Organization) ++
       langStringMap(msxml.organizationName, ms.organizationName) ++
       langStringMap(msxml.organizationShortName, ms.organizationShortName) ++
       langStringMap(msxml.departmentName, ms.departmentName) ++
@@ -1834,7 +1788,7 @@ object Metashare extends ModelWithMappings {
   )
 
   def personInfoType = 
-      (rdf_type > ms.PersonInfoType) ++
+      (rdf_type > ms.Person) ++
       (rdf_type > foaf.Person) ++
       langStringMap(msxml.surname, foaf.surname) ++
       langStringMap(msxml.givenName, foaf.givenName) ++
@@ -1864,7 +1818,7 @@ object Metashare extends ModelWithMappings {
   // Derived from META-SHARE-UsageMetadata.xsd
   
   def projectInfoType = 
-    (rdf_type > ms.ProjectInfoType) ++
+    (rdf_type > ms.Project) ++
     langStringMap(msxml.projectName, ms.projectName) ++
     langStringMap(msxml.projectShortName, ms.projectShortName) ++
     stringMap(msxml.projectID, ms.projectID) ++
@@ -1881,13 +1835,10 @@ object Metashare extends ModelWithMappings {
     dateMap(msxml.projectEndDate, ms.projectEndDate)
 
   msxml.usageInfo --> (
-    ms.usageInfo > node(frag("usageInfo")) (
-      rdf_type > ms.UsageInfo,
-      handle(msxml.accessTool),
-      handle(msxml.resourceAssociatedWith),
-      handle(msxml.foreseenUseInfo),
-      handle(msxml.actualUseInfo)
-    )
+    handle(msxml.accessTool),
+    handle(msxml.resourceAssociatedWith),
+    handle(msxml.foreseenUseInfo),
+    handle(msxml.actualUseInfo)
   )
 
   msxml.accessTool --> (
@@ -1901,7 +1852,7 @@ object Metashare extends ModelWithMappings {
   msxml.foreseenUseInfo --> (
     ms.foreseenUseInfo > node(frag("foreseenUseInfo")) (
       rdf_type > ms.ForeseenUseInfo,
-      objectMap(msxml.foreseenUse, ms.foreseenUse,
+      objectMap(msxml.foreseenUse, ms.use,
         "humanUse" -> ms.humanUse,
         "nlpApplications" -> ms.nlpApplications
         ),
@@ -1912,7 +1863,7 @@ object Metashare extends ModelWithMappings {
   msxml.actualUseInfo --> (
     ms.actualUseInfo > node(frag("actualUseInfo")) (
       rdf_type > ms.ActualUseInfo,
-      objectMap(msxml.actualUse, ms.actualUse,
+      objectMap(msxml.actualUse, ms.use,
         "humanUse" -> ms.humanUse,
         "nlpApplications" -> ms.nlpApplications
         ),
@@ -1973,22 +1924,27 @@ object Metashare extends ModelWithMappings {
   // Derived from resourceTypes/languageDescription.xsd
 
   msxml.relatedLexiconInfo --> (
-    ms.relatedLexiconInfo > node(frag("relatedLexiconInfo")) (
-      rdf_type > ms.RelatedLexiconInfo,
-      objectMap(msxml.relatedLexiconType, ms.relatedLexiconType,
-        "included" -> ms.included,
-        "attached" -> ms.attached,
-        "compatible" -> ms.compatible,
-        "none" -> ms.none
-        ),
-      stringMap(msxml.attachedLexiconPosition, ms.attachedLexiconPosition),
-      objectMap(msxml.compatibleLexiconType, ms.compatibleLexiconType,
+    objectMap(msxml.relatedLexiconType, ms.relatedLexiconType,
+      "included" -> ms.included,
+      "attached" -> ms.attached,
+      "compatible" -> ms.compatible,
+      "none" -> ms.none
+      ),
+    stringMap(msxml.attachedLexiconPosition, ms.attachedLexiconPosition),
+    objectMap(msxml.compatibleLexiconType, ms.compatibleLexiconType,
+        "wordList" -> ms.wordlist,
+        "computationalLexicon" -> ms.computationalLexicon,
+        "ontology" -> ms.ontology,
         "wordnet" -> ms.wordnet,
+        "thesaurus" -> ms.thesaurus,
+        "framenet" -> ms.framenet,
+        "terminologicalResource" -> ms.terminologicalResource,
+        "machineReadableDictionary" -> ms.machineReadableDictionary,
+        "lexicon" -> ms.lexicon,
         "wordlist" -> ms.wordlist,
         "morphologicalLexicon" -> ms.morphologicalLexicon,
         "other" -> ms.other
-        )
-    )
+      )
   )
 
   msxml.languageDescriptionInfo --> (
@@ -2009,67 +1965,55 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.languageDescriptionMediaType --> (
-    ms.languageDescriptionMediaType > node(frag("languageDescriptionMediaType")) (
-      rdf_type > ms.LanguageDescriptionMediaType,
-      handle(msxml.languageDescriptionTextInfo),
-      handle(msxml.languageDescriptionVideoInfo),
-      handle(msxml.languageDescriptionImageInfo)
-    )
+    handle(msxml.languageDescriptionTextInfo),
+    handle(msxml.languageDescriptionVideoInfo),
+    handle(msxml.languageDescriptionImageInfo)
   )
 
   msxml.languageDescriptionEncodingInfo --> (
-    ms.languageDescriptionEncodingInfo > node(frag("languageDescriptionEncodingInfo")) (
-      rdf_type > ms.LanguageDescriptionEncodingInfo,
-      objectMap(msxml.encodingLevel, ms.encodingLevel,
-        "phonetics" -> ms.phonetics,
-        "phonology" -> ms.phonology,
-        "semantics" -> ms.semantics,
-        "morphology" -> ms.morphology,
-        "syntax" -> ms.syntax,
-        "pragmatics" -> ms.pragmatics,
-        "other" -> ms.other
-        ),
-      handle(msxml.conformanceToStandardsBestPractices),
-      stringMap(msxml.theoreticModel, ms.theoreticModel),
-      handle(msxml.formalism),
-      objectMap(msxml.task, ms.task,
-        "anaphoraResolution" -> ms.anaphoraResolution,
-        "chunking" -> ms.chunking,
-        "parsing" -> ms.parsing,
-        "npRecognition" -> ms.npRecognition,
-        "titlesParsing" -> ms.titlesParsing,
-        "definitionsParsing" -> ms.definitionsParsing,
-        "analysis" -> ms.analysis,
-        "generation" -> ms.generation,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.grammaticalPhenomenaCoverage, ms.grammaticalPhenomenaCoverage,
-        "clauseStructure" -> ms.clauseStructure,
-        "ppAttachment" -> ms.ppAttachment,
-        "npStructure" -> ms.npStructure,
-        "coordination" -> ms.coordination,
-        "anaphora" -> ms.anaphora,
-        "other" -> ms.other
-        ),
-      boolMap(msxml.weightedGrammar, ms.weightedGrammar)
-    )
+    objectMap(msxml.encodingLevel, ms.encodingLevel,
+      "phonetics" -> ms.phonetics,
+      "phonology" -> ms.phonology,
+      "semantics" -> ms.semantics,
+      "morphology" -> ms.morphology,
+      "syntax" -> ms.syntax,
+      "pragmatics" -> ms.pragmatics,
+      "other" -> ms.other
+      ),
+    handle(msxml.conformanceToStandardsBestPractices),
+    stringMap(msxml.theoreticModel, ms.theoreticModel),
+    handle(msxml.formalism),
+    objectMap(msxml.task, ms.task,
+      "anaphoraResolution" -> ms.anaphoraResolution,
+      "chunking" -> ms.chunking,
+      "parsing" -> ms.parsing,
+      "npRecognition" -> ms.npRecognition,
+      "titlesParsing" -> ms.titlesParsing,
+      "definitionsParsing" -> ms.definitionsParsing,
+      "analysis" -> ms.analysis,
+      "generation" -> ms.generation,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.grammaticalPhenomenaCoverage, ms.grammaticalPhenomenaCoverage,
+      "clauseStructure" -> ms.clauseStructure,
+      "ppAttachment" -> ms.ppAttachment,
+      "npStructure" -> ms.npStructure,
+      "coordination" -> ms.coordination,
+      "anaphora" -> ms.anaphora,
+      "other" -> ms.other
+      ),
+    boolMap(msxml.weightedGrammar, ms.weightedGrammar)
   )
 
   msxml.languageDescriptionOperationInfo --> (
-    ms.languageDescriptionOperationInfo > node(frag("languageDescriptionOperationInfo")) (
-      rdf_type > ms.LanguageDescriptionOperationInfo,
-      handle(msxml.runningEnvironmentInfo),
-      handle(msxml.relatedLexiconInfo)
-    )
+    handle(msxml.runningEnvironmentInfo),
+    handle(msxml.relatedLexiconInfo)
   )
 
   msxml.languageDescriptionPerformanceInfo --> (
-    ms.languageDescriptionPerformanceInfo > node(frag("languageDescriptionPerformanceInfo")) (
-      rdf_type > ms.LanguageDescriptionPerformanceInfo,
-      stringMap(msxml.robustness, ms.robustness),
-      stringMap(msxml.shallowness, ms.shallowness),
-      stringMap(msxml.output, ms.output)
-    )
+    stringMap(msxml.robustness, ms.robustness),
+    stringMap(msxml.shallowness, ms.shallowness),
+    stringMap(msxml.output, ms.output)
   )
 
   // Derived from resourceTypes/lexicalConceptualResources.xsd
@@ -2082,6 +2026,7 @@ object Metashare extends ModelWithMappings {
       objectMap(msxml.lexicalConceptualResourceType, ms.lexicalConceptualResourceType,
         "wordList" -> ms.wordList,
         "computationalLexicon" -> ms.computationalLexicon,
+        "morphologicalLexicon" -> ms.morphologicalLexicon,
         "ontology" -> ms.ontology,
         "wordnet" -> ms.wordnet,
         "thesaurus" -> ms.thesaurus,
@@ -2098,95 +2043,89 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.lexicalConceptualResourceMediaType --> (
-    ms.lexicalConceptualResourceMediaType > node(frag("lexicalConceptualResourceMediaType")) (
-      rdf_type > ms.LexicalConceptualResourceMediaType,
-      handle(msxml.lexicalConceptualResourceTextInfo),
-      handle(msxml.lexicalConceptualResourceAudioInfo),
-      handle(msxml.lexicalConceptualResourceVideoInfo),
-      handle(msxml.lexicalConceptualResourceImageInfo)
-    )
+    handle(msxml.lexicalConceptualResourceTextInfo),
+    handle(msxml.lexicalConceptualResourceAudioInfo),
+    handle(msxml.lexicalConceptualResourceVideoInfo),
+    handle(msxml.lexicalConceptualResourceImageInfo)
   )
 
   msxml.lexicalConceptualResourceEncodingInfo --> (
-    ms.lexicalConceptualResourceEncodingInfo > node(frag("lexicalConceptualResourceEncodingInfo")) (
-      rdf_type > ms.LexicalConceptualResourceEncodingInfo,
-      objectMap(msxml.encodingLevel, ms.encodingLevel,
-        "phonetics" -> ms.phonetics,
-        "phonology" -> ms.phonology,
-        "semantics" -> ms.semantics,
-        "morphology" -> ms.morphology,
-        "syntax" -> ms.syntax,
-        "pragmatics" -> ms.pragmatics,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.linguisticInformation, ms.linguisticInformation,
-        "accentuation" -> ms.`accentuation`,
-        "lemma" -> ms.`lemma`,
-        "lemma-MultiWordUnits" -> ms.`lemma-MultiWordUnits`,
-        "lemma-Variants" -> ms.`lemma-Variants`,
-        "lemma-Abbreviations" -> ms.`lemma-Abbreviations`,
-        "lemma-Compounds" -> ms.`lemma-Compounds`,
-        "lemma-CliticForms" -> ms.`lemma-CliticForms`,
-        "partOfSpeech" -> ms.`partOfSpeech`,
-        "morpho-Case" -> ms.`morpho-Case`,
-        "morpho-Gender" -> ms.`morpho-Gender`,
-        "morpho-Number" -> ms.`morpho-Number`,
-        "morpho-Degree" -> ms.`morpho-Degree`,
-        "morpho-IrregularForms" -> ms.`morpho-IrregularForms`,
-        "morpho-Mood" -> ms.`morpho-Mood`,
-        "morpho-Tense" -> ms.`morpho-Tense`,
-        "morpho-Person" -> ms.`morpho-Person`,
-        "morpho-Aspect" -> ms.`morpho-Aspect`,
-        "morpho-Voice" -> ms.`morpho-Voice`,
-        "morpho-Auxiliary" -> ms.`morpho-Auxiliary`,
-        "morpho-Inflection" -> ms.`morpho-Inflection`,
-        "morpho-Reflexivity" -> ms.`morpho-Reflexivity`,
-        "syntax-SubcatFrame" -> ms.`syntax-SubcatFrame`,
-        "semantics-Traits" -> ms.`semantics-Traits`,
-        "semantics-SemanticClass" -> ms.`semantics-SemanticClass`,
-        "semantics-CrossReferences" -> ms.`semantics-CrossReferences`,
-        "semantics-Relations" -> ms.`semantics-Relations`,
-        "semantics-Relations-Hyponyms" -> ms.`semantics-Relations-Hyponyms`,
-        "semantics-Relations-Hyperonyms" -> ms.`semantics-Relations-Hyperonyms`,
-        "semantics-Relations-Synonyms" -> ms.`semantics-Relations-Synonyms`,
-        "semantics-Relations-Antonyms" -> ms.`semantics-Relations-Antonyms`,
-        "semantics-Relations-Troponyms" -> ms.`semantics-Relations-Troponyms`,
-        "semantics-Relations-Meronyms" -> ms.`semantics-Relations-Meronyms`,
-        "usage-Frequency" -> ms.`usage-Frequency`,
-        "usage-Register" -> ms.`usage-Register`,
-        "usage-Collocations" -> ms.`usage-Collocations`,
-        "usage-Examples" -> ms.`usage-Examples`,
-        "usage-Notes" -> ms.`usage-Notes`,
-        "definition/gloss" -> ms.`definition-gloss`,
-        "translationEquivalent" -> ms.`translationEquivalent`,
-        "phonetics-Transcription" -> ms.`phonetics-Transcription`,
-        "semantics-Domain" -> ms.`semantics-Domain`,
-        "semantics-EventType" -> ms.`semantics-EventType`,
-        "semantics-SemanticRoles" -> ms.`semantics-SemanticRoles`,
-        "statisticalProperties" -> ms.`statisticalProperties`,
-        "morpho-Derivation" -> ms.`morpho-Derivation`,
-        "semantics-QualiaStructure" -> ms.`semantics-QualiaStructure`,
-        "syntacticoSemanticLinks" -> ms.`syntacticoSemanticLinks`,
-        "other" -> ms.other
-        ),
-      handle(msxml.conformanceToStandardsBestPractices),
-      stringMap(msxml.theoreticModel, ms.theoreticModel),
-      stringMap(msxml.externalRef, ms.externalRef),
-      objectMap(msxml.extratextualInformation, ms.extratextualInformation,
-        "images" -> ms.images,
-        "videos" -> ms.videos,
-        "soundRecordings" -> ms.soundRecordings,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.extraTextualInformationUnit, ms.extraTextualInformationUnit,
-        "word" -> ms.word,
-        "lemma" -> ms.lemma,
-        "semantics" -> ms.semantics,
-        "example" -> ms.example,
-        "syntax" -> ms.syntax,
-        "lexicalUnit" -> ms.lexicalUnit,
-        "other" -> ms.other
-        )
+    objectMap(msxml.encodingLevel, ms.encodingLevel,
+      "phonetics" -> ms.phonetics,
+      "phonology" -> ms.phonology,
+      "semantics" -> ms.semantics,
+      "morphology" -> ms.morphology,
+      "syntax" -> ms.syntax,
+      "pragmatics" -> ms.pragmatics,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.linguisticInformation, ms.linguisticInformation,
+      "accentuation" -> ms.`accentuation`,
+      "lemma" -> ms.`lemma`,
+      "lemma-MultiWordUnits" -> ms.`lemma-MultiWordUnits`,
+      "lemma-Variants" -> ms.`lemma-Variants`,
+      "lemma-Abbreviations" -> ms.`lemma-Abbreviations`,
+      "lemma-Compounds" -> ms.`lemma-Compounds`,
+      "lemma-CliticForms" -> ms.`lemma-CliticForms`,
+      "partOfSpeech" -> ms.`partOfSpeech`,
+      "morpho-Case" -> ms.`morpho-Case`,
+      "morpho-Gender" -> ms.`morpho-Gender`,
+      "morpho-Number" -> ms.`morpho-Number`,
+      "morpho-Degree" -> ms.`morpho-Degree`,
+      "morpho-IrregularForms" -> ms.`morpho-IrregularForms`,
+      "morpho-Mood" -> ms.`morpho-Mood`,
+      "morpho-Tense" -> ms.`morpho-Tense`,
+      "morpho-Person" -> ms.`morpho-Person`,
+      "morpho-Aspect" -> ms.`morpho-Aspect`,
+      "morpho-Voice" -> ms.`morpho-Voice`,
+      "morpho-Auxiliary" -> ms.`morpho-Auxiliary`,
+      "morpho-Inflection" -> ms.`morpho-Inflection`,
+      "morpho-Reflexivity" -> ms.`morpho-Reflexivity`,
+      "syntax-SubcatFrame" -> ms.`syntax-SubcatFrame`,
+      "semantics-Traits" -> ms.`semantics-Traits`,
+      "semantics-SemanticClass" -> ms.`semantics-SemanticClass`,
+      "semantics-CrossReferences" -> ms.`semantics-CrossReferences`,
+      "semantics-Relations" -> ms.`semantics-Relations`,
+      "semantics-Relations-Hyponyms" -> ms.`semantics-Relations-Hyponyms`,
+      "semantics-Relations-Hyperonyms" -> ms.`semantics-Relations-Hyperonyms`,
+      "semantics-Relations-Synonyms" -> ms.`semantics-Relations-Synonyms`,
+      "semantics-Relations-Antonyms" -> ms.`semantics-Relations-Antonyms`,
+      "semantics-Relations-Troponyms" -> ms.`semantics-Relations-Troponyms`,
+      "semantics-Relations-Meronyms" -> ms.`semantics-Relations-Meronyms`,
+      "usage-Frequency" -> ms.`usage-Frequency`,
+      "usage-Register" -> ms.`usage-Register`,
+      "usage-Collocations" -> ms.`usage-Collocations`,
+      "usage-Examples" -> ms.`usage-Examples`,
+      "usage-Notes" -> ms.`usage-Notes`,
+      "definition/gloss" -> ms.`definition-gloss`,
+      "translationEquivalent" -> ms.`translationEquivalent`,
+      "phonetics-Transcription" -> ms.`phonetics-Transcription`,
+      "semantics-Domain" -> ms.`semantics-Domain`,
+      "semantics-EventType" -> ms.`semantics-EventType`,
+      "semantics-SemanticRoles" -> ms.`semantics-SemanticRoles`,
+      "statisticalProperties" -> ms.`statisticalProperties`,
+      "morpho-Derivation" -> ms.`morpho-Derivation`,
+      "semantics-QualiaStructure" -> ms.`semantics-QualiaStructure`,
+      "syntacticoSemanticLinks" -> ms.`syntacticoSemanticLinks`,
+      "other" -> ms.other
+      ),
+    handle(msxml.conformanceToStandardsBestPractices),
+    stringMap(msxml.theoreticModel, ms.theoreticModel),
+    stringMap(msxml.externalRef, ms.externalRef),
+    objectMap(msxml.extratextualInformation, ms.extratextualInformation,
+      "images" -> ms.images,
+      "videos" -> ms.videos,
+      "soundRecordings" -> ms.soundRecordings,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.extraTextualInformationUnit, ms.extraTextualInformationUnit,
+      "word" -> ms.word,
+      "lemma" -> ms.lemma,
+      "semantics" -> ms.semantics,
+      "example" -> ms.example,
+      "syntax" -> ms.syntax,
+      "lexicalUnit" -> ms.lexicalUnit,
+      "other" -> ms.other
     )
   )
 
@@ -2264,32 +2203,29 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.toolServiceEvaluationInfo --> (
-    ms.toolServiceEvaluationInfo > node(frag("toolServiceEvaluationInfo")) (
-      rdf_type > ms.ToolServiceEvaluationInfo,
-      boolMap(msxml.evaluated, ms.evaluated),
-      objectMap(msxml.evaluationLevel, ms.evaluationLevel,
-        "technological" -> ms.technological,
-        "usage" -> ms.usage,
-        "impact" -> ms.impact,
-        "diagnostic" -> ms.diagnostic
-        ),
-      objectMap(msxml.evaluationType, ms.evaluationType,
-        "glassBox" -> ms.glassBox,
-        "blackBox" -> ms.blackBox
-        ),
-      objectMap(msxml.evaluationCriteria, ms.evaluationCriteria,
-        "extrinsic" -> ms.extrinsic,
-        "intrinsic" -> ms.intrinsic
-        ),
-      objectMap(msxml.evaluationMeasure, ms.evaluationMeasure,
-        "human" -> ms.human,
-        "automatic" -> ms.automatic
-        ),
-      handle(msxml.evaluationReport),
-      handle(msxml.evaluationTool),
-      stringMap(msxml.evaluationDetails, ms.evaluationDetails),
-      handle(msxml.evaluator)
-    )
+    boolMap(msxml.evaluated, ms.evaluated),
+    objectMap(msxml.evaluationLevel, ms.evaluationLevel,
+      "technological" -> ms.technological,
+      "usage" -> ms.usage,
+      "impact" -> ms.impact,
+      "diagnostic" -> ms.diagnostic
+      ),
+    objectMap(msxml.evaluationType, ms.evaluationType,
+      "glassBox" -> ms.glassBox,
+      "blackBox" -> ms.blackBox
+      ),
+    objectMap(msxml.evaluationCriteria, ms.evaluationCriteria,
+      "extrinsic" -> ms.extrinsic,
+      "intrinsic" -> ms.intrinsic
+      ),
+    objectMap(msxml.evaluationMeasure, ms.evaluationMeasure,
+      "human" -> ms.human,
+      "automatic" -> ms.automatic
+      ),
+    handle(msxml.evaluationReport),
+    handle(msxml.evaluationTool),
+    stringMap(msxml.evaluationDetails, ms.evaluationDetails),
+    handle(msxml.evaluator)
   )
 
   msxml.evaluationReport --> (
@@ -2309,68 +2245,59 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.toolServiceOperationInfo --> (
-    ms.toolServiceOperationInfo > node(frag("toolServiceOperationInfo")) (
-      rdf_type > ms.ToolServiceOperationInfo,
-      objectMap(msxml.operatingSystem, ms.operatingSystem,
-        "os-independent" -> ms.`os-independent`,
-        "windows" -> ms.windows,
-        "linux" -> ms.linux,
-        "unix" -> ms.unix,
-        "mac-OS" -> ms.`mac-OS`,
-        "other" -> ms.other
-        ),
-      handle(msxml.runningEnvironmentInfo),
-      stringMap(msxml.runningTime, ms.runningTime)
-    )
+    objectMap(msxml.operatingSystem, ms.operatingSystem,
+      "os-independent" -> ms.`os-independent`,
+      "windows" -> ms.windows,
+      "linux" -> ms.linux,
+      "unix" -> ms.unix,
+      "mac-OS" -> ms.`mac-OS`,
+      "other" -> ms.other
+      ),
+    handle(msxml.runningEnvironmentInfo),
+    stringMap(msxml.runningTime, ms.runningTime)
   )
 
   msxml.toolServiceCreationInfo --> (
-    ms.toolServiceCreationInfo > node(frag("toolServiceCreationInfo")) (
-      rdf_type > ms.ToolServiceCreationInfo,
-      stringMap(msxml.implementationLanguage, ms.implementationLanguage),
-      stringMap(msxml.formalism, ms.formalism),
-      handle(msxml.originalSource),
-      stringMap(msxml.creationDetails, ms.creationDetails)
-    )
+    stringMap(msxml.implementationLanguage, ms.implementationLanguage),
+    stringMap(msxml.formalism, ms.formalism),
+    handle(msxml.originalSource),
+    stringMap(msxml.creationDetails, ms.creationDetails)
   ) 
 
   // Derived from resourceTypes/mediaTypes/AudioSpecific.xsd
   
   msxml.audioContentInfo --> (
-    ms.audioContentInfo > node(frag("audioContentInfo")) (
-      rdf_type > ms.AudioContentInfo,
-      objectMap(msxml.speechItems, ms.speechItems,
-        "isolatedWords" -> ms.isolatedWords,
-        "isolatedDigits" -> ms.isolatedDigits,
-        "naturalNumbers" -> ms.naturalNumbers,
-        "properNouns" -> ms.properNouns,
-        "applicationWords" -> ms.applicationWords,
-        "phoneticallyRichSentences" -> ms.phoneticallyRichSentences,
-        "phoneticallyRichWords" -> ms.phoneticallyRichWords,
-        "phoneticallyBalancedSentences" -> ms.phoneticallyBalancedSentences,
-        "moneyAmounts" -> ms.moneyAmounts,
-        "creditCardNumbers" -> ms.creditCardNumbers,
-        "telephoneNumbers" -> ms.telephoneNumbers,
-        "yesNoQuestions" -> ms.yesNoQuestions,
-        "vcvSequences" -> ms.vcvSequences,
-        "freeSpeech" -> ms.freeSpeech,
-        "other" -> ms.other
-        ),
-      objectMap(msxml.nonSpeechItems, ms.nonSpeechItems,
-        "notes" -> ms.notes,
-        "tempo" -> ms.tempo,
-        "sounds" -> ms.sounds,
-        "noise" -> ms.noise,
-        "music" -> ms.music,
-        "commercial " -> ms.commercial ,
-        "other" -> ms.other
-        ),
-      stringMap(msxml.textualDescription, dc.description),
-      objectMap(msxml.noiseLevel, ms.noiseLevel,
-        "low" -> ms.low,
-        "medium" -> ms.medium,
-        "high" -> ms.high
-      )
+    objectMap(msxml.speechItems, ms.speechItems,
+      "isolatedWords" -> ms.isolatedWords,
+      "isolatedDigits" -> ms.isolatedDigits,
+      "naturalNumbers" -> ms.naturalNumbers,
+      "properNouns" -> ms.properNouns,
+      "applicationWords" -> ms.applicationWords,
+      "phoneticallyRichSentences" -> ms.phoneticallyRichSentences,
+      "phoneticallyRichWords" -> ms.phoneticallyRichWords,
+      "phoneticallyBalancedSentences" -> ms.phoneticallyBalancedSentences,
+      "moneyAmounts" -> ms.moneyAmounts,
+      "creditCardNumbers" -> ms.creditCardNumbers,
+      "telephoneNumbers" -> ms.telephoneNumbers,
+      "yesNoQuestions" -> ms.yesNoQuestions,
+      "vcvSequences" -> ms.vcvSequences,
+      "freeSpeech" -> ms.freeSpeech,
+      "other" -> ms.other
+      ),
+    objectMap(msxml.nonSpeechItems, ms.nonSpeechItems,
+      "notes" -> ms.notes,
+      "tempo" -> ms.tempo,
+      "sounds" -> ms.sounds,
+      "noise" -> ms.noise,
+      "music" -> ms.music,
+      "commercial " -> ms.commercial ,
+      "other" -> ms.other
+      ),
+    stringMap(msxml.textualDescription, dc.description),
+    objectMap(msxml.noiseLevel, ms.noiseLevel,
+      "low" -> ms.low,
+      "medium" -> ms.medium,
+      "high" -> ms.high
     )
   )
 
@@ -2384,27 +2311,29 @@ object Metashare extends ModelWithMappings {
   )
 
   msxml.durationOfEffectiveSpeechInfo --> (
-    ms.durationOfEffectiveSpeechInfo > node(frag("durationOfEffectiveSpeechInfo")) (
-      rdf_type > ms.DurationOfEffectiveSpeechInfo,
-      intMap(msxml.size, ms.size),
-      objectMap(msxml.durationUnit, ms.durationUnit,
+    // Not sure if this is actually 1:1, but shouldn't this be sizeInfoType anyway?
+    //ms.durationOfEffectiveSpeechInfo > node(frag("durationOfEffectiveSpeechInfo")) (
+    //  rdf_type > ms.DurationOfEffectiveSpeechInfo,
+      intMap(msxml.size, ms.durationOfEffectiveSpeechInfo),
+      objectMap(msxml.durationUnit, ms.durationOfEffectiveSpeechInfoUnit,
         "hours" -> ms.hours,
         "minutes" -> ms.minutes,
         "seconds" -> ms.seconds
       )
-    )
+    //)
   )
 
   msxml.durationOfAudioInfo --> (
-    ms.durationOfAudioInfo > node(frag("durationOfAudioInfo")) (
-      rdf_type > ms.DurationOfAudioInfo,
-      intMap(msxml.size, ms.size),
-      objectMap(msxml.durationUnit, ms.durationUnit,
+    // Not sure if this is actually 1:1, but shouldn't this be sizeInfoType anyway?
+    //ms.durationOfAudioInfo > node(frag("durationOfAudioInfo")) (
+    //  rdf_type > ms.DurationOfAudioInfo,
+      intMap(msxml.size, ms.durationOfAudioInfo),
+      objectMap(msxml.durationUnit, ms.durationOfAudioInfoUnit,
         "hours" -> ms.hours,
         "minutes" -> ms.minutes,
         "seconds" -> ms.seconds
       )
-    )
+    //)
   )
 
 
@@ -2460,29 +2389,29 @@ object Metashare extends ModelWithMappings {
   msxml.audioClassificationInfo --> (
     ms.audioClassificationInfo > node(frag("audioClassificationInfo")) (
       rdf_type > ms.AudioClassificationInfo,
-      objectMap(msxml.audioGenre, ms.audioGenre,
-        "speech" -> ms.speech,
-        "humanNonSpeech" -> ms.humanNonSpeech,
-        "noise" -> ms.noise,
-        "animalVocalizations" -> ms.animalVocalizations,
-        "song" -> ms.song,
-        "instrumentalMusic" -> ms.instrumentalMusic,
-        "other" -> ms.other
+      dataMap(msxml.audioGenre, ms.audioGenre,
+        "speech" -> "Speech",
+        "humanNonSpeech" -> "Human Non-Speech",
+        "noise" -> "Noise",
+        "animalVocalizations" -> "Animal Vocalizations",
+        "song" -> "Song",
+        "instrumentalMusic" -> "Instrumental Music",
+        "other" -> "Other"
         ),
-      objectMap(msxml.speechGenre, ms.speechGenre,
-        "broadcastNews" -> ms.broadcastNews,
-        "meeting" -> ms.meeting,
-        "lecture" -> ms.lecture,
-        "emotionalExpressive" -> ms.emotionalExpressive,
-        "airTrafficControl" -> ms.airTrafficControl,
-        "conversation" -> ms.conversation,
-        "roundtable" -> ms.roundtable,
-        "interview" -> ms.interview,
-        "debate" -> ms.debate,
-        "call-in" -> ms.`call-in`,
-        "questionAnswer" -> ms.questionAnswer,
-        "presentation" -> ms.presentation,
-        "narrative" -> ms.narrative
+      dataMap(msxml.speechGenre, ms.speechGenre,
+        "broadcastNews" -> "Broadcast News",
+        "meeting" -> "Meeting",
+        "lecture" -> "Lecture",
+        "emotionalExpressive" -> "Emotional Expressive",
+        "airTrafficControl" -> "Air Traffic Control",
+        "conversation" -> "Conversation",
+        "roundtable" -> "Roundtable",
+        "interview" -> "Interview",
+        "debate" -> "Debate",
+        "call-in" -> "Call-in",
+        "questionAnswer" -> "Question Answer",
+        "presentation" -> "Presentation",
+        "narrative" -> "Narrative"
         ),
       stringMap(msxml.subject_topic, dc.subject),
       stringMap(msxml.register, ms.register),
@@ -2500,17 +2429,14 @@ object Metashare extends ModelWithMappings {
   // Derived from resourceTypes/mediaTypes/ImageSpecific.xsd
 
   msxml.imageContentInfo --> (
-    ms.imageContentInfo > node(frag("imageContentInfo")) (
-      rdf_type > ms.ImageContentInfo,
-      stringMap(msxml.typeOfImageContent, ms.typeOfImageContent),
-      objectMap(msxml.textIncludedInImage, ms.textIncludedInImage,
-        "captions" -> ms.captions,
-        "subtitles" -> ms.subtitles,
-        "captureTime" -> ms.captureTime,
-        "none" -> ms.none
-        ),
-      handle(msxml.staticElementInfo)
-    )
+    stringMap(msxml.typeOfImageContent, ms.typeOfImageContent),
+    objectMap(msxml.textIncludedInImage, ms.textIncludedInImage,
+      "captions" -> ms.captions,
+      "subtitles" -> ms.subtitles,
+      "captureTime" -> ms.captureTime,
+      "none" -> ms.none
+      ),
+    handle(msxml.staticElementInfo)
   )
 
   msxml.staticElementInfo --> (
@@ -2617,10 +2543,7 @@ object Metashare extends ModelWithMappings {
   // Derived from resourceTypes/mediaTypes/TextNumericalSpecific.xsd
 
   msxml.textNumericalContentInfo --> (
-    ms.textNumericalContentInfo > node(frag("textNumericalContentInfo")) (
-      rdf_type > ms.TextNumericalContentInfo,
-      stringMap(msxml.typeOfTextNumericalContent, ms.typeOfTextNumericalContent)
-    )
+    stringMap(msxml.typeOfTextNumericalContent, ms.typeOfTextNumericalContent)
   )
 
   msxml.textNumericalFormatInfo --> (
@@ -2674,16 +2597,13 @@ object Metashare extends ModelWithMappings {
   // Derived from resourceTypes/mediaTypes/VideoSpecific.xsd
 
   msxml.videoContentInfo --> (
-    ms.videoContentInfo > node(frag("videoContentInfo")) (
-      rdf_type > ms.VideoContentInfo,
-      stringMap(msxml.typeOfVideoContent, dc.`type`),
-      objectMap(msxml.textIncludedInVideo, ms.textIncludedInVideo,
-        "captions" -> ms.captions,
-        "subtitles" -> ms.subtitles,
-        "none" -> ms.none
-        ),
-      handle(msxml.dynamicElementInfo)
-    )
+    stringMap(msxml.typeOfVideoContent, dc.`type`),
+    objectMap(msxml.textIncludedInVideo, ms.textIncludedInVideo,
+      "captions" -> ms.captions,
+      "subtitles" -> ms.subtitles,
+      "none" -> ms.none
+      ),
+    handle(msxml.dynamicElementInfo)
   )
 
   msxml.dynamicElementInfo --> (

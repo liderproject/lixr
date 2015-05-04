@@ -1,8 +1,5 @@
-package eu.liderproject.lixr.models
-
-import eu.liderproject.lixr._
-
-class GrAF(baseURI : String) extends Model {
+new Model {
+  val baseURI = System.getProperty("graf.baseURI")
   val base = Namespace(baseURI)
   val graf = Namespace("http://www.xces.org/ns/GrAF/1.0/")
   val nif = Namespace("http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#")

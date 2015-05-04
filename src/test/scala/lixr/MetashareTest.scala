@@ -1,11 +1,18 @@
 package eu.liderproject.lixr
 
-import eu.liderproject.lixr.models.Metashare
 import org.scalatest._
 
 
+object testmodels {
+  lazy val Metashare = Main.loadModelFromFile("models/metashare.scala")
+  System.setProperty("tbx.resourceURI", "")
+  System.setProperty("tbx.mappings", "src/test/resources/mappings.blank")
+  lazy val tbx = Main.loadModelFromFile("models/tbx.scala")
+}
 
 class MetashareTest extends FlatSpec with Matchers { 
+  import testmodels._
+
   "trivial document" should "produce nothing" in {
     val doc = "<OAI-PMH xmlns='http://www.openarchives.org/OAI/2.0/'/>"
     val in = new java.io.StringReader(doc)

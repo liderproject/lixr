@@ -54,7 +54,7 @@ trait Model {
       //println("Property:" + this.toURI(_.toString))
       NTripleGenerator(this, ng)
     }
-    def >[G <: Generator](cg : ConditionalGenerator[G]) = {
+    def >(cg : ConditionalGenerator) = {
       ConditionalTripleGenerator(this, cg)
     }
     def >(value : Boolean) = {
@@ -104,6 +104,7 @@ trait Model {
     def !==(target : PlainTextGenerator) : Condition[PlainTextGenerator] = InequalityCondition(this,target)
     def !==(target : String) : Condition[PlainTextGenerator] = InequalityCondition(this, FixedTextGenerator(target))
     def matches(regex : String) : Condition[PlainTextGenerator] = RegexCondition(this, regex)
+    def replace(regex : String, regex2 : String) : PlainTextGenerator = RegexReplace(this, regex, regex2)
     def exists : Condition[PlainTextGenerator] = ExistenceCondition(this)
     def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(s),this,None)
     def :+(s : String) : PlainTextGenerator = AppendTextGenerator(None, this, Some(s))
@@ -114,6 +115,8 @@ trait Model {
   case class FixedTextGenerator(str : String) extends PlainTextGenerator {
     override def toString = str
   }
+
+  case class RegexReplace(base : PlainTextGenerator, regex : String, replaceRegex : String) extends PlainTextGenerator
 
   case class TypedTextGenerator(str : PlainTextGenerator, typ : NodeRequest) extends TextGenerator 
 
@@ -131,7 +134,7 @@ trait Model {
 
   case class INTripleGenerator(prop : NodeRequest, value : NodeGenerator) extends Generator 
 
-  case class ConditionalTripleGenerator[G <: Generator](prop : NodeRequest, value : ConditionalGenerator[G]) extends Generator
+  case class ConditionalTripleGenerator(prop : NodeRequest, value : ConditionalGenerator) extends Generator
 
   case class AttributeGenerator(name : NodeRequest, text : TextGenerator) extends Generator
 
@@ -172,12 +175,29 @@ trait Model {
 
   case class ForGenerator(req : Request, body : Seq[Generator]) extends Generator
 
-  case class ConditionalGenerator[G <: Generator](condition : Condition[Any], result : Seq[G], otherwise : Option[G]) extends Generator {
-    def or(condition2 : Condition[Any])(result2 : G*) = 
-      ConditionalGenerator(condition, result, 
-        Some(ConditionalGenerator(condition2, result2, None)))
-    def otherwise(result2 : G) = 
-      ConditionalGenerator(condition, result, Some(result2))
+  case class ConditionalGenerator(condition : Condition[Any], result : Seq[Generator], otherwize : Option[Generator]) extends Generator {
+    def or(condition2 : Condition[Any])(result2 : Generator*) : ConditionalGenerator = otherwize match {
+      case Some(o) => o match {
+        case o : ConditionalGenerator =>
+          ConditionalGenerator(condition, result, Some(o.or(condition2)(result2:_*)))
+        case _ =>
+          ConditionalGenerator(condition, result, 
+            Some(ConditionalGenerator(condition2, result2, None)))
+      }
+      case None =>
+        ConditionalGenerator(condition, result, 
+          Some(ConditionalGenerator(condition2, result2, None)))
+    }
+    def otherwise(result2 : Generator) : ConditionalGenerator = otherwize match {
+      case Some(o) => o match {
+        case o : ConditionalGenerator =>
+          ConditionalGenerator(condition, result, Some(o.otherwise(result2)))
+        case _ =>
+          ConditionalGenerator(condition, result, Some(result2))
+      }
+      case None =>
+        ConditionalGenerator(condition, result, Some(result2))
+    }
   }
 
   trait Condition[+A] {
@@ -274,7 +294,7 @@ trait Model {
 
   def get(name : String) = GetVariable(name)
 
-  def when[G <: Generator](condition : Condition[Any])(result : G*) = ConditionalGenerator[G](condition, result, None)
+  def when(condition : Condition[Any])(result : Generator*) = ConditionalGenerator(condition, result, None)
 
   def forall(req : Request)(body : Generator*) = ForGenerator(req, body)
   def forall(s : String)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s), body)

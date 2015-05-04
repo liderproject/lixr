@@ -1,0 +1,86 @@
+EModel.          Model ::= "new" "Model" "{" [Statement] "}" ;
+
+EStatementNS.    Statement ::= NamespaceStatement ; 
+EStatementH.     Statement ::= HandlerStatement ;
+
+ENSStat.         NamespaceStatement ::= "val" Ident "=" "Namespace" "(" String ")" ;
+
+EHandlerStat.    HandlerStatement ::= Request "-->" "(" [Generator] ")" ;
+EHandlerStat2.   HandlerStatement ::= Request "-->" Generator ;
+
+EGenerator.      Generator ::= TextGenerator ;                          /*Why?*/
+EGeneratorOT.    Generator ::= NodeRequest ">" NodeRequest ;
+EGeneratorDT.    Generator ::= NodeRequest ">" TextGenerator ;
+EGeneratorNT.    Generator ::= NodeRequest ">" NodeGenerator ;
+EGeneratorCT.    Generator ::= NodeRequest ">" ConditionalGenerator ;
+EGeneratorIOT.   Generator ::= NodeRequest "<" NodeRequest ;
+EGeneratorINT    Generator ::= NodeRequest "<" NodeGenerator ;
+EGeneratorAtt.   Generator ::= "checkAtt" "(" (NodeRequest | String | Symbol) "," (String | TextGenerator) ")" ;
+EGeneratorHandl. Generator ::= "handle" "(" (Request | Symbol) ")" ;
+EGeneratorFail.  Generator ::= "fail" "(" ([TextGenerator] | String) ")" ;
+EGeneratorCmt.   Generator ::= "comment" "(" ([TextGenerator] | String) ")" ; # message?
+EGeneratorNode.  Generator ::= NodeGenerator ;
+EGeneratorList.  Generator ::= GeneratorList ;                         # Refactor to tuples?
+EGeneratorSet.   Generator ::= "set" "(" String "," PlainTextGenerator ")" "(" [Generator] ")" ;
+EGeneratorCond.  Generator ::= ConditionalGenerator ;
+EGeneratorFor.   Generator ::= ForGenerator ;
+terminator nonempty Generator "," ;
+
+ENR_Str_Sym__NR.  NR_Str_Sym ::= NodeRequest ;
+ENR_Str_Sym__Str. NR_Str_Sym ::= String ;
+ENR_Str_Sym__Sym. NR_Str_Sym ::= Symbol ;
+EStr_TG__Str.     Str_TG ::= String ;
+EStr_TG__TG.      Str_TG ::= TextGenerator ;
+ER_Sym__R.        R_Sym ::= Request ;
+ER_Sym__Sym.      R_Sym ::= Symbol ;
+
+
+
+ENodeGen.        NodeGenerator ::= "node" "(" (TextGenerator | String) ")" "(" [Generator] ")" ;
+
+ETextGen.        TextGenerator ::= PlainTextGenerator |
+                                   PlainTextGenerator "^^" (NodeRequest | PlainTextGenerator | String) |
+                                   PlainTextGenerator "@@" (PlainTextGenerator | String) |
+                                   xmlContent "(" NodeRequest ")" |
+                                   xmlContent ;
+terminator nonempty TextGenerator "," ;
+
+EPTG.            PlainTextGenerator ::= FixedTextGenerator |
+                                        PlainTextGenerator "or" PlainTextGenerator |
+                                        "content" "(" Request ")" |
+                                        "att" "(" (Request | PlainTextGenerator | String) ")" |
+                                        "frag" "(" ([TextGenerator] | String) ")" |    # Should be TextGenerator 
+                                        "uri" "(" (PlainTextGenerator | String) ")" |
+                                        "get" "(" String ")" |
+                                        PlainTextGenerator ":+" String |
+                                        String "+:" PlainTextGenerator |
+                                        "concat" "(" [PlainTextGenerator] ")" | # ":+" for concatenation?
+                                        PlainTextGenerator "." "substring" "(" Int "," Int ")" |   # replace with "transform"
+                                        PlainTextGenerator "." "replace" "(" String "," String ")" ;
+terminator nonempty PlainTextGenerator "," ;
+
+EFTG.            FixedTextGenerator ::= "text" "(" String ")" | "uuid" ;
+
+ENodeReq.        NodeRequest ::= "prop" "(" String ")" |
+                                 Identifier "." Identifier |
+                                 Identifier "+" String |  # remove?
+                                 Identifier "+" PlainTextGenerator ; # use applyDynamic ?
+
+EConditionGen.   ConditionalGenerator ::= "when" "(" Condition ")" "(" [Generator] ")" |
+                                          ConditionalGenerator "or" "(" Condition ")" "(" [Generator] ")" |
+                                          "otherwise" "(" Generator ")" ;   # Should be [Generator]
+
+ERequest.        Request ::= NodeRequest | Request "\" Request ;
+
+ECondition.      Condition ::= Request "." "isEmpty" |
+                               PlainTextGenerator ("===" | "!==") (PlainTextGenerator | String) |
+                               PlainTextGenerator "." "matches" "(" String ")" |   # replace with "passes"?
+                               PlainTextGenerator "." "exists" |
+                               Condition "and" Condition |
+                               Condition "or" Condition |
+                               "not" Condition ;
+
+EGeneratorList.  GeneratorList ::= GeneratorList "++" Generator | Generator ;
+
+comment "//" ;
+comment "/*" "*/" ;

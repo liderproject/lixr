@@ -1,6 +1,6 @@
-package eu.liderproject.lixr
+import eu.liderproject.lixr.Clarin
 
-object ClarinDmci extends Clarin {
+new Clarin {
   cmd.Components --> (
     handle(cmd.`OLAC-DcmiTerms`),
     handle(cmd.DcmiTerms)

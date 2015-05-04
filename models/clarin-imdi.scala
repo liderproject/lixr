@@ -1,6 +1,6 @@
-package eu.liderproject.lixr
+import eu.liderproject.lixr.Clarin
 
-object ClarinIMDI extends Clarin {
+new Clarin {
   val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
   val imdi = cmd
 

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIRNAME="$(dirname "$0")"
+
+if [ ! -e $DIRNAME/target/scala-2.10/lixr-assembly-0.1.jar ]
+then
+    sbt assembly
+fi
+
+java -jar $DIRNAME/target/scala-2.10/lixr-assembly-0.1.jar $@

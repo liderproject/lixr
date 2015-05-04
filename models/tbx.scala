@@ -1,10 +1,10 @@
-package eu.liderproject.lixr.models
-
 import eu.liderproject.lixr._
 import java.io.File
 import java.net.URI
 
-class TBX(resourceURI : String, mapping : java.io.File) extends Model {
+new Model {
+  val resourceURI = System.getProperty("tbx.resourceURI")
+  val mapping = new File(Option(System.getProperty("tbx.mappings")).getOrElse("mappings.default"))
   val dcat = Namespace("http://www.w3.org/ns/dcat#")
   val dct = Namespace("http://purl.org/dc/terms/")
   val ontolex = Namespace("http://www.w3.org/ns/lemon/ontolex#")

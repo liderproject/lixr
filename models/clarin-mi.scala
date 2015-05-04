@@ -1,6 +1,6 @@
-package eu.liderproject.lixr
+import eu.liderproject.lixr.Clarin
 
-object ClarinMeertensSong extends Clarin {
+new eu.liderproject.lixr.Clarin {
   val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
 
   cmd.Song --> (
