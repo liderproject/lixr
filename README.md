@@ -70,7 +70,7 @@ We can map as follows
 Note that in LIXR a period is used instead of a colon to separate the namespace
 from the entity name.
 
-## Handlers and nodes
+### Handlers and nodes
 
 When generating RDF from XML, LIXR works by starting at the root tag and the
 recursively following *handlers* which are declared as part of each mapping
@@ -122,8 +122,7 @@ In order to generate the following Turtle document:
 
     <http://www.example.com/node> foo.bar "baz" .
 
-Triple Generators
------------------
+### Triple Generators
 
 Triples may be generated in the following forms
 * `ns.property > "text"`: Generates an untyped data property
@@ -166,9 +165,8 @@ Generates:
     ns:baz ns:p6 <bar> .
 
     <baz> ns:p7 <foo> .
-      
-Text Generators
----------------
+
+### Text Generators
 
 Text generators are used to generate text based on the content of the current
 document, the following generators are available
@@ -212,8 +210,7 @@ Several built-in variations of `transform` exist, for example:
     def substring(tg : TextGenerator, start : Int, end : Int =
       transform(tg)(_.slice(start, end))(throw new UnsupportedOperationException())
 
-Requests
---------
+### Requests
 
 Requests function like XPath selectors to choose an element of the document
 relevant to the current document, however these nodes are much simpler. The
@@ -249,8 +246,7 @@ The following may be used as conditions
 * _Request_ `.isEmpty`: Checks if a node(s) has no children or text content.
 * `and`, `or`, `not`: Standard Boolean combinations of conditions.
 
-Variables
----------
+### Variables
 
 Variables may be set for convinience and to avoid long dependencies, the syntax
 is as follows
@@ -274,8 +270,7 @@ of generators set in the statement, for example:
       comment(get("myvar")) // Suceeds if called from 'foo
     )
 
-Iterators
----------
+### Iterators
 
 Handlers are associated globally with a matching tag, however often a tag may
 generate different RDF at different parts of a file. For this case, the `forall`
@@ -293,8 +288,7 @@ command should be used, e.g.,
       )
     )
 
-Other generators
-----------------
+### Other generators
 
 The following other generators are available 
 
@@ -313,13 +307,13 @@ LIXR is embedded into Scala and each LIXR transform is first evaluated as a
 Scala file. Some experience with Scala is helpful to understand error messages
 and debugging files. We will now list some common pitfalls
 
-## Strings are concatenated with `:+` and `+:` not `+`
+### Strings are concatenated with `:+` and `+:` not `+`
 
 The expression `content + "foo"` generates a text string such as
 `ContentGenerator@abe890foo`. This is as Scala converts the `content` element to
 a string and then concatenates the string.
 
-## `if` and `else` are not used for conditions
+### `if` and `else` are not used for conditions
 
 Writing a condition using Scala primitives will cause it to be executed at
 compile time, e.g.,
