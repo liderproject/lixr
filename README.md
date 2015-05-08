@@ -51,8 +51,8 @@ LIXR file will start with a `Namespace` declaration. Note that if a namespace is
 declared even as the base namespace it should be used in the mapping. For
 example, if we have the input file
 
-    <example xmnls="http://www.example.com/"
-             foo="http://www.example.com/foo#">
+    <example xmlns="http://www.example.com/"
+             xmlns:foo="http://www.example.com/foo#">
       <foo:bar>baz</foo:baz>
     </example>
 
@@ -64,7 +64,7 @@ We can map as follows
 
       base.example --> comment("Example")
 
-      foo.bar --> comment("Bar"")
+      foo.bar --> comment("Bar")
     }
 
 Note that in LIXR a period is used instead of a colon to separate the namespace
@@ -128,14 +128,14 @@ Triple Generators
 Triples may be generated in the following forms
 * `ns.property > "text"`: Generates an untyped data property
 * `ns.property > ("text" @@ "en")`: Generates a data property with a language tag
-* `ns.property > ("text" ^^ "http://uri"): Generates a data property with a
+* `ns.property > ("text" ^^ "http://uri")`: Generates a data property with a
   datatype
 * `ns.property > xmlContent(<foo></foo>)`: Generate an XML datatype literal,
   [see below](). ** Shouldn't this be plain **
 * `ns.property > ns.name`: Generate a URI with a fixed value
 * `ns.property > node("http://uri/")()`: Generates an object property whose object
   is the named node
-* `ns.property > when()()`: Generates conditionally, see [below](#Conditions)
+* `ns.property > when()()`: Generates conditionally, see [below](#conditions)
   **check**!
 * `ns.property < ns.name`: Generate a backlink, this means that the active node
   will be generated in the *object* position and `ns.name` will be the
@@ -161,7 +161,7 @@ Generates:
       ns:p2 "bar"@en ;
       ns:p3 "bar"^^xsd:string ;
       ns:p4 ns:bar ;
-      ns:p5 <foo> .
+      ns:p5 <bar> .
 
     ns:baz ns:p6 <bar> .
 
@@ -176,16 +176,16 @@ document, the following generators are available
 * `"fixed text"`: Generate a fixed text string
 * `content`: The text contents of the current node and all its children
 * `content('request)`: The content of the node selected by `'request`, see
-  [requests](#Requests).
+  [requests](#requests).
 * `xmlContent`, `xmlContent('request)`: The XML content (including tags and
   attributes) of the
-  current node and all its children (or the nodes matching `'request').
+  current node and all its children (or the nodes matching `'request`).
 * `att("foo")`: The value of the XML attribute `foo`. A namespace identifier may
   als be used.
 * `frag("foo")`: Generates a unique string of the form `#fooN` where `N` is a
   unique number counting from 1. This is intended for use as `node(frag("foo"))()`.
 * `uuid`: Generate a UUID (a globally unique string).
-* `get("foo")`: The value of the variable `foo`, see [variables](#Variables)
+* `get("foo")`: The value of the variable `foo`, see [variables](#variables)
 * `"foo" +:` + _TextGenerator_, _TextGenerator_ `:+ "foo"`: Prepend or append a
   fixed string to the start of another text generator
 * _TextGenerator_ `or` _TextGenerator_: Generate the second generator only if
@@ -271,7 +271,7 @@ of generators set in the statement, for example:
     )
 
     'bar --> (
-      comment(get("myvar"))
+      comment(get("myvar")) // Suceeds if called from 'foo
     )
 
 Iterators
@@ -324,11 +324,11 @@ a string and then concatenates the string.
 Writing a condition using Scala primitives will cause it to be executed at
 compile time, e.g.,
 
-   if(content == "foo") {
-     ns.prop > ns.value
-   } else {
-     ns.prop > ns.someOtherValue
-   }
+    if(content == "foo") {
+      ns.prop > ns.value
+    } else {
+      ns.prop > ns.someOtherValue
+    }
 
 This will always generate `ns.value` and never `ns.someOtherValue` as the LIXR
 generator object `content` is never equal to "foo". This should instead be
@@ -342,13 +342,8 @@ rewritten using LIXR constructs:
 
 Note, `if` may be useful when checking global configuration variables, e.g.,
 
-   if(System.getProperty("something") == "foo) {
+    if(System.getProperty("something") == "foo") {
       ns.prop > ns.value
     } else {
       ns.prop > ns.someOtherValue
     }
-
-
-
-
-      
