@@ -14,17 +14,16 @@ in a number of ways:
 Installation
 ------------
 
-LIXR can be installed using [SBT](http://www.scala-sbt.org) **check!**, the
+LIXR can be installed using [SBT](http://www.scala-sbt.org), the
 binary can thus be compiled as follows
 
     sbt assembly
 
-Running LIXR requires Java, and can be done with either the supplied script or
-with java
+Running LIXR requires Java, and can be done with either the supplied script:
 
     ./lixr definition.scala input.xml
 
-Or
+Or with Java:
 
     java -jar target/scala-2.11/lixr-assembly-0.1.jar definition.scala input.xml
 
@@ -53,7 +52,7 @@ example, if we have the input file
 
     <example xmlns="http://www.example.com/"
              xmlns:foo="http://www.example.com/foo#">
-      <foo:bar>baz</foo:baz>
+      <foo:bar>baz</foo:bar>
     </example>
 
 We can map as follows
@@ -146,7 +145,7 @@ Example:
 
     node("foo")(
       ns.p1 > "bar",
-      ns.p2 > ("bar" @@ "en),
+      ns.p2 > ("bar" @@ "en"),
       ns.p3 > ("bar" ^^ xsd.string),
       ns.p4 > ns.bar,
       ns.p5 > node("bar")(
@@ -204,10 +203,10 @@ as follows
 
 Several built-in variations of `transform` exist, for example:
 
-    def replace(tg : TextGenerator, regex1 : String regex2 : String) = 
+    def replace(tg : TextGenerator, regex1 : String, regex2 : String) = 
       transform(tg)(_.replaceAll(regex1, regex2))(_.replaceAll(regex2, regex1))
 
-    def substring(tg : TextGenerator, start : Int, end : Int =
+    def substring(tg : TextGenerator, start : Int, end : Int) =
       transform(tg)(_.slice(start, end))(throw new UnsupportedOperationException())
 
 ### Requests

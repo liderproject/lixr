@@ -8,6 +8,16 @@ object testmodels {
   System.setProperty("tbx.resourceURI", "")
   System.setProperty("tbx.mappings", "src/test/resources/mappings.blank")
   lazy val tbx = Main.loadModelFromFile("models/tbx.scala")
+  lazy val ex1 = Main.loadModelFromFile("src/test/resources/readme/ex1.scala")
+  lazy val ex2 = Main.loadModelFromFile("src/test/resources/readme/ex2.scala")
+//  lazy val ex3 = Main.loadModelFromFile("src/test/resources/readme/ex3.scala")
+  lazy val ex4 = Main.loadModelFromFile("src/test/resources/readme/ex4.scala")
+  lazy val ex5 = Main.loadModelFromFile("src/test/resources/readme/ex5.scala")
+  lazy val ex6 = Main.loadModelFromFile("src/test/resources/readme/ex6.scala")
+  lazy val ex7 = Main.loadModelFromFile("src/test/resources/readme/ex7.scala")
+  lazy val ex8 = Main.loadModelFromFile("src/test/resources/readme/ex8.scala")
+  lazy val ex9 = Main.loadModelFromFile("src/test/resources/readme/ex9.scala")
+  lazy val ex10 = Main.loadModelFromFile("src/test/resources/readme/ex10.scala")
 }
 
 class MetashareTest extends FlatSpec with Matchers { 

@@ -1,0 +1,9 @@
+<foo> ns:p1 "bar" ;
+  ns:p2 "bar"@en ;
+  ns:p3 "bar"^^xsd:string ;
+  ns:p4 ns:bar ;
+  ns:p5 <bar> .
+
+ns:baz ns:p6 <bar> .
+
+<baz> ns:p7 <foo> .

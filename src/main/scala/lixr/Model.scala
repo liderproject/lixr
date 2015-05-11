@@ -57,6 +57,7 @@ trait Model {
     def >(cg : ConditionalGenerator) = {
       ConditionalTripleGenerator(this, cg)
     }
+    def >(value : String) = DTripleGenerator(this, FixedTextGenerator(value))
     def >(value : Boolean) = {
       DTripleGenerator(this, (text(value.toString) ^^ xsd.boolean))
     }
@@ -104,19 +105,21 @@ trait Model {
     def !==(target : PlainTextGenerator) : Condition[PlainTextGenerator] = InequalityCondition(this,target)
     def !==(target : String) : Condition[PlainTextGenerator] = InequalityCondition(this, FixedTextGenerator(target))
     def matches(regex : String) : Condition[PlainTextGenerator] = RegexCondition(this, regex)
-    def replace(regex : String, regex2 : String) : PlainTextGenerator = RegexReplace(this, regex, regex2)
     def exists : Condition[PlainTextGenerator] = ExistenceCondition(this)
     def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(s),this,None)
     def :+(s : String) : PlainTextGenerator = AppendTextGenerator(None, this, Some(s))
     def or(alternative : PlainTextGenerator) = TextAltGen(this, alternative)
-    def substring(from : Int, to : Int) = SubstringTextGenerator(this, from, to)
+    //def replace(regex : String, regex2 : String) : PlainTextGenerator = RegexReplace(this, regex, regex2)
+    //def substring(from : Int, to : Int) = SubstringTextGenerator(this, from, to)
+    def replace(regex : String, regex2 : String) = Model.this.replace(this, regex, regex2)
+    def substring(from : Int, to : Int) = Model.this.substring(this, from, to)
   }
 
   case class FixedTextGenerator(str : String) extends PlainTextGenerator {
     override def toString = str
   }
 
-  case class RegexReplace(base : PlainTextGenerator, regex : String, replaceRegex : String) extends PlainTextGenerator
+ // case class RegexReplace(base : PlainTextGenerator, regex : String, replaceRegex : String) extends PlainTextGenerator
 
   case class TypedTextGenerator(str : PlainTextGenerator, typ : NodeRequest) extends TextGenerator 
 
@@ -171,7 +174,23 @@ trait Model {
 
   case class ConcatTextGenerator(generators : Seq[PlainTextGenerator]) extends PlainTextGenerator
 
-  case class SubstringTextGenerator(generator : PlainTextGenerator, to : Int, from : Int) extends PlainTextGenerator
+  case class TransformTextGenerator(generator : PlainTextGenerator, 
+                                    forward : String => String,
+                                    backward : String => String) extends PlainTextGenerator
+
+  def transform(generator : PlainTextGenerator)(forward : String => String)
+    (backward : String => String) = TransformTextGenerator(generator, forward, backward)
+
+  def transform(generator : String)(forward : String => String)
+    (backward : String => String) = TransformTextGenerator(FixedTextGenerator(generator), forward, backward)
+
+  def replace(tg : PlainTextGenerator, regex1 : String, regex2 : String) = 
+    transform(tg)(_.replaceAll(regex1, regex2))(_.replaceAll(regex2, regex1))
+
+  def substring(tg : PlainTextGenerator, start : Int, end : Int) =
+    transform(tg)(_.slice(start, end))(throw new UnsupportedOperationException())
+
+//  case class SubstringTextGenerator(generator : PlainTextGenerator, to : Int, from : Int) extends PlainTextGenerator
 
   case class ForGenerator(req : Request, body : Seq[Generator]) extends Generator
 
@@ -308,6 +327,11 @@ trait Model {
   implicit class StringPimps(s : String) {
     def --> (foo : Generator*) = NodeRequest.resolveStringAsRequest(s).-->(foo:_*)
     def when (condition : Condition[Any]) = NodeRequest.resolveStringAsRequest(s).when(condition)
+    def ^^(nodeRequest : NodeRequest) = TypedTextGenerator(FixedTextGenerator(s), nodeRequest)
+    def ^^(text : PlainTextGenerator) = TypedTextGenerator(FixedTextGenerator(s), NodeRequest(None, text))
+    def ^^(text : String) = TypedTextGenerator(FixedTextGenerator(s), NodeRequest(None, FixedTextGenerator(text)))
+    def @@(text : PlainTextGenerator) = LangTextGenerator(FixedTextGenerator(s), text)
+    def @@(text : String) = LangTextGenerator(FixedTextGenerator(s), FixedTextGenerator(text))
   }
   
   implicit class SymbolPimps(s : Symbol) {

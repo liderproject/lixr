@@ -1,0 +1,4 @@
+@prefix : <http://www.example.com> .
+@prefix foo: <http://www.example.com/foo#> .
+
+<> foo.bar "baz" .

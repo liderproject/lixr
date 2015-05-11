@@ -176,10 +176,8 @@ class DOMGenerator {
           case Seq() => None
           case y => Some(y.mkString(""))
         }
-      case model.SubstringTextGenerator(ptg, from, to) =>
-        genStringOpt(ptg, state).map(_.substring(from, to))
-      case model.RegexReplace(base, regex, replaceRegex) =>
-        genStringOpt(base, state).map(_.replaceAll(regex, replaceRegex))
+      case model.TransformTextGenerator(ptg, forward, _) =>
+        genStringOpt(ptg, state).map(forward)
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
     }
   }

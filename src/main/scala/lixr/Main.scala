@@ -4,7 +4,8 @@ import com.twitter.util.Eval
 import java.io.File
 
 object Main {
-  def loadModelFromFile(fileName : String) = Eval[Model](new File(fileName))
+  def loadModelFromFile(fileName : String) = Eval[Model](
+    "import eu.liderproject.lixr._\n" + io.Source.fromFile(fileName).mkString)
 
   def main(_args : Array[String]) {
     var args = collection.mutable.Buffer(_args:_*)
