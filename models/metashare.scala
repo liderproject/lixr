@@ -20,12 +20,12 @@ new ModelWithMappings {
     handle(oai.ListRecords)
   )
 
-  oai.responseDate --> text("2014-10-03T11:18:32Z")
+  //oai.responseDate --> text("2014-10-03T11:18:32Z")
 
   oai.request --> (
     checkAtt("verb","ListRecords"),
-    checkAtt("metadataPrefix","metashare"),
-    text("http://127.0.0.1:8000/oai_pmh/")
+    checkAtt("metadataPrefix","metashare")//,
+//    text("http://127.0.0.1:8000/oai_pmh/")
   )
 
   oai.ListRecords --> 

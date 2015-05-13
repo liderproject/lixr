@@ -33,7 +33,7 @@ class DOMGenerator {
   }
 
   def conditionEvalNode(x : Any, state : State[Node]) : Option[Any] = x match {
-    case gen : state.model.PlainTextGenerator =>
+    case gen : state.model.TextGenerator =>
       genStringOpt(gen, state)
     case req : state.model.Request =>
       val nodes = locateNode(req, state)
@@ -45,7 +45,7 @@ class DOMGenerator {
   }
 
   def conditionEval(x : Any, state : State[Elem]) : Option[Any] = x match {
-    case gen : state.model.PlainTextGenerator =>
+    case gen : state.model.TextGenerator =>
       genStringOpt(gen, state)
     case req : state.model.Request =>
       val nodes = locate(req, state)
@@ -57,14 +57,12 @@ class DOMGenerator {
   }
 
 
-  def verify(req : Model#Request, state : State[Elem]) : Boolean = {
+  def verify(req : Model#Handleable, state : State[Elem]) : Boolean = {
     import state._
     req match {
       case model.NodeRequest(Some(n), name) => elem.namespace == n && elem.label == genString(name, state)
       case model.NodeRequest(None, name) => elem.namespace == null && elem.label == genString(name, state)
-      case model.ChainRequest(first, second) => throw new UnsupportedOperationException("Sorry no chain request on left hand side")
-      case model.ConditionRequest(r, cond) => verify(r, state) && cond.check(conditionEval(_, state))
-      case model.current => false
+      case model.HandleableConditionRequest(r, cond) => verify(r, state) && cond.check(conditionEval(_, state))
     }
   }
 
@@ -103,21 +101,13 @@ class DOMGenerator {
 
   def genString(t : Model#TextGenerator, state : State[Node]) : String = {
     import state._
-    t match {
-      case ttg : model.TypedTextGenerator => throw new RuntimeException("Nested type")
-      case ltg : model.LangTextGenerator => throw new RuntimeException("Nested type")
-      case xtg : model.XMLTextGenerator => throw new RuntimeException("Nested type")
-      case _ => genStringOpt(t,state).getOrElse("")
-    }
+    genStringOpt(t,state).getOrElse("")
   }
 
   def genStringOpt(t : Model#TextGenerator, state : State[Node]) : Option[String] = {
     import state._
     t match {
       case model.FixedTextGenerator(s) => Some(s)
-      case ttg : model.TypedTextGenerator => None
-      case ltg : model.LangTextGenerator => None
-      case xtg : model.XMLTextGenerator => None
       case model.TextAltGen(p, alt) => genStringOpt(p,state) match {
         case None => genStringOpt(alt, state)
         case Some(s) => Some(s)
@@ -182,17 +172,14 @@ class DOMGenerator {
     }
   }
 
-
-  def handleOne(gen : Model#Generator, state : State[Elem]) : Seq[GenResult] = {
+  def handleOne(gen : Model#DataValueGenerator, state : State[Elem]) : Seq[GenResult] = {
     import state._
 
-    def res2str(s : model.PlainTextGenerator) = {
+    def res2str(s : model.TextGenerator) = {
       handleOne(s, state).headOption.getOrElse(throw new RuntimeException("Not string-like result")).asString.str 
     }
 
     gen match {
-      case model.GeneratorList(head, tail) => 
-        handleOne(head, state) ++ handleOne(tail, state)
       case model.FixedTextGenerator(str) => Seq(LiteralGenResult(str))
       case model.TypedTextGenerator(str, datatype) => Seq(TypedStringResult(
         res2str(str),
@@ -222,13 +209,23 @@ class DOMGenerator {
         case Some(s) => Seq(LiteralGenResult(s))
         case None => Seq()
       }
+    }
+
+  }
+
+  def handleOne(gen : Model#Generator, state : State[Elem]) : Seq[GenResult] = {
+    import state._
+
+    gen match {
+      case model.GeneratorList(head, tail) => 
+        handleOne(head, state) ++ handleOne(tail, state)
       case model.OTripleGenerator(nr1, nr2) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
             s, nr1.toURI(genString(_,state)), nr2.toURI(genString(_,state))))
         case None => 
           
-          throw new RuntimeException("No current node" + gen)
+        throw new RuntimeException("No current node" + gen)
       }
       case model.DTripleGenerator(prop, value) => node match {
         case Some(s) => 

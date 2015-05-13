@@ -225,7 +225,7 @@ new Model {
     handle('xref)
   )
 
-  def langStringMap(gen : PlainTextGenerator, rdf : NodeRequest) = {
+  def langStringMap(gen : TextGenerator, rdf : NodeRequest) = {
     when(att("lang").exists) (
       rdf > (gen @@ att("lang"))
     ) otherwise (

@@ -111,7 +111,7 @@ case class Ontology(entities : Set[Entity]) {
 
 }
 
-class OntologyExtractor(root : Seq[(Model#Request, Seq[Model#Generator])], model : Model) {
+class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], model : Model) {
   private val xsd = "http://www.w3.org/2001/XMLSchema#"
   private val rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   private val rdfs = "http://www.w3.org/2000/01/rdf-schema#"
@@ -295,10 +295,8 @@ class OntologyExtractor(root : Seq[(Model#Request, Seq[Model#Generator])], model
       throw new NotSchematic("Expected FixedTextGenerator got " + t)
   }
 
-  def tr2class(t : TextGenerator) : URI = t match {
-    case f : PlainTextGenerator => 
-      URI.create(xsd + "string")
-    case TypedTextGenerator(_, t) =>
+  def tr2class(t : DataValueGenerator) : URI = t match {
+   case TypedTextGenerator(_, t) =>
       try {
         nr2uri(t) 
       } catch {
@@ -309,7 +307,9 @@ class OntologyExtractor(root : Seq[(Model#Request, Seq[Model#Generator])], model
       URI.create(rdf + "langString")
     case _ : XMLTextGenerator =>
       URI.create(rdf + "XMLLiteral")
-  }
+    case f : TextGenerator => 
+      URI.create(xsd + "string")
+   }
 }
 
 object OntologyExtractor {

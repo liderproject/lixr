@@ -3,28 +3,75 @@ package eu.liderproject.lixr
 import java.net.URI
 import scala.language.dynamics
 
+/** The generic type of all models */
 trait Model {
+  /** The XSD namespace used for datatypes */
   val xsd = Namespace("http://www.w3.org/2001/XMLSchema#")
 
   // The map containing the data
-  private var handlers = collection.mutable.Map[(Option[String],String),Seq[(Request,Seq[Generator])]]()
+  private var handlers = collection.mutable.Map[(Option[String],String),Seq[(Handleable,Seq[Generator])]]()
 
+  /** A namespace abbreviation */
   case class Namespace(__url__ : String) extends Dynamic {
     private val __names__ = collection.mutable.Set[String]()
     def selectDynamic(name : String) = {
       __names__ += name
       NodeRequest(Some(__url__), FixedTextGenerator(name))
     }
-    def +(name : PlainTextGenerator) = NodeRequest(Some(__url__), name)
+    /** Generate a member of this namespace with a text generator */
+    def +(name : TextGenerator) = {
+      NodeRequest(Some(__url__), name)
+    }
+    /** Generate a member of this namespace with a text generator */
     def +(name : String) = {
       __names__ += name
       NodeRequest(Some(__url__), FixedTextGenerator(name))
     }
+    /** Return all static names created in this namespace */
     def getAllNames = __names__.toSet
   }
 
+  /** An XPath-like node lookup request */
   trait Request {
+    /**
+     * Generates a condition that is true if this request matches no nodes
+     */
+    def isEmpty : Condition[Any] = NegationCondition(ExistenceCondition(this))
+    /**
+     * Add a condition to this request
+     */
+    def when(cond : Condition[Any]) : Request = ConditionRequest(this, cond)
+    /**
+     * Creates a request for a direct child
+     */
+    def \(request : Request) : Request = ChainRequest(this, request)
+    /**
+     * Request a prefixed attribute of the current node
+     * @param nr The prefixed attribute
+     */
+    def att(nr : NodeRequest) : TextGenerator = AttributeContentGenerator(this, nr)
+    /**
+     * Request an unprefixed attribute of the current node
+     * @param s The unprefixed attribute
+     */
+    def att(s : TextGenerator) : TextGenerator = AttributeContentGenerator(this, NodeRequest(None,s))
+    /**
+     * Request an unprefixed attribute of the current node
+     * @param s The unprefixed attribute
+     */
+    def att(s : String) : TextGenerator = AttributeContentGenerator(this, NodeRequest(None,FixedTextGenerator(s)))
+  }
+
+  /** A request that can be handled */
+  trait Handleable {
+    /** 
+     * The primary lookup, as required for a handler
+     */
     def lookup : (Option[String],String)
+    /** 
+     * Assign a handler to this request 
+     * @param foo The actions to take if this request matches
+     */
     def --> (foo : Generator*) {
       if(!handlers.contains(lookup)) {
         handlers(lookup) = Seq((this,foo.toSeq))
@@ -32,165 +79,282 @@ trait Model {
         handlers(lookup) :+= (this,foo.toSeq)
       }
     }
-    def when(cond : Condition[Any]) = ConditionRequest(this, cond)
-    def \(request : Request) = ChainRequest(this, request)
-    def att(nr : NodeRequest) = AttributeContentGenerator(this, nr)
-    def att(s : PlainTextGenerator) = AttributeContentGenerator(this, NodeRequest(None,s))
-    def att(s : String) = AttributeContentGenerator(this, NodeRequest(None,FixedTextGenerator(s)))
-    def isEmpty = NegationCondition(ExistenceCondition(this))
   }
 
-  case class NodeRequest(namespace : Option[String], name : PlainTextGenerator) extends Request {
-    def >(nr : NodeRequest) = {
-      //println("Object Property:" + this.toURI(_.toString))
-      //println("Individual:" + nr.toURI(_.toString))
+  /**
+   * The 'base' request for a node by its name
+   * @param namespace The namespace URL (not the shortened form)
+   * @param name The node's name
+   */
+  case class NodeRequest(namespace : Option[String], name : TextGenerator) 
+      extends Request with Handleable {
+    /**
+     * Generating an object property triple with the given value
+     */
+    def >(nr : NodeRequest) : Generator = {
       OTripleGenerator(this, nr)
     }
-    def >(gen : TextGenerator) = {
-      //println("Data Property:" + this.toURI(_.toString))
+    /**
+     * Generate a data property triple with the given value
+     */
+    def >(gen : DataValueGenerator) : Generator = {
       DTripleGenerator(this, gen)
     }
-    def >(ng : NodeGenerator) = {
-      //println("Property:" + this.toURI(_.toString))
+    /**
+     * Generate an object property triple whose value is another node
+     */
+    def >(ng : NodeGenerator) : Generator = {
       NTripleGenerator(this, ng)
     }
-    def >(cg : ConditionalGenerator) = {
+    /**
+     * Conditionally generate an object property
+     * @deprecated This supports a syntax that is not necessary!
+     */
+    def >(cg : ConditionalGenerator) : Generator = {
       ConditionalTripleGenerator(this, cg)
     }
-    def >(value : String) = DTripleGenerator(this, FixedTextGenerator(value))
-    def >(value : Boolean) = {
+    /**
+     * Generate an untyped string data property triple.
+     * Note this does not generate the same as "foo"^^xsd.string
+     */
+    def >(value : String) : Generator = DTripleGenerator(this, FixedTextGenerator(value))
+    /**
+     * Generate an untyped boolean data property triple
+     */
+    def >(value : Boolean) : Generator = {
       DTripleGenerator(this, (text(value.toString) ^^ xsd.boolean))
     }
-    def <(nr : NodeRequest) = IOTripleGenerator(this, nr)
-    def <(ng : NodeGenerator) = INTripleGenerator(this, ng)
+    /**
+     * Generate an untyped int data property triple
+     */
+    def >(value : Int) : Generator = {
+      DTripleGenerator(this, (text(value.toString) ^^ xsd.integer))
+    }
+    /**
+     * Generate an untyped decimal data property triple
+     */
+    def >(value : Double) : Generator = {
+      DTripleGenerator(this, (text(value.toString) ^^ xsd.decimal))
+    }
+    /**
+     * Generate an object property triple with the active node as the object and 
+     * the value as the subject (i.e., a 'backlink')
+     */
+    def <(nr : NodeRequest) : Generator = IOTripleGenerator(this, nr)
+    /**
+     * Generate an object property triple with the active node as the object and
+     * the value as the subject, which is also a new triple block.
+     */
+    def <(ng : NodeGenerator) : Generator = INTripleGenerator(this, ng)
     lazy val lookup = name match {
       case FixedTextGenerator(name) => (namespace,name)
       case _ => throw new RuntimeException("Looking up non-fixed namespace")
     }
-    def toURI(realize : PlainTextGenerator => String) = URI.create(namespace.getOrElse("") + realize(name))
+    override def when(cond : Condition[Any]) : Request with Handleable = HandleableConditionRequest(this, cond)
+    /**
+     * @deprecated Why does this exist here?
+     */
+    def toURI(realize : TextGenerator => String) = URI.create(namespace.getOrElse("") + realize(name))
   }
 
   object NodeRequest {
+    /** Convert a string to a node request */
     def resolveStringAsRequest(bar : String) = NodeRequest(None,FixedTextGenerator(bar))
+    /** Convert a symbol to a node request */
     def resolveStringAsRequest(bar : Symbol) = NodeRequest(None,FixedTextGenerator(bar.name))
   }
 
-  case class ChainRequest(first : Request, second : Request) extends Request {
-    def lookup = first.lookup
-  }
+  private[lixr] case class ChainRequest(first : Request, second : Request) extends Request
 
-  case class ConditionRequest(req : Request, cond : Condition[Any]) extends Request {
+  private[lixr] case class ConditionRequest(req : Request, cond : Condition[Any]) extends Request
+
+  private[lixr] case class HandleableConditionRequest(req : Handleable with Request, 
+    cond : Condition[Any]) extends Request with Handleable {
     def lookup = req.lookup
   }
 
-  object current extends Request {
-    def lookup = (None,"")
-  }
+  /** 
+   * Symbol for the current node
+   */
+  object current extends Request
 
+  /**
+   * An object that generates something in the output
+   */
   sealed trait Generator {
+    /**
+     * Apply this generator immediately followed by the next one in the list
+     */
     def ++(g : Generator) = GeneratorList(this,g)
+    /**
+     * Convert this generator to a sequence of generator. If this generator is
+     * not a GeneratorList this returns a list of one element
+     */
     def flatten = Seq(this)
   }
 
-  sealed trait TextGenerator extends Generator 
+  private[lixr] case class OTripleGenerator(prop : NodeRequest, value : NodeRequest) extends Generator 
 
-  trait PlainTextGenerator extends TextGenerator {
-    def ^^(nodeRequest : NodeRequest) = TypedTextGenerator(this, nodeRequest)
-    def ^^(text : PlainTextGenerator) = TypedTextGenerator(this, NodeRequest(None, text))
-    def ^^(text : String) = TypedTextGenerator(this, NodeRequest(None, FixedTextGenerator(text)))
-    def @@(text : PlainTextGenerator) = LangTextGenerator(this, text)
-    def @@(text : String) = LangTextGenerator(this, FixedTextGenerator(text))
-    def ===(target : PlainTextGenerator) : Condition[PlainTextGenerator] = EqualityCondition(this,target)
-    def ===(target : String) : Condition[PlainTextGenerator] = EqualityCondition(this, FixedTextGenerator(target))
-    def !==(target : PlainTextGenerator) : Condition[PlainTextGenerator] = InequalityCondition(this,target)
-    def !==(target : String) : Condition[PlainTextGenerator] = InequalityCondition(this, FixedTextGenerator(target))
-    def matches(regex : String) : Condition[PlainTextGenerator] = RegexCondition(this, regex)
-    def exists : Condition[PlainTextGenerator] = ExistenceCondition(this)
-    def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(s),this,None)
-    def :+(s : String) : PlainTextGenerator = AppendTextGenerator(None, this, Some(s))
-    def or(alternative : PlainTextGenerator) = TextAltGen(this, alternative)
-    //def replace(regex : String, regex2 : String) : PlainTextGenerator = RegexReplace(this, regex, regex2)
-    //def substring(from : Int, to : Int) = SubstringTextGenerator(this, from, to)
-    def replace(regex : String, regex2 : String) = Model.this.replace(this, regex, regex2)
-    def substring(from : Int, to : Int) = Model.this.substring(this, from, to)
-  }
+  private[lixr] case class DTripleGenerator(prop : NodeRequest, value : DataValueGenerator) extends Generator 
 
-  case class FixedTextGenerator(str : String) extends PlainTextGenerator {
-    override def toString = str
-  }
+  private[lixr] case class NTripleGenerator(prop : NodeRequest, value : NodeGenerator) extends Generator 
 
- // case class RegexReplace(base : PlainTextGenerator, regex : String, replaceRegex : String) extends PlainTextGenerator
+  private[lixr] case class IOTripleGenerator(prop : NodeRequest, value : NodeRequest) extends Generator 
 
-  case class TypedTextGenerator(str : PlainTextGenerator, typ : NodeRequest) extends TextGenerator 
+  private[lixr] case class INTripleGenerator(prop : NodeRequest, value : NodeGenerator) extends Generator 
 
-  case class LangTextGenerator(str : PlainTextGenerator, lang : PlainTextGenerator) extends TextGenerator
+  private[lixr] case class ConditionalTripleGenerator(prop : NodeRequest, value : ConditionalGenerator) extends Generator
 
-  case class XMLTextGenerator(node : Request) extends TextGenerator
+  private[lixr] case class AttributeGenerator(name : NodeRequest, text : TextGenerator) extends Generator
 
-  case class OTripleGenerator(prop : NodeRequest, value : NodeRequest) extends Generator 
+  private[lixr] case class RecursiveGenerator(request : Request) extends Generator
 
-  case class DTripleGenerator(prop : NodeRequest, value : TextGenerator) extends Generator 
+  private[lixr] case class FailGenerator(message : Seq[TextGenerator]) extends Generator
 
-  case class NTripleGenerator(prop : NodeRequest, value : NodeGenerator) extends Generator 
+  private[lixr] case class CommentGenerator(message : Seq[TextGenerator]) extends Generator
 
-  case class IOTripleGenerator(prop : NodeRequest, value : NodeRequest) extends Generator 
+  private[lixr] case class NodeGenerator(about : TextGenerator, body : Seq[Generator]) extends Generator
 
-  case class INTripleGenerator(prop : NodeRequest, value : NodeGenerator) extends Generator 
-
-  case class ConditionalTripleGenerator(prop : NodeRequest, value : ConditionalGenerator) extends Generator
-
-  case class AttributeGenerator(name : NodeRequest, text : TextGenerator) extends Generator
-
-  case class RecursiveGenerator(request : Request) extends Generator
-
-  case class FailGenerator(message : Seq[TextGenerator]) extends Generator
-
-  case class CommentGenerator(message : Seq[TextGenerator]) extends Generator
-
-  case class NodeGenerator(about : TextGenerator, body : Seq[Generator]) extends Generator
-
-  case class TextAltGen(primary : TextGenerator, alt : PlainTextGenerator) extends PlainTextGenerator
-
-  case class ContentGenerator(node : Request) extends PlainTextGenerator
-
-  case class AttributeContentGenerator(node : Request, att : NodeRequest) extends PlainTextGenerator
-
-  case class FragmentGenerator(frag : Seq[TextGenerator]) extends PlainTextGenerator
-
-  case class URIGenerator(uri : PlainTextGenerator) extends PlainTextGenerator
-
-  case class GeneratorList(first : Generator, second : Generator) extends Generator {
+  private[lixr] case class GeneratorList(first : Generator, second : Generator) extends Generator {
     override def flatten = first.flatten ++ second.flatten
   }
 
-  case class SetVariable(name : String, value : PlainTextGenerator, context : Seq[Generator]) extends Generator
+  /**
+   * Generate the object of a data property triple
+   */
+  sealed trait DataValueGenerator
 
-  case class GetVariable(name : String) extends PlainTextGenerator
-
-  case class AppendTextGenerator(left : Option[String], generator : PlainTextGenerator, right : Option[String]) extends PlainTextGenerator {
-    override def +:(s : String) : PlainTextGenerator = AppendTextGenerator(Some(left.getOrElse("") + s), generator, right)
-    override def :+(s : String) : PlainTextGenerator = AppendTextGenerator(left, generator, Some(right.getOrElse("") + s))
+  /**
+   * Generate a piece of text
+   */
+  sealed trait TextGenerator extends DataValueGenerator {
+    /**
+     * Generate a typed RDF literal
+     */
+    def ^^(nodeRequest : NodeRequest) : DataValueGenerator = TypedTextGenerator(this, nodeRequest)
+    /**
+     * Generate a typed RDF literal
+     */
+    def ^^(text : TextGenerator) : DataValueGenerator = TypedTextGenerator(this, NodeRequest(None, text))
+    /**
+     * Generate a typed RDF literal
+     */
+    def ^^(text : String) : DataValueGenerator = TypedTextGenerator(this, NodeRequest(None, FixedTextGenerator(text)))
+    /**
+     * Generate a lang-tagged RDF literal
+     */
+    def @@(text : TextGenerator) : DataValueGenerator = LangTextGenerator(this, text)
+    /**
+     * Generate a lang-tagged RDF literal
+     */
+    def @@(text : String) : DataValueGenerator = LangTextGenerator(this, FixedTextGenerator(text))
+    /**
+     * Check equality of text generators
+     */
+    def ===(target : TextGenerator) : Condition[TextGenerator] = EqualityCondition(this,target)
+    /**
+     * Check equality of text generators
+     */
+    def ===(target : String) : Condition[TextGenerator] = EqualityCondition(this, FixedTextGenerator(target))
+    /**
+     * Check equality of text generators
+     */
+    def !==(target : TextGenerator) : Condition[TextGenerator] = InequalityCondition(this,target)
+    /**
+     * Check inequality of text generators
+     */
+    def !==(target : String) : Condition[TextGenerator] = InequalityCondition(this, FixedTextGenerator(target))
+    /**
+     * Check whether text generator matches a fixed regular expression
+     */
+    def matches(regex : String) : Condition[TextGenerator] = RegexCondition(this, regex)
+    /**
+     * Check whether text generator matches a non-empty string
+     */
+    def exists : Condition[TextGenerator] = ExistenceCondition(this)
+    /**
+     * Concatenate a text generator
+     */
+    def +:(s : String) : TextGenerator = AppendTextGenerator(Some(s),this,None)
+    /**
+     * Concatenate a text generator
+     */
+    def :+(s : String) : TextGenerator = AppendTextGenerator(None, this, Some(s))
+    /**
+     * If this text generator does not match a non-empty string use the alternative
+     */
+    def or(alternative : TextGenerator) = TextAltGen(this, alternative)
+    /**
+     * Transform the result of this text generator by replacing all matches of 
+     * regex with regex2
+     */
+    def replace(regex : String, regex2 : String) = Model.this.replace(this, regex, regex2)
+    /**
+     * Take a substring of this text generator
+     */
+    def substring(from : Int, to : Int) = Model.this.substring(this, from, to)
   }
 
-  case class ConcatTextGenerator(generators : Seq[PlainTextGenerator]) extends PlainTextGenerator
+  case class FixedTextGenerator(str : String) extends TextGenerator {
+    override def toString = str
+  }
 
-  case class TransformTextGenerator(generator : PlainTextGenerator, 
+  private[lixr] case class TypedTextGenerator(str : TextGenerator, typ : NodeRequest) extends DataValueGenerator 
+
+  private[lixr] case class LangTextGenerator(str : TextGenerator, lang : TextGenerator) extends DataValueGenerator
+
+  private[lixr] case class XMLTextGenerator(node : Request) extends TextGenerator
+
+  private[lixr] case class TextAltGen(primary : TextGenerator, alt : TextGenerator) extends TextGenerator
+
+  private[lixr] case class ContentGenerator(node : Request) extends TextGenerator
+
+  private[lixr] case class AttributeContentGenerator(node : Request, att : NodeRequest) extends TextGenerator
+
+  private[lixr] case class FragmentGenerator(frag : Seq[TextGenerator]) extends TextGenerator
+
+  private[lixr] case class URIGenerator(uri : TextGenerator) extends TextGenerator
+
+  private[lixr] case class SetVariable(name : String, value : TextGenerator, context : Seq[Generator]) extends Generator
+
+  private[lixr] case class GetVariable(name : String) extends TextGenerator
+
+  private[lixr] case class AppendTextGenerator(left : Option[String], generator : TextGenerator, right : Option[String]) extends TextGenerator {
+    override def +:(s : String) : TextGenerator = AppendTextGenerator(Some(left.getOrElse("") + s), generator, right)
+    override def :+(s : String) : TextGenerator = AppendTextGenerator(left, generator, Some(right.getOrElse("") + s))
+  }
+
+  private[lixr] case class ConcatTextGenerator(generators : Seq[TextGenerator]) extends TextGenerator
+
+  private[lixr] case class TransformTextGenerator(generator : TextGenerator, 
                                     forward : String => String,
-                                    backward : String => String) extends PlainTextGenerator
+                                    backward : String => String) extends TextGenerator
 
-  def transform(generator : PlainTextGenerator)(forward : String => String)
+  /**
+   * Transform the result of a text generator
+   * @param generator The base string
+   * @param forward The XML to RDF converter
+   * @param backward The RDF to XML converter
+   */
+  def transform(generator : TextGenerator)(forward : String => String)
     (backward : String => String) = TransformTextGenerator(generator, forward, backward)
 
+  /**
+   * Transform the result of a text generator. 
+   * @param generator The base string
+   * @param forward The XML to RDF converter
+   * @param backward The RDF to XML converter
+   */
   def transform(generator : String)(forward : String => String)
     (backward : String => String) = TransformTextGenerator(FixedTextGenerator(generator), forward, backward)
 
-  def replace(tg : PlainTextGenerator, regex1 : String, regex2 : String) = 
+  def replace(tg : TextGenerator, regex1 : String, regex2 : String) = 
     transform(tg)(_.replaceAll(regex1, regex2))(_.replaceAll(regex2, regex1))
 
-  def substring(tg : PlainTextGenerator, start : Int, end : Int) =
+  def substring(tg : TextGenerator, start : Int, end : Int) =
     transform(tg)(_.slice(start, end))(throw new UnsupportedOperationException())
 
-//  case class SubstringTextGenerator(generator : PlainTextGenerator, to : Int, from : Int) extends PlainTextGenerator
+//  case class SubstringTextGenerator(generator : TextGenerator, to : Int, from : Int) extends TextGenerator
 
   case class ForGenerator(req : Request, body : Seq[Generator]) extends Generator
 
@@ -237,9 +401,9 @@ trait Model {
     def check(resolve : A => Option[Any]) = resolve(lhs) != resolve(rhs)
   }
 
-  case class RegexCondition(target : PlainTextGenerator, pattern : String) 
-      extends Condition[PlainTextGenerator] {
-    def check(resolve : PlainTextGenerator => Option[Any]) = resolve(target) match {
+  case class RegexCondition(target : TextGenerator, pattern : String) 
+      extends Condition[TextGenerator] {
+    def check(resolve : TextGenerator => Option[Any]) = resolve(target) match {
       case Some(s : String) => s.matches(pattern)
       case Some(_) => false
       case None => false
@@ -300,7 +464,7 @@ trait Model {
   def frag(frags : TextGenerator*) = FragmentGenerator(frags)
   def frag(s : String) = FragmentGenerator(FixedTextGenerator(s) :: Nil)
 
-  def uri(uri : PlainTextGenerator) = URIGenerator(uri)
+  def uri(uri : TextGenerator) = URIGenerator(uri)
   def uri(s : String) = URIGenerator(FixedTextGenerator(s))
 
   def prop(s : String) = NodeRequest.resolveStringAsRequest(s)
@@ -308,7 +472,7 @@ trait Model {
   def att(name : NodeRequest) = current.att(name)
   def att(s : String) = current.att(s)
 
-  def set(name : String, value : PlainTextGenerator)(context : Generator*) = SetVariable(name, value, context)
+  def set(name : String, value : TextGenerator)(context : Generator*) = SetVariable(name, value, context)
   def set(name : String, value : String)(context : Generator*) = SetVariable(name, FixedTextGenerator(value), context)
 
   def get(name : String) = GetVariable(name)
@@ -319,7 +483,7 @@ trait Model {
   def forall(s : String)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s), body)
   def forall(s : Symbol)(body : Generator*) = ForGenerator(NodeRequest.resolveStringAsRequest(s.name), body)
 
-  def concat(ptgs : PlainTextGenerator*) = ConcatTextGenerator(ptgs)
+  def concat(ptgs : TextGenerator*) = ConcatTextGenerator(ptgs)
 
   val rdf_type = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#") + "type"
   val a = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#") + "type"
@@ -328,9 +492,9 @@ trait Model {
     def --> (foo : Generator*) = NodeRequest.resolveStringAsRequest(s).-->(foo:_*)
     def when (condition : Condition[Any]) = NodeRequest.resolveStringAsRequest(s).when(condition)
     def ^^(nodeRequest : NodeRequest) = TypedTextGenerator(FixedTextGenerator(s), nodeRequest)
-    def ^^(text : PlainTextGenerator) = TypedTextGenerator(FixedTextGenerator(s), NodeRequest(None, text))
+    def ^^(text : TextGenerator) = TypedTextGenerator(FixedTextGenerator(s), NodeRequest(None, text))
     def ^^(text : String) = TypedTextGenerator(FixedTextGenerator(s), NodeRequest(None, FixedTextGenerator(text)))
-    def @@(text : PlainTextGenerator) = LangTextGenerator(FixedTextGenerator(s), text)
+    def @@(text : TextGenerator) = LangTextGenerator(FixedTextGenerator(s), text)
     def @@(text : String) = LangTextGenerator(FixedTextGenerator(s), FixedTextGenerator(text))
   }
   

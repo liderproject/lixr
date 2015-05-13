@@ -72,7 +72,7 @@ class Clarin extends eu.liderproject.lixr.ModelWithMappings {
   )
 
   cmd.ResourceRef --> (
-    cmd.ResourceRef > resolveUri
+    resolveUri(cmd.ResourceRef)
   )
 
   (cmd.JournalFileProxyList when (not(current.isEmpty))) --> (
@@ -88,15 +88,22 @@ class Clarin extends eu.liderproject.lixr.ModelWithMappings {
   )
 
   cmd.IsPartOf --> (
-    cmd.IsPartOf > resolveUri
+    resolveUri(cmd.IsPartOf)
   )
 
     
-  def resolveUri = when(content matches ("^hdl:")) (
-    uri("http://hdl.handle.net" +: (content.substring(0, 4)))
+//  def resolveUri = when(content matches ("^hdl:")) (
+//    uri("http://hdl.handle.net" +: (content.substring(0, 4)))
+//  ) otherwise (
+//    uri(content)
+//  )
+
+  def resolveUri(prop : NodeRequest) = when(content matches ("^hdl:")) (
+    prop > uri("http://hdl.handle.net" +: (content.substring(0, 4)))
   ) otherwise (
-    uri(content)
+    prop > uri(content)
   )
+
 }
 
 
