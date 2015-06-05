@@ -98,10 +98,10 @@ trait ModelWithMappings extends Model {
     assert(values.size > 1)
     forall(node) {
       var gen : ConditionalGenerator = when(content === values.head._1)(
-        rdf > text(values.head._2)
+        rdf > values.head._2
       )
       for((k, v) <- values.tail) {
-        gen = gen.or(content === k)(rdf > text(v))
+        gen = gen.or(content === k)(rdf > v)
       }
       gen
     }
@@ -123,9 +123,9 @@ trait ModelWithMappings extends Model {
     //handle(node)
   }
 
-  def linkMap(node : NodeRequest, rdf : NodeRequest) = {
-    forall(node)(
-      rdf > uri(content(rdf))
+  def linkMap(n : NodeRequest, rdf : NodeRequest) = {
+    forall(n)(
+      rdf > node(content)()
     )
     //node --> (
     //  rdf > uri(content(rdf))
@@ -138,7 +138,7 @@ trait ModelWithMappings extends Model {
       when(content matches "\\d{3,4}")(
         (rdf > (content ^^ xsd.gYear)) : Generator
       ).otherwise(
-        fail(text("Badly formatted year "), content)
+        fail("Badly formatted year " +: content)
       )
     )
       

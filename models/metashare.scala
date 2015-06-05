@@ -23,8 +23,8 @@ new ModelWithMappings {
   //oai.responseDate --> text("2014-10-03T11:18:32Z")
 
   oai.request --> (
-    checkAtt("verb","ListRecords"),
-    checkAtt("metadataPrefix","metashare")//,
+    xmlAtt("verb","ListRecords"),
+    xmlAtt("metadataPrefix","metashare")//,
 //    text("http://127.0.0.1:8000/oai_pmh/")
   )
 
@@ -40,7 +40,7 @@ new ModelWithMappings {
   )
 
   oai.header.when(current.att("status") === "deleted") --> (
-    comment(text("deleted "), content(oai.identifier))
+    comment("deleted " +: content(oai.identifier))
   )
 
   oai.header --> (
@@ -56,8 +56,8 @@ new ModelWithMappings {
 
   oai.metadata --> handle(msxml.resourceInfo)
     
-  def personAsContributor = forall(msxml.personInfo)(dc.contributor > concat(content(msxml.givenName), text(" "), content(msxml.surname)))
-  def personAsCreator = forall(msxml.personInfo)(dc.creator > concat(content(msxml.givenName), text(" "), content(msxml.surname)))
+  def personAsContributor = forall(msxml.personInfo)(dc.contributor > (content(msxml.givenName) :+ " " +: content(msxml.surname)))
+  def personAsCreator = forall(msxml.personInfo)(dc.creator > (content(msxml.givenName) :+ " " +: content(msxml.surname)))
 
   // Based on META-SHARE-Resource.xsd
 
@@ -74,10 +74,10 @@ new ModelWithMappings {
     handle(msxml.resourceCreationInfo),
     handle(msxml.relationInfo),
     handle(msxml.resourceComponentType),
-    rdfs.seeAlso > uri("http://metashare.elda.org/repository/browse/" +: get("resourceID") :+ "/"),
+    rdfs.seeAlso > node("http://metashare.elda.org/repository/browse/" +: get("resourceID") :+ "/")(),
     rdf_type > dcat.Dataset,
     // Basic DC properties
-    dc.source > text("META-SHARE"),
+    dc.source > "META-SHARE",
     forall(msxml.validationInfo) (
       forall(msxml.validator) (
         personAsContributor
@@ -348,7 +348,7 @@ new ModelWithMappings {
   )
 
   msxml.url --> (
-    ms.url > uri(content)
+    ms.url > node(content)()
   )
     
   msxml.versionInfo --> (
@@ -608,7 +608,7 @@ new ModelWithMappings {
     )
   )
       
-  def targetResourceInfoType = uri(content(msxml.targetResourceNameURI))
+  def targetResourceInfoType = node(content(msxml.targetResourceNameURI))()
 
   msxml.relationInfo --> (
     ms.relationInfo > node(frag("relationInfo")) (
@@ -1541,42 +1541,50 @@ new ModelWithMappings {
     dct.license > node(frag("licenceInfo")) (
       rdf_type > ms.LicenceInfo,
       objectMap(msxml.licence, owl.sameAs,
-        "CC-BY" -> prop("https://creativecommons.org/licenses/by/4.0/"),
-        "CC-BY-NC" -> prop("https://creativecommons.org/licenses/by-nc/4.0/"),
-        "CC-BY-NC-ND" -> prop("https://creativecommons.org/licenses/by-nc-nd/4.0/"),
-        "CC-BY-NC-SA" -> prop("https://creativecommons.org/licenses/by-nc-sa/4.0/"),
-        "CC-BY-ND" -> prop("https://creativecommons.org/licenses/by-nd/4.0/"),
-        "CC-BY-SA" -> prop("https://creativecommons.org/licenses/by-sa/4.0/"),
-        "CC-ZERO" -> prop("http://creativecommons.org/publicdomain/zero/1.0/"),
-        "MS-C-NoReD" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20%20NoRedistribution_v0%207.pdf"),
-        "MS-C-NoReD-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20For-a-Fee_v0%207.pdf"),
-        "MS-C-NoReD-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20NoDerivatives-v1.0.pdf"),
-        "MS-C-NoReD-ND-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20NoDerivatives%20For-a-fee-v1.0.pdf"),
-        "MS-NC-NoReD" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution-v%201.0.pdf"),
-        "MS-NC-NoReD-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20For-a-Fee-v%201.0.pdf"),
-        "MS-NC-NoReD-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20NoDerivatives-v1.0.pdf"),
-        "MS-NC-NoReD-ND-FF" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20NoDerivatives%20For-a-fee-v%201.0.pdf"),
-        "MSCommons-BY" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BY%20v1.0.pdf"),
-        "MSCommons-BY-NC" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNC%20v1.0.pdf"),
-        "MSCommons-BY-NC-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNCND%20v1.0.pdf"),
-        "MSCommons-BY-NC-SA" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNCSA%20v1.0.pdf"),
-        "MSCommons-BY-ND" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYND%20v1.0.pdf"),
-        "MSCommons-BY-SA" -> prop("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYSA%20v1.0.pdf"),
-        "CLARIN_ACA" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-ACA-2014-10.rtf"),
-        "CLARIN_ACA-NC" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-ACA-2014-10.rtf"),
-        "CLARIN_PUB" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-PUB-2014-10.rtf"),
-        "CLARIN_RES" -> prop("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-RES-2014-10.rtf"),
-        "ELRA_END_USER" -> prop("http://www.elra.info/IMG/pdf_ENDUSER_140312.pdf"),
-        "ELRA_EVALUATION" -> prop("http://www.elra.info/IMG/pdf_EVALUATION_140312.pdf"),
-        "ELRA_VAR" -> prop("http://www.elra.info/IMG/pdf_VAR_140312.pdf"),
-        "AGPL" -> prop("https://gnu.org/licenses/agpl.html"),
-        "ApacheLicence_2.0" -> prop("http://www.apache.org/licenses/LICENSE-2.0.html"),
-        "BSD" -> prop("http://opensource.org/licenses/BSD-3-Clause"),
-        "BSD-style" -> prop("http://opensource.org/licenses/BSD-2-Clause"),
-        "GFDL" -> prop("http://www.gnu.org/copyleft/fdl.html"),
-        "GPL" -> prop("http://www.gnu.org/copyleft/gpl.html"),
-        "LGPL" -> prop("https://www.gnu.org/licenses/lgpl.html"),
-        "Princeton_Wordnet" -> prop("http://wordnet.princeton.edu/wordnet/license/"),
+        "CC-BY" -> node("https://creativecommons.org/licenses/by/4.0/")(),
+        "CC-BY-NC" -> node("https://creativecommons.org/licenses/by-nc/4.0/")(),
+        "CC-BY-NC-ND" -> node("https://creativecommons.org/licenses/by-nc-nd/4.0/")(),
+        "CC-BY-NC-SA" -> node("https://creativecommons.org/licenses/by-nc-sa/4.0/")(),
+        "CC-BY-ND" -> node("https://creativecommons.org/licenses/by-nd/4.0/")(),
+        "CC-BY-SA" -> node("https://creativecommons.org/licenses/by-sa/4.0/")(),
+        "CC-ZERO" -> node("http://creativecommons.org/publicdomain/zero/1.0/")(),
+        "MS-C-NoReD" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20%20NoRedistribution_v0%207.pdf")(),
+        "MS-C-NoReD-FF" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20For-a-Fee_v0%207.pdf")(),
+        "MS-C-NoReD-ND" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20NoDerivatives-v1.0.pdf")(),
+        "MS-C-NoReD-ND-FF" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20Commercial%20NoRedistribution%20NoDerivatives%20For-a-fee-v1.0.pdf")(),
+        "MS-NC-NoReD" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution-v%201.0.pdf")(),
+        "MS-NC-NoReD-FF" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20For-a-Fee-v%201.0.pdf")(),
+        "MS-NC-NoReD-ND" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20NoDerivatives-v1.0.pdf")(),
+        "MS-NC-NoReD-ND-FF" ->
+        node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20NonCommercial%20NoRedistribution%20NoDerivatives%20For-a-fee-v%201.0.pdf")(),
+        "MSCommons-BY" -> node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BY%20v1.0.pdf")(),
+        "MSCommons-BY-NC" -> node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNC%20v1.0.pdf")(),
+        "MSCommons-BY-NC-ND" -> node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNCND%20v1.0.pdf")(),
+        "MSCommons-BY-NC-SA" -> node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYNCSA%20v1.0.pdf")(),
+        "MSCommons-BY-ND" -> node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYND%20v1.0.pdf")(),
+        "MSCommons-BY-SA" -> node("http://www.meta-net.eu/meta-share/meta-share-licenses/META-SHARE%20COMMONS_BYSA%20v1.0.pdf")(),
+        "CLARIN_ACA" -> node("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-ACA-2014-10.rtf")(),
+        "CLARIN_ACA-NC" -> node("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-ACA-2014-10.rtf")(),
+        "CLARIN_PUB" -> node("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-PUB-2014-10.rtf")(),
+        "CLARIN_RES" -> node("https://kitwiki.csc.fi/twiki/pub/FinCLARIN/ClarinEULA/CLARIN-EULA-RES-2014-10.rtf")(),
+        "ELRA_END_USER" -> node("http://www.elra.info/IMG/pdf_ENDUSER_140312.pdf")(),
+        "ELRA_EVALUATION" -> node("http://www.elra.info/IMG/pdf_EVALUATION_140312.pdf")(),
+        "ELRA_VAR" -> node("http://www.elra.info/IMG/pdf_VAR_140312.pdf")(),
+        "AGPL" -> node("https://gnu.org/licenses/agpl.html")(),
+        "ApacheLicence_2.0" -> node("http://www.apache.org/licenses/LICENSE-2.0.html")(),
+        "BSD" -> node("http://opensource.org/licenses/BSD-3-Clause")(),
+        "BSD-style" -> node("http://opensource.org/licenses/BSD-2-Clause")(),
+        "GFDL" -> node("http://www.gnu.org/copyleft/fdl.html")(),
+        "GPL" -> node("http://www.gnu.org/copyleft/gpl.html")(),
+        "LGPL" -> node("https://www.gnu.org/licenses/lgpl.html")(),
+        "Princeton_Wordnet" -> node("http://wordnet.princeton.edu/wordnet/license/")(),
         "proprietary" -> ms.`proprietary`,
         "underNegotiation" -> ms.`underNegotiation`,
         "other" -> ms.`other`
@@ -2686,7 +2694,7 @@ new ModelWithMappings {
     ms.corpusAudioInfo > node(frag("corpusAudioInfo")) (
       rdf_type > ms.CorpusAudioInfo,
       ms.mediaType > ms.audio,
-      checkAtt("mediaType","audio"),
+      xmlAtt("mediaType","audio"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.modalityInfo),
@@ -2712,7 +2720,7 @@ new ModelWithMappings {
     ms.corpusImageInfo > node(frag("corpusImageInfo")) (
       rdf_type > ms.CorpusImageInfo,
       ms.mediaType > ms.image,
-      checkAtt("mediaType","image"),
+      xmlAtt("mediaType","image"),
       handle(msxml.modalityInfo),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
@@ -2736,7 +2744,7 @@ new ModelWithMappings {
     ms.corpusTextInfo > node(frag("corpusTextInfo")) (
       rdf_type > ms.CorpusTextInfo,
       ms.mediaType > ms.text,
-      checkAtt("mediaType","text"),
+      xmlAtt("mediaType","text"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.modalityInfo),
@@ -2759,7 +2767,7 @@ new ModelWithMappings {
     ms.corpusTextNgramInfo > node(frag("corpusTextNgramInfo")) (
       rdf_type > ms.CorpusTextNgramInfo,
       ms.mediaType > ms.textNgram,
-      checkAtt("mediaType","textNgram"),
+      xmlAtt("mediaType","textNgram"),
       handle(msxml.ngramInfo),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
@@ -2782,7 +2790,7 @@ new ModelWithMappings {
     ms.corpusTextNumericalInfo > node(frag("corpusTextNumericalInfo")) (
       rdf_type > ms.CorpusTextNumericalInfo,
       ms.mediaType > ms.textNumerical,
-      checkAtt("mediaType","textNumerical"),
+      xmlAtt("mediaType","textNumerical"),
       handle(msxml.modalityInfo),
       handle(msxml.sizeInfo),
       handle(msxml.textNumericalContentInfo),
@@ -2801,7 +2809,7 @@ new ModelWithMappings {
     ms.corpusVideoInfo > node(frag("corpusVideoInfo")) (
       rdf_type > ms.CorpusVideoInfo,
       ms.mediaType > ms.video,
-      checkAtt("mediaType","video"),
+      xmlAtt("mediaType","video"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.modalityInfo),
@@ -2827,7 +2835,7 @@ new ModelWithMappings {
     ms.languageDescriptionTextInfo > node(frag("languageDescriptionTextInfo")) (
       rdf_type > ms.LanguageDescriptionTextInfo,
       ms.mediaType > ms.text,
-      checkAtt("mediaType","text"),
+      xmlAtt("mediaType","text"),
       handle(msxml.creationInfo),
       handle(msxml.linkToOtherMediaInfo),
       handle(msxml.lingualityInfo),
@@ -2848,7 +2856,7 @@ new ModelWithMappings {
     ms.languageDescriptionImageInfo > node(frag("languageDescriptionImageInfo")) (
       rdf_type > ms.LanguageDescriptionImageInfo,
       ms.mediaType > ms.image,
-      checkAtt("mediaType","image"),
+      xmlAtt("mediaType","image"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.creationInfo),
@@ -2869,7 +2877,7 @@ new ModelWithMappings {
     ms.languageDescriptionVideoInfo > node(frag("languageDescriptionVideoInfo")) (
       rdf_type > ms.LanguageDescriptionVideoInfo,
       ms.mediaType > ms.video,
-      checkAtt("mediaType","video"),
+      xmlAtt("mediaType","video"),
       handle(msxml.creationInfo),
       handle(msxml.linkToOtherMediaInfo),
       handle(msxml.lingualityInfo),
@@ -2890,7 +2898,7 @@ new ModelWithMappings {
     ms.lexicalConceptualResourceAudioInfo > node(frag("lexicalConceptualResourceAudioInfo")) (
       rdf_type > ms.LexicalConceptualResourceAudioInfo,
       ms.mediaType > ms.audio,
-      checkAtt("mediaType","audio"),
+      xmlAtt("mediaType","audio"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.modalityInfo),
@@ -2909,7 +2917,7 @@ new ModelWithMappings {
     ms.lexicalConceptualResourceImageInfo > node(frag("lexicalConceptualResourceImageInfo")) (
       rdf_type > ms.LexicalConceptualResourceImageInfo,
       ms.mediaType > ms.image,
-      checkAtt("mediaType","image"),
+      xmlAtt("mediaType","image"),
       handle(msxml.modalityInfo),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
@@ -2928,7 +2936,7 @@ new ModelWithMappings {
     ms.lexicalConceptualResourceTextInfo > node(frag("lexicalConceptualResourceTextInfo")) (
       rdf_type > ms.LexicalConceptualResourceTextInfo,
       ms.mediaType > ms.text,
-      checkAtt("mediaType","text"),
+      xmlAtt("mediaType","text"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.modalityInfo),
@@ -2947,7 +2955,7 @@ new ModelWithMappings {
     ms.lexicalConceptualResourceVideoInfo > node(frag("lexicalConceptualResourceVideoInfo")) (
       rdf_type > ms.LexicalConceptualResourceVideoInfo,
       ms.mediaType > ms.video,
-      checkAtt("mediaType","video"),
+      xmlAtt("mediaType","video"),
       handle(msxml.lingualityInfo),
       handle(msxml.languageInfo),
       handle(msxml.modalityInfo),

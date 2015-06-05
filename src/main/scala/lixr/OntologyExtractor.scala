@@ -194,7 +194,7 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
     case DTripleGenerator(prop, value) => 
       Seq(
         DataProperty(
-          nr2uri(prop),
+          tg2uri(prop),
           clazz.toSeq,
           tr2class(value)
         )
@@ -210,7 +210,7 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
     )
     case OTripleGenerator(prop, value) =>
      val c = Class(
-      capnr2uri(prop)
+      captg2uri(prop)
      )
      //if(value.name == FixedTextGenerator("other")) {
      //  println(prop)
@@ -218,7 +218,7 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
      //  println(c)}
      Seq(
        ObjectProperty(
-         nr2uri(prop),
+         tg2uri(prop),
          clazz.toSeq,
          Seq(c)),
        Individual(
@@ -228,14 +228,14 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
     case NTripleGenerator(prop, NodeGenerator(_, body)) =>
       val (rangeClass, velems) = handle(body)
       ObjectProperty(
-        nr2uri(prop),
+        tg2uri(prop),
         clazz.toSeq,
         rangeClass.toSeq
       ) +: velems
     case INTripleGenerator(prop, NodeGenerator(_, body)) =>
       val (domainClass, velems) = handle(body)
       ObjectProperty(
-        nr2uri(prop),
+        tg2uri(prop),
         domainClass.toSeq,
         clazz.toSeq
       ) +: velems
@@ -285,12 +285,22 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
       URI.create(genString(name))
   }
 
+  def tg2uri(tg : Model#TextGenerator) : URI = {
+      URI.create(genString(tg))
+  }
 
+  def captg2uri(tg : Model#TextGenerator) : URI = {
+    val u = genString(tg)
+    val x = math.max(u.lastIndexOf("#"), u.lastIndexOf("/"))
+    if(x > 0) {
+      URI.create(u.take(x + 1) + u.charAt(x + 1).toUpper + u.drop(x + 2))
+    } else {
+      URI.create(u)
+    }
+  }
 
   def genString(t : Model#TextGenerator) : String = t match {
     case FixedTextGenerator(s) => s
-    case URIGenerator(s) =>
-      genString(s)
     case _ => 
       throw new NotSchematic("Expected FixedTextGenerator got " + t)
   }

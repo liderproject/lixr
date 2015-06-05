@@ -32,29 +32,29 @@ class DOMGenerator {
     }
   }
 
-  def conditionEvalNode(x : Any, state : State[Node]) : Option[Any] = x match {
-    case gen : state.model.TextGenerator =>
-      genStringOpt(gen, state)
-    case req : state.model.Request =>
-      val nodes = locateNode(req, state)
-      if(!nodes.isEmpty) {
-        Some(nodes)
-      } else {
-        None
-      }
-  }
-
-  def conditionEval(x : Any, state : State[Elem]) : Option[Any] = x match {
-    case gen : state.model.TextGenerator =>
-      genStringOpt(gen, state)
-    case req : state.model.Request =>
-      val nodes = locate(req, state)
-      if(!nodes.isEmpty) {
-        Some(nodes)
-      } else {
-        None
-      }
-  }
+//  def conditionEvalNode(x : Any, state : State[Node]) : Option[Any] = x match {
+//    case gen : state.model.TextGenerator =>
+//      genStringOpt(gen, state)
+//    case req : state.model.Request =>
+//      val nodes = locateNode(req, state)
+//      if(!nodes.isEmpty) {
+//        Some(nodes)
+//      } else {
+//        None
+//      }
+//  }
+//
+//  def conditionEval(x : Text, state : State[Elem]) : Option[Any] = x match {
+//    case gen : state.model.TextGenerator =>
+//      genStringOpt(gen, state)
+//    case req : state.model.Request =>
+//      val nodes = locate(req, state)
+//      if(!nodes.isEmpty) {
+//        Some(nodes)
+//      } else {
+//        None
+//      }
+//  }
 
 
   def verify(req : Model#Handleable, state : State[Elem]) : Boolean = {
@@ -62,7 +62,8 @@ class DOMGenerator {
     req match {
       case model.NodeRequest(Some(n), name) => elem.namespace == n && elem.label == genString(name, state)
       case model.NodeRequest(None, name) => elem.namespace == null && elem.label == genString(name, state)
-      case model.HandleableConditionRequest(r, cond) => verify(r, state) && cond.check(conditionEval(_, state))
+      case model.HandleableConditionRequest(r, cond) => verify(r, state) && cond.check(genStringOpt(_, state), locate(_, state))
+      case _ => throw new RuntimeException("Shouldn't happen")
     }
   }
 
@@ -73,7 +74,7 @@ class DOMGenerator {
       case _ => req match {
         case model.current => Seq(elem)
         case model.ConditionRequest(r, cond) => locateNode(r,state) filter {
-          n2 => cond.check(conditionEvalNode(_, state))
+          n2 => cond.check(genStringOpt(_, state), locateNode(_, state))
         }
         case _ => Seq()
       }
@@ -89,9 +90,10 @@ class DOMGenerator {
         e => locateNode(second, State(e, model, node, vars))
       }
       case model.ConditionRequest(r, cond) => locate(r, state) filter {
-        elem => cond.check(conditionEval(_, state))
+        elem => cond.check(genStringOpt(_, state), locate(_, state))
       }
       case model.current => Seq(elem)
+      case _ => throw new RuntimeException("Shouldn't happen")
     }
   }
 
@@ -134,9 +136,7 @@ class DOMGenerator {
           case xs => Some(xs.mkString(""))
         }
       case model.FragmentGenerator(frag) => 
-        val fragText = (frag.flatMap { f =>
-          genStringOpt(f, state)
-        }).mkString("")
+        val fragText = genStringOpt(frag, state).getOrElse("")
         node match {
           case Some(uri) =>
             val ssp = uri.getSchemeSpecificPart()
@@ -154,18 +154,12 @@ class DOMGenerator {
           case None =>
             throw new IllegalArgumentException("No node")
         }
-      case model.URIGenerator(uri) => genStringOpt(uri, state)
       case model.GetVariable(name) => vars.get(name)
       case model.AppendTextGenerator(left, generator, right) =>
         // Assume left or right is Some
         Some(left.getOrElse("") + genStringOpt(generator, state).getOrElse("") + right.getOrElse(""))
-      case model.ConcatTextGenerator(ptgs) =>
-        (ptgs.flatMap {
-          case x => genStringOpt(x, state)
-        }) match {
-          case Seq() => None
-          case y => Some(y.mkString(""))
-        }
+      case model.ConcatTextGenerator(tg1, tg2) =>
+        genStringOpt(tg1, state).flatMap(x => genStringOpt(tg1, state).map(y => x + y))
       case model.TransformTextGenerator(ptg, forward, _) =>
         genStringOpt(ptg, state).map(forward)
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
@@ -188,17 +182,6 @@ class DOMGenerator {
         res2str(str),
         res2str(lang)
       ))
-      case model.URIGenerator(uri) =>
-        genStringOpt(uri, state) match {
-          case Some(s) => try {
-            Seq(URIGenResult(URI.create(s)))
-          } catch {
-            case x : IllegalArgumentException =>
-              System.err.println("Bad URI: %s" format (s))
-              Seq(LiteralGenResult(s))
-          }
-          case None => Seq()
-        }
       case model.XMLTextGenerator(req) => 
         Seq(TypedStringResult(
           (locate(req, state) map { elem =>
@@ -209,6 +192,7 @@ class DOMGenerator {
         case Some(s) => Seq(LiteralGenResult(s))
         case None => Seq()
       }
+      case _ => throw new RuntimeException("Wrong model")
     }
 
   }
@@ -222,22 +206,23 @@ class DOMGenerator {
       case model.OTripleGenerator(nr1, nr2) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
-            s, nr1.toURI(genString(_,state)), nr2.toURI(genString(_,state))))
+            s, URI.create(genString(nr1, state)), nr2.toURI(genString(_,state))))
         case None => 
           
         throw new RuntimeException("No current node" + gen)
       }
       case model.DTripleGenerator(prop, value) => node match {
         case Some(s) => 
+          val p = URI.create(genString(prop, state))
           handleOne(value, state) map { 
             case LiteralGenResult(o) => LitTripleResult(
-              s, prop.toURI(genString(_,state)), o)
+              s, p, o)
             case LangStringResult(o, l) => LLTripleResult(
-              s, prop.toURI(genString(_,state)), o, l)
+              s, p, o, l)
             case TypedStringResult(o, t) => TLTripleResult(
-              s, prop.toURI(genString(_,state)), o, t.uri)
+              s, p, o, t.uri)
             case URIGenResult(u) => ObjTripleResult(
-              s, prop.toURI(genString(_,state)), u)
+              s, p, u)
             case _ => throw new RuntimeException("Unexpected result type in triple generation")
         }
         case None => throw new RuntimeException("No current node" + gen)
@@ -246,20 +231,20 @@ class DOMGenerator {
         case Some(s) => 
           val obj = URI.create(genString(about,state))
           ObjTripleResult(
-            s, prop.toURI(genString(_,state)), obj) +: handleOne(ng, state)
+            s, URI.create(genString(prop, state)), obj) +: handleOne(ng, state)
         case None => throw new RuntimeException("No current node" + gen)
       }
       case model.ConditionalTripleGenerator(prop, cond) => node match {
         case Some(s) =>
           handleOne(cond, state) map { 
             case LiteralGenResult(o) => LitTripleResult(
-              s, prop.toURI(genString(_,state)), o)
+              s, URI.create(genString(prop, state)), o)
             case LangStringResult(o, l) => LLTripleResult(
-              s, prop.toURI(genString(_,state)), o, l)
+              s, URI.create(genString(prop, state)), o, l)
             case TypedStringResult(o, t) => TLTripleResult(
-              s, prop.toURI(genString(_,state)), o, t.uri)
+              s, URI.create(genString(prop, state)), o, t.uri)
             case URIGenResult(uri) => ObjTripleResult(
-              s, prop.toURI(genString(_,state)), uri)
+              s, URI.create(genString(prop, state)), uri)
             case other => FailGenResult("Non-literal returned by conditional")
           }
         case None =>
@@ -268,7 +253,7 @@ class DOMGenerator {
       case model.IOTripleGenerator(prop, subj) => node match {
         case Some(s) => 
           Seq(ObjTripleResult(
-            subj.toURI(genString(_,state)), prop.toURI(genString(_,state)), s))
+            subj.toURI(genString(_,state)), URI.create(genString(prop, state)), s))
         case None => throw new RuntimeException("No current node" + gen)
       }
       case model.INTripleGenerator(prop, ng @ model.NodeGenerator(about, body)) => node match {
@@ -276,7 +261,7 @@ class DOMGenerator {
         case Some(s) => 
           val obj = URI.create(genString(about,state))
           ObjTripleResult(
-            obj, prop.toURI(genString(_,state)), s) +: handleOne(ng, state)
+            obj, URI.create(genString(prop, state)), s) +: handleOne(ng, state)
         case None => throw new RuntimeException("No current node" + gen)
       }
       case model.AttributeGenerator(name, text) => Seq()
@@ -290,12 +275,12 @@ class DOMGenerator {
           }
           case n : Node => throw new RuntimeException("Handle resolved to non elements!?")
         }
-      case model.FailGenerator(messages) => Seq(FailGenResult(messages.flatMap { message =>
-        genStringOpt(message, state)
-      }.mkString("")))
-      case model.CommentGenerator(messages) => Seq(CommentGenResult(messages.flatMap { message =>
-        genStringOpt(message, state)
-      }.mkString("")))
+      case model.FailGenerator(message) => Seq(FailGenResult(genString(message, state)))
+      case model.CommentGenerator(message) => Seq(CommentGenResult(genString(message, state)))
+      case model.MessageGenerator(message) => {
+        System.err.println(genString(message, state))
+        Seq()
+      }
       case model.NodeGenerator(about, body) => 
         val uri = try {
           URI.create(genString(about, state).trim())
@@ -315,7 +300,7 @@ class DOMGenerator {
             throw new RuntimeException("Variable %s requested but not set" format name)
         }
       case model.ConditionalGenerator(cond, value, otherwise) =>
-        if(cond.check(conditionEval(_, state))) {
+        if(cond.check(genStringOpt(_, state), locate(_, state))) {
           value.flatMap(handleOne(_, state))
         } else {
           otherwise match {
@@ -328,6 +313,8 @@ class DOMGenerator {
           case n : Elem => handle(body, State(n, model, node, vars))
           case _ => Seq()
         }
+      case model.TextContentGenerator(body) => Seq()
+      case model.XMLContentGenerator(elem) => Seq()
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccra.e" format x.toString)
     }
   }

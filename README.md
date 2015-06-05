@@ -242,7 +242,7 @@ The following may be used as conditions
 * _TextGenerator_ `.exists`: Checks if the text generator fails to generate
   anything (primarily used to check if an attribute is present, the content of
   a tag always exists but may be the empty string)
-* _Request_ `.isEmpty`: Checks if a node(s) has no children or text content.
+* _Request_ `.exists`: Checks if a node(s) has children.
 * `and`, `or`, `not`: Standard Boolean combinations of conditions.
 
 ### Variables

@@ -99,9 +99,9 @@ class Clarin extends eu.liderproject.lixr.ModelWithMappings {
 //  )
 
   def resolveUri(prop : NodeRequest) = when(content matches ("^hdl:")) (
-    prop > uri("http://hdl.handle.net" +: (content.substring(0, 4)))
+    prop > node("http://hdl.handle.net" +: (content.substring(0, 4)))()
   ) otherwise (
-    prop > uri(content)
+    prop > node(content)()
   )
 
 }

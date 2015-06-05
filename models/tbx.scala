@@ -248,17 +248,17 @@ new Model {
       case indivMappingLine(_,_) => {}
       case objPropMappingLine(tag, attName, value, puri, null, null) => 
         tag.when((att(attName) === value) and not(att("target").exists)) --> (
-          prop(puri) > uri(content)
+          prop(puri) > node(content)()
         )
         tag.when((att(attName) === value) and att("target").exists) --> (
-          prop(puri) > uri(att("target"))
+          prop(puri) > node(att("target"))()
         )
       case objPropMappingLine(tag, attName, value, puri, _, alloweds) =>
         for(allowed <- alloweds.split(",")) {
           tag.when((att(attName) === value) and (content === allowed.trim())) --> (
             indivs.get(allowed) match {
               case Some(o) =>
-                prop(puri) > uri(o)
+                prop(puri) > node(o)()
               case None =>
                 System.err.println("Individual value not found:" + allowed)
                 comment("Individual value not found")
@@ -270,11 +270,11 @@ new Model {
           prop(puri) > content
         )
         tag.when((att(attName) === value) and att("datatype").exists) --> (
-          prop(puri) > (content ^^ uri(att("datatype")))
+          prop(puri) > (content ^^ node(att("datatype"))())
         )
       case dataPropMappingLine(tag, attName, value, puri, _, dturi) =>
         tag.when(att(attName) === value) --> (
-          prop(puri) > (content ^^ uri(att("datatype")))
+          prop(puri) > (content ^^ node(att("datatype"))())
         )
       case line =>
         System.err.println("Bad line:" + line)
