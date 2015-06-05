@@ -27,6 +27,90 @@ John P. McCrae\\
 \keywords{ACM proceedings, \LaTeX, text tagging} % NOT required for Proceedings
 
 \section{Introduction}
+\subsection{Mapping META-SHARE to RDF [JPM]}
+
+\label{sec:conversion}
+
+When translating XML documents into RDF, one of the most common approaches is
+based on exploiting Extensible Stylesheet Language Transformations
+(XSLT)~\cite{wustner2002converting,van2008xml,borin2014representing}. However, XSLT has a number of disadvantages
+for this task, in particular as it has limited extensibility and cannot be
+applied to streaming data or as an invertible transform.
+
+The META-SHARE schema itself is quite complex, consisting of 111 complex types
+and 207 simple types.
+Writing a converter to RDF is thus not a trivial exercise. Instead of writing an
+XSL transformation, we opted to follow a different approach by developing a
+\emph{domain-specific language} (DSL) ~\cite{fowler2010domain} that allows us to express the conversion from XML to RDF in a declarative fashion.
+This language is called the \textit{Lightweight Invertible XML to RDF Mapping
+Language} (LIXR, pronounced `elixir') and a simple example of a
+LIXR mapping is given below:
+{\footnotesize
+\begin{verbatim}
+object Metashare extends eu.liderproject.lixr.Model {
+ val dc = Namespace("http://purl.org/dc/elements/1.1/")
+ val ms = Namespace("http://purl.org/ms-lod/MetaShare.ttl#")
+ val msxml = Namespace("http://www.ilsp.gr/META-XMLSchema")
+
+ msxml.resourceInfo --> (
+ a > ms.ResourceInfo,
+ handle(msxml.identificationInfo)
+ )
+
+ msxml.identificationInfo --> (
+ forall(msxml.resourceName)(
+ dc.title > (content @@ att("lang"))
+ )
+ )
+}
+\end{verbatim}}
+In this example, we first create our model extending the basic LIXR model and
+define namespaces as dynamic Scala objects\footnote{This is a newer feature of
+Scala only supported since 2.10 (Jan 2013)}. We then make two mapping
+declarations for the tags {\tt resourceInfo} and {\tt identificationInfo}. LIXR (as
+XSLT) simply searches for a matching declaration at the root of the XML document
+to begin the transformation. Having matched the {\tt resourceInfo} tag, the system
+first generates the triple that states that the base element has type
+{\tt ms:resourceInfo}, and then `handles' any children {\tt identificationInfo} tags by
+searching for an appropriate rule for each one. For {\tt identificationInfo} the
+system generates a triple using the {\tt dc:title} property whose value is the
+content of the {\tt resourceName} tag tagged with the language given by the
+attribute {\tt lang}.
+\begin{table}
+\begin{center}
+\begin{tabular}{p{4cm}|cccc}
+Name & Tags & Implementation & LoC & LoC/Tag \\
+\hline
+TBX & 48 & Java & 2,752 & 57.33 \\
+CLARIN (OLAC-DMCI) & 79 & XSLT & 404 & 5.11 \\
+CLARIN (OLAC-DMCI) & 79 & XSLT (Compact Syntax) & 255 & 3.22 \\
+\hline
+TBX & 48 & LIXR & 197 & 4.10 \\
+CLARIN (OLAC-DMCI) & 79 & LIXR & 176 & 2.23 \\
+MetaShare & 730 & LIXR & 2,487 & 3.41 \\
+\end{tabular}
+\end{center}
+\caption{\label{tab:locs}Comparison of XML to RDF mapping implementations,
+by number of tags in XML schema, and non-trivial lines of code (LoC)}
+\end{table}
+To evaluate the effectiveness of our approach we compared directly with two other
+XML to RDF transformations, we had carried out in this project, and
+reimplemented them using the LIXR language. In particular these were the TBX
+model~\cite{iso30042} as well as the OLCA-DMCI profile of the CLARIN
+metadata~\footnote{\url{http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p\_1288172614026/xsd}}. In table \ref{tab:locs}, we see the
+effort to implement these using LIXR is approximately half of using XSLT and
+about ten times less than writing a converter from scratch.
+In addition to the reduction in effort using this approach, we also note several
+other advantages of the LIXR approach, due to its declarative declaration
+\begin{itemize}
+\item We can easily switch to using a stream-based parse for XML (e.g., SAX)
+so we can process large files without having to use much memory
+\item A reverse mapping can be extracted that re-generates the XML from the
+outputted RDF
+\item We can extract the type, range and domain of RDF entities generated
+during this procedure. This export formed the initial version of the
+ontology described in this paper
+\end{itemize}
 
 \section{Acknowledgments}
 
