@@ -206,8 +206,8 @@ Several built-in variations of `transform` exist, for example:
     def replace(tg : TextGenerator, regex1 : String, regex2 : String) = 
       transform(tg)(_.replaceAll(regex1, regex2))(_.replaceAll(regex2, regex1))
 
-    def substring(tg : TextGenerator, start : Int, end : Int) =
-      transform(tg)(_.slice(start, end))(throw new UnsupportedOperationException())
+\emph{    def substring(tg : TextGenerator, start : Int, end : Int) =
+      transform(tg)(_.slice(start, end))(throw new UnsupportedOperationException())}
 
 ### Requests
 

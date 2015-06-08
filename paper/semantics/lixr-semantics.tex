@@ -1,8 +1,10 @@
 \documentclass{acm_proc_article-sp}
 
+\usepackage{url}
+
 \begin{document}
 
-\title{LIXR: Fast, efficient conversion of XML to RDF and back again}
+\title{LIXR: Quick, succinct conversion of XML to RDF and back again}
 
 \numberofauthors{1}
 
@@ -27,25 +29,156 @@ John P. McCrae\\
 \keywords{ACM proceedings, \LaTeX, text tagging} % NOT required for Proceedings
 
 \section{Introduction}
-\subsection{Mapping META-SHARE to RDF [JPM]}
 
-\label{sec:conversion}
+In order to envision the vision of a web of data, it is necessary to update existing 
+resources of various forms to use the latest web standards, in particular the 
+Resource Description Framework~\cite[RDF]{}. The most frequent case is thus the
+conversion of an existing dataset expressed in XML into an RDF structure. There
+exist generic mappings for such conversions but these are generally not ideal for
+several reasons:
 
-When translating XML documents into RDF, one of the most common approaches is
-based on exploiting Extensible Stylesheet Language Transformations
-(XSLT)~\cite{wustner2002converting,van2008xml,borin2014representing}. However, XSLT has a number of disadvantages
-for this task, in particular as it has limited extensibility and cannot be
-applied to streaming data or as an invertible transform.
+\begin{enumerate}
+\item Many times the RDF generated is very verbose. This is partly due to generic
+converters creating both a property and a node for each individual tag in the XML.
+\item It is uncommon for XML documents to reuse URLs from other resources. For
+example it is typical for a resource to reuse the data categories of Dublin Core~\cite{}, 
+but to recast them under a new namespace.
+\item XML provides no generic mechanisms for the representation of external links
+and these are often given not by means of a URI, but instead by a proprietary schema.
+\end{enumerate}
 
-The META-SHARE schema itself is quite complex, consisting of 111 complex types
+Secondly, many mappings are currently achieved by means of XSLT transformation or 
+by writing a short script in an associated language. Thus, these transformations
+are generally very verbose, as they must repeat many standard RDF modelling
+structures, and unidirectional, as they are not well-formulated to cope with the 
+polymorphic nature of RDF.
+
+In order to meet these shortcomings, we developed a new system for specifying the
+translation of RDF documents into XML, which we call the Lightweight Invertible
+XML and RDF language (LIXR, pronounced `elixir'). This system builds on a 
+Scala domain-specific language~\cite[DSL]{}, which allows the conversion to be
+expressed, significantly more compactly than existing systems and in a manner
+that allows for transformation in both the direction of RDF to XML and from XML
+to RDF.
+
+We will describe the system and the features of the domain-specific language in Section
+\ref{sec:dsl}. Then we will consider a detailed use case, where we used the LIXR
+system to convert a very complicated XML schema into RDF, namely for the META-SHARE
+resources~\cite{mccrae2015ontology,xyz}, in Section \ref{sec:metashare}. Next, we will present some qualitative evaluation
+of the methodology to demonstrate its brevity and discuss these results in Section
+\ref{sec:results} and conclude in Section \ref{sec:conclusion}.
+
+\section{The LIXR Language}
+\label{sec:dsl}
+
+The LIXR language was created as a domain-specific language based on the Scala
+Language. This choice was made as Scala has an exceptional amount of freedom in
+expression, allowing us to compactly and clearly state transformations in a manner
+that would be more difficult in other languages. Moreover, the fact that Scala
+compiles to Java bytecode allows us to reuse existing libraries for handling
+RDF, including the Jena library~\footnote{\url{}}.
+
+The basic structure of LIXR is inspired by XSLT and based around \emph{handlers},
+which describe the action, that should be taken when a specific XML tag is 
+encountered. These handlers are stated by linking an XML tag name to a list
+of \emph{generators} with the {\tt -->} operator. For example
+
+\begin{verbatim}
+xml.language --> (
+  dc.language > content
+)
+\end{verbatim}
+
+This associates the XML tag {\tt <xml:language>} to
+generating the triple \emph{s} {\tt dc:language} {\tt "}\emph{c}{\tt "}, 
+where \emph{s} is the current subject node, and \emph{c} is the text content of
+the node. Note for technical reasons, the {\tt .} is used to conjoin the namespace
+to the local name instead of the customary {\tt :}\footnote{This, in fact, is 
+a dynamic call a relatively recent feature of the Scala language}. More typically
+the converter works by means of two features: firstly, {\tt node}s instruct the RDF generation
+to create a new node in the RDF graph and use it as subject for all future triples
+to be generated. Secondly, the {\tt handle} tells the XML parser to look for all 
+children matching a given tag and call the approriate handler for each matching
+case. For example:
+
+\begin{verbatim}
+xml.metadata --> (
+  node("http://.../metadata")(
+	  handle(xml.language),
+		handle(xml.source)
+	)
+)
+\end{verbatim}
+
+This code asks the RDF generator to create a new root node with the given URI and
+then the XML parser looks for matching children and then calls appropriate handlers
+(such as in the first example). In the opposite direction (RDF to XML), it is
+possible to generate the XML by walking the RDF diagram as a tree~\footnote{
+The LIXR language allows for cycles in RDF graphs only by double naming of
+{\tt node}s} generating a
+tag for any handler where all of its mandatory generators and at least one 
+generator is active. For example, if a triple is generated this is considered
+mandatory, however {\tt handle}s are not mandatory. In some cases, this means that
+`round-tripping', that is the conversion of RDF to XML and back to RDF, may not
+be possible. For example, the {\tt substring} function can not be used in the
+inverse direction and is defined by means of two lambda functions, based on
+the generic {\tt transform} generator:
+
+\begin{verbatim}
+def substring(tg : TextGenerator, s : Int, e : Int) =
+  transform(tg)
+           (_.slice(s, e))
+           (throw new UnsupportedOperationException())
+\end{verbatim}
+
+This can be fixed by introducing a custom converter, for example to remove a 
+prefix from a tag's content, we can define a transform function as follows
+
+\begin{verbatim}
+def removePrefix(tg : TextGenerator) =
+  transform(tg)
+	         (_.drop(10))
+					 ("myprefix__" + _) 
+\end{verbatim}
+
+In addition, there are a number of other features provided by the LIXR langauge:
+
+\begin{itemize}
+\item `Backlink' triple generators where the current node is the object of the triple
+\item Features for generating unique fragment identifiers and for generating globally unique 
+identifiers (UUIDs).
+\item Conditional statements ({\tt when... or... otherwise}), which function as
+{\tt if... then... else}, but do not clash with the Scala keywords. In inverse mode
+these function one a first success basis.
+\item Iterators {\tt forall}, allowing for direct iteration. Handlers are the 
+preferred from of traversing the XML document, but an iterator may be more appropriate 
+if there is a tag, whose transformation is dependent on where it appears in the
+XML graph.
+\item Variables may be assigned, which can be used later in the translation.
+\end{itemize}
+
+\section{Converting META-SHARE to RDF}
+\label{sec:metashare}
+
+
+META-SHARE is a part of the META-NET project for the management of language resources. 
+META-SHARE attempts to catalogue and provide detailed metadata about the whole
+lifecycle of the resource. As such a META-SHARE record of a language resource
+contains not only resource specific information, such as the language, type
+or annotation scheme of the resource, but also information concerning, the
+creation, intended use, associated publications and funding projects. This 
+information may contain very specific details, such as the addresses of individual
+institute, who created the resource.
+
+As such, the META-SHARE schema itself is quite complex, consisting of 111 complex types
 and 207 simple types.
-Writing a converter to RDF is thus not a trivial exercise. Instead of writing an
+Writing a\textsc{} converter to RDF is thus not a trivial exercise. Instead of writing an
 XSL transformation, we opted to follow a different approach by developing a
 \emph{domain-specific language} (DSL) ~\cite{fowler2010domain} that allows us to express the conversion from XML to RDF in a declarative fashion.
 This language is called the \textit{Lightweight Invertible XML to RDF Mapping
 Language} (LIXR, pronounced `elixir') and a simple example of a
 LIXR mapping is given below:
-{\footnotesize
+{\scriptsize
 \begin{verbatim}
 object Metashare extends eu.liderproject.lixr.Model {
  val dc = Namespace("http://purl.org/dc/elements/1.1/")
@@ -76,7 +209,12 @@ searching for an appropriate rule for each one. For {\tt identificationInfo} the
 system generates a triple using the {\tt dc:title} property whose value is the
 content of the {\tt resourceName} tag tagged with the language given by the
 attribute {\tt lang}.
-\begin{table}
+
+
+\section{Evaluation}
+\label{sec:evaluation}
+
+\begin{table*}
 \begin{center}
 \begin{tabular}{p{4cm}|cccc}
 Name & Tags & Implementation & LoC & LoC/Tag \\
@@ -92,14 +230,32 @@ MetaShare & 730 & LIXR & 2,487 & 3.41 \\
 \end{center}
 \caption{\label{tab:locs}Comparison of XML to RDF mapping implementations,
 by number of tags in XML schema, and non-trivial lines of code (LoC)}
-\end{table}
+\end{table*}
+
+As a system, that performs as specific task the correctness of the system is of 
+paramount importance, however in addition the choice of which software to use
+is always influenced by a number of decisions, but some factors can be identified
+that are measurable. In particular, \emph{lines of code} is easily measured and it
+has been claimed that the average number of errors made per lines of code is 
+approximately constant for a given programmer, regardless of what language he or
+she is programming in. As such, lines of code can be a good proxy not only for
+ease of development but also for software quality. As such, we measure the
+code in terms of \emph{non-trivial} lines of code, where a line of code
+is considered trivial if it only contains closing brackets or braces or is empty.
+
 To evaluate the effectiveness of our approach we compared directly with two other
-XML to RDF transformations, we had carried out in this project, and
+XML to RDF transformations, previously carried out by the lead author of the
+project~\footnote{The lead author has over 5 years experience in all languages}, and
 reimplemented them using the LIXR language. In particular these were the TBX
 model~\cite{iso30042} as well as the OLCA-DMCI profile of the CLARIN
 metadata~\footnote{\url{http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p\_1288172614026/xsd}}. In table \ref{tab:locs}, we see the
 effort to implement these using LIXR is approximately half of using XSLT and
 about ten times less than writing a converter from scratch.
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
 In addition to the reduction in effort using this approach, we also note several
 other advantages of the LIXR approach, due to its declarative declaration
 \begin{itemize}
@@ -112,7 +268,8 @@ during this procedure. This export formed the initial version of the
 ontology described in this paper
 \end{itemize}
 
-\section{Acknowledgments}
+
+\section*{Acknowledgments}
 
 \bibliographystyle{abbrv}
 \bibliography{lixr-semantics}
