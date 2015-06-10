@@ -32,7 +32,7 @@ John P. McCrae\\
 
 In order to envision the vision of a web of data, it is necessary to update existing 
 resources of various forms to use the latest web standards, in particular the 
-Resource Description Framework~\cite[RDF]{}. The most frequent case is thus the
+Resource Description Framework~\cite[RDF]{cyganiak2014rdf}. The most frequent case is thus the
 conversion of an existing dataset expressed in XML into an RDF structure. There
 exist generic mappings for such conversions but these are generally not ideal for
 several reasons:
@@ -41,7 +41,7 @@ several reasons:
 \item Many times the RDF generated is very verbose. This is partly due to generic
 converters creating both a property and a node for each individual tag in the XML.
 \item It is uncommon for XML documents to reuse URLs from other resources. For
-example it is typical for a resource to reuse the data categories of Dublin Core~\cite{}, 
+example it is typical for a resource to reuse the data categories of Dublin Core~\cite{weibel1998dublin}, 
 but to recast them under a new namespace.
 \item XML provides no generic mechanisms for the representation of external links
 and these are often given not by means of a URI, but instead by a proprietary schema.
@@ -56,7 +56,7 @@ polymorphic nature of RDF.
 In order to meet these shortcomings, we developed a new system for specifying the
 translation of RDF documents into XML, which we call the Lightweight Invertible
 XML and RDF language (LIXR, pronounced `elixir'). This system builds on a 
-Scala domain-specific language~\cite[DSL]{}, which allows the conversion to be
+Scala domain-specific language~\cite[DSL]{fowler2010domain,wampler2008programming}, which allows the conversion to be
 expressed, significantly more compactly than existing systems and in a manner
 that allows for transformation in both the direction of RDF to XML and from XML
 to RDF.
@@ -64,7 +64,7 @@ to RDF.
 We will describe the system and the features of the domain-specific language in Section
 \ref{sec:dsl}. Then we will consider a detailed use case, where we used the LIXR
 system to convert a very complicated XML schema into RDF, namely for the META-SHARE
-resources~\cite{mccrae2015ontology,xyz}, in Section \ref{sec:metashare}. Next, we will present some qualitative evaluation
+resources~\cite{mccrae2015ontology,piperidis2012meta}, in Section \ref{sec:metashare}. Next, we will present some qualitative evaluation
 of the methodology to demonstrate its brevity and discuss these results in Section
 \ref{sec:results} and conclude in Section \ref{sec:conclusion}.
 
@@ -159,7 +159,23 @@ XML graph.
 
 \section{Converting META-SHARE to RDF}
 \label{sec:metashare}
-
+\begin{table*}
+\begin{center}
+\begin{tabular}{p{4cm}|cccc}
+Name & Tags & Implementation & LoC & LoC/Tag \\
+\hline
+TBX & 48 & Java & 2,752 & 57.33 \\
+CLARIN (OLAC-DMCI) & 79 & XSLT & 404 & 5.11 \\
+CLARIN (OLAC-DMCI) & 79 & XSLT (Compact Syntax) & 255 & 3.22 \\
+\hline
+TBX & 48 & LIXR & 197 & 4.10 \\
+CLARIN (OLAC-DMCI) & 79 & LIXR & 176 & 2.23 \\
+MetaShare & 730 & LIXR & 2,487 & 3.41 \\
+\end{tabular}
+\end{center}
+\caption{\label{tab:locs}Comparison of XML to RDF mapping implementations,
+by number of tags in XML schema, and non-trivial lines of code (LoC)}
+\end{table*}
 
 META-SHARE is a part of the META-NET project for the management of language resources. 
 META-SHARE attempts to catalogue and provide detailed metadata about the whole
@@ -178,6 +194,7 @@ XSL transformation, we opted to follow a different approach by developing a
 This language is called the \textit{Lightweight Invertible XML to RDF Mapping
 Language} (LIXR, pronounced `elixir') and a simple example of a
 LIXR mapping is given below:
+
 {\scriptsize
 \begin{verbatim}
 object Metashare extends eu.liderproject.lixr.Model {
@@ -212,25 +229,8 @@ attribute {\tt lang}.
 
 
 \section{Evaluation}
-\label{sec:evaluation}
+\label{sec:results}
 
-\begin{table*}
-\begin{center}
-\begin{tabular}{p{4cm}|cccc}
-Name & Tags & Implementation & LoC & LoC/Tag \\
-\hline
-TBX & 48 & Java & 2,752 & 57.33 \\
-CLARIN (OLAC-DMCI) & 79 & XSLT & 404 & 5.11 \\
-CLARIN (OLAC-DMCI) & 79 & XSLT (Compact Syntax) & 255 & 3.22 \\
-\hline
-TBX & 48 & LIXR & 197 & 4.10 \\
-CLARIN (OLAC-DMCI) & 79 & LIXR & 176 & 2.23 \\
-MetaShare & 730 & LIXR & 2,487 & 3.41 \\
-\end{tabular}
-\end{center}
-\caption{\label{tab:locs}Comparison of XML to RDF mapping implementations,
-by number of tags in XML schema, and non-trivial lines of code (LoC)}
-\end{table*}
 
 As a system, that performs as specific task the correctness of the system is of 
 paramount importance, however in addition the choice of which software to use
