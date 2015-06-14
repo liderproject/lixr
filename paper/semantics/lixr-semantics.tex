@@ -19,14 +19,22 @@ John P. McCrae\\
 
 \maketitle
 \begin{abstract}
+This paper presents the LIXR system for converting between RDF and XML, that is
+formed as a domain-specific language embedded into the Scala programming language.
+This system allows a simple yet flexible system for representing the conversion
+of a program from RDF to XML, while still maintaining the flexibility of a full
+programming language environment. We directly compare this system to other systems
+programmed in Java and XSLT and show that the LIXR implementations are significantly
+shorter, in addition to being bidirectional and conceptually easier-to-understand.
+
 \end{abstract}
 
-\category{H.4}{Information Systems Applications}{Miscellaneous}
-\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
+%\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
 
-\terms{Theory}
+%\terms{Theory}
 
-\keywords{ACM proceedings, \LaTeX, text tagging} % NOT required for Proceedings
+\keywords{rdf, xml, scala, format conversion}
 
 \section{Introduction}
 
@@ -47,7 +55,8 @@ but to recast them under a new namespace.
 and these are often given not by means of a URI, but instead by a proprietary schema.
 \end{enumerate}
 
-Secondly, many mappings are currently achieved by means of XSLT transformation or 
+Secondly, many mappings are currently achieved by means of Extensible Stylesheet Language
+Transformations (XSLT) or 
 by writing a short script in an associated language. Thus, these transformations
 are generally very verbose, as they must repeat many standard RDF modelling
 structures, and unidirectional, as they are not well-formulated to cope with the 
@@ -76,7 +85,7 @@ Language. This choice was made as Scala has an exceptional amount of freedom in
 expression, allowing us to compactly and clearly state transformations in a manner
 that would be more difficult in other languages. Moreover, the fact that Scala
 compiles to Java bytecode allows us to reuse existing libraries for handling
-RDF, including the Jena library~\footnote{\url{}}.
+RDF, including the Jena library\footnote{\url{http://jena.apache.org/}}.
 
 The basic structure of LIXR is inspired by XSLT and based around \emph{handlers},
 which describe the action, that should be taken when a specific XML tag is 
@@ -217,11 +226,11 @@ object Metashare extends eu.liderproject.lixr.Model {
 In this example, we first create our model extending the basic LIXR model and
 define namespaces as dynamic Scala objects\footnote{This is a newer feature of
 Scala only supported since 2.10 (Jan 2013)}. We then make two mapping
-declarations for the tags {\tt resourceInfo} and {\tt identificationInfo}. LIXR (as
+declarations for the tags {\tt resourceInfo} and {\tt identifi\-cationInfo}. LIXR (as
 XSLT) simply searches for a matching declaration at the root of the XML document
 to begin the transformation. Having matched the {\tt resourceInfo} tag, the system
 first generates the triple that states that the base element has type
-{\tt ms:resourceInfo}, and then `handles' any children {\tt identificationInfo} tags by
+{\tt ms:resourceInfo}, and then `handles' any children {\tt identi\-ficationInfo} tags by
 searching for an appropriate rule for each one. For {\tt identificationInfo} the
 system generates a triple using the {\tt dc:title} property whose value is the
 content of the {\tt resourceName} tag tagged with the language given by the
@@ -246,12 +255,29 @@ is considered trivial if it only contains closing brackets or braces or is empty
 To evaluate the effectiveness of our approach we compared directly with two other
 XML to RDF transformations, previously carried out by the lead author of the
 project~\footnote{The lead author has over 5 years experience in all languages}, and
-reimplemented them using the LIXR language. In particular these were the TBX
-model~\cite{iso30042} as well as the OLCA-DMCI profile of the CLARIN
-metadata~\footnote{\url{http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p\_1288172614026/xsd}}. In table \ref{tab:locs}, we see the
-effort to implement these using LIXR is approximately half of using XSLT and
-about ten times less than writing a converter from scratch.
-
+reimplemented them using the LIXR language. The first model we looked at was the
+TermBase eXchange format~\cite[TBX]{iso30042}, a format for representing multilingual
+terminology, which was an ISO standard and has seen wide adoption in both industry
+and academia. This model was first written as a Java application, and was significantly
+complex due to the interface with the XML and RDF libraries. In contrast, the LIXR 
+implementation was many times shorter as LIXR provided built in mechanisms for 
+handling both RDF and XML. Secondly, we looked at the CLARIN XML schema also known as
+Component Metadata Initiative~\cite{broeder2012cmdi}, which is a format similar
+to META-SHARE for representing metadata about language resources. The CMDI model
+has a small common header and then a second schema that is specific to the
+institute publishing the metadata. In particular, we used the profile for 
+Dublin Core\footnote{\url{http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p\_1288172614026/xsd}},
+which is shared across a large number of metadata publishers. This conversion
+was first implemented in XSLT, and in fact using a non-standard XML serialization
+called Jade\footnote{\url{http://jade-lang.com/}}, which uses tab-based bracketing 
+(like the Python language) and thus does not have closing tags like standard XML.
+As such this compact syntax does reduce the number of lines-of-code, however we 
+still see that the XSLT formalism is significantly more verbose than LIXR. All
+the results are presented in table \ref{tab:locs}. In conclusion, we see that
+LIXR is significantly shorted in terms of lines-of-code than the other methods
+we attempted. This is in addition to the obvious benefits of invertibility and
+the fact that LIXR is likely more correct as the formalism is more concise and 
+natural for XML to RDF conversion. 
 
 \section{Conclusion}
 \label{sec:conclusion}
