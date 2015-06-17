@@ -6,7 +6,7 @@
 
 \title{LIXR: Quick, succinct conversion of XML to RDF and back again}
 
-\numberofauthors{1}
+\numberofauthors{2}
 
 \author{
 \alignauthor
@@ -15,14 +15,21 @@ John P. McCrae\\
        \affaddr{Bielefeld University}\\
        \affaddr{Bielefeld, Germany}\\
        \email{john@mccr.ae}
+\alignauthor
+Philipp Cimiano\\
+       \affaddr{Cognitive Interaction Technology, Cluster of Excellence}\\
+       \affaddr{Bielefeld University}\\
+       \affaddr{Bielefeld, Germany}\\
+       \email{cimiano@cit-ec.uni-bielefeld.de}
 }
 
 \maketitle
 \begin{abstract}
 This paper presents the LIXR system for converting between RDF and XML, that is
 formed as a domain-specific language embedded into the Scala programming language.
-This system allows a simple yet flexible system for representing the conversion
-of a program from RDF to XML, while still maintaining the flexibility of a full
+This system allows a simple yet flexible system, which allows
+the representation of the conversion
+of a dataset from RDF to XML in a declarative fashion, while still maintaining the flexibility of a full
 programming language environment. We directly compare this system to other systems
 programmed in Java and XSLT and show that the LIXR implementations are significantly
 shorter, in addition to being bidirectional and conceptually easier-to-understand.
@@ -34,11 +41,11 @@ shorter, in addition to being bidirectional and conceptually easier-to-understan
 
 %\terms{Theory}
 
-\keywords{rdf, xml, scala, format conversion}
+\keywords{RDF, XML, Scala, format conversion}
 
 \section{Introduction}
 
-In order to envision the vision of a web of data, it is necessary to update existing 
+In order to achieve the vision of a web of data, it is necessary to update existing 
 resources of various forms to use the latest web standards, in particular the 
 Resource Description Framework~\cite[RDF]{cyganiak2014rdf}. The most frequent case is thus the
 conversion of an existing dataset expressed in XML into an RDF structure. There
@@ -55,7 +62,7 @@ but to recast them under a new namespace.
 and these are often given not by means of a URI, but instead by a proprietary schema.
 \end{enumerate}
 
-Secondly, many mappings are currently achieved by means of Extensible Stylesheet Language
+Secondly, many mappings are currently specified by means of Extensible Stylesheet Language
 Transformations (XSLT) or 
 by writing a short script in an associated language. Thus, these transformations
 are generally very verbose, as they must repeat many standard RDF modelling
@@ -63,10 +70,10 @@ structures, and unidirectional, as they are not well-formulated to cope with the
 polymorphic nature of RDF.
 
 In order to meet these shortcomings, we developed a new system for specifying the
-translation of RDF documents into XML, which we call the Lightweight Invertible
+translation of XML documents into RDF and \emph{vica versa}, which we call the Lightweight Invertible
 XML and RDF language (LIXR, pronounced `elixir'). This system builds on a 
 Scala domain-specific language~\cite[DSL]{fowler2010domain,wampler2008programming}, which allows the conversion to be
-expressed, significantly more compactly than existing systems and in a manner
+expressed significantly more compactly than existing systems and in a manner
 that allows for transformation in both the direction of RDF to XML and from XML
 to RDF.
 
@@ -88,7 +95,7 @@ compiles to Java bytecode allows us to reuse existing libraries for handling
 RDF, including the Jena library\footnote{\url{http://jena.apache.org/}}.
 
 The basic structure of LIXR is inspired by XSLT and based around \emph{handlers},
-which describe the action, that should be taken when a specific XML tag is 
+which describe the action that should be taken when a specific XML tag is 
 encountered. These handlers are stated by linking an XML tag name to a list
 of \emph{generators} with the {\tt -->} operator. For example
 
@@ -193,7 +200,7 @@ contains not only resource specific information, such as the language, type
 or annotation scheme of the resource, but also information concerning, the
 creation, intended use, associated publications and funding projects. This 
 information may contain very specific details, such as the addresses of individual
-institute, who created the resource.
+institute who created the resource.
 
 As such, the META-SHARE schema itself is quite complex, consisting of 111 complex types
 and 207 simple types.
@@ -212,14 +219,14 @@ object Metashare extends eu.liderproject.lixr.Model {
  val msxml = Namespace("http://www.ilsp.gr/META-XMLSchema")
 
  msxml.resourceInfo --> (
- a > ms.ResourceInfo,
- handle(msxml.identificationInfo)
+   a > ms.ResourceInfo,
+   handle(msxml.identificationInfo)
  )
 
  msxml.identificationInfo --> (
- forall(msxml.resourceName)(
- dc.title > (content @@ att("lang"))
- )
+   forall(msxml.resourceName)(
+     dc.title > (content @@ att("lang"))
+   )
  )
 }
 \end{verbatim}}
@@ -241,7 +248,7 @@ attribute {\tt lang}.
 \label{sec:results}
 
 
-As a system, that performs as specific task the correctness of the system is of 
+As a system that performs as specific task the correctness of the system is of 
 paramount importance, however in addition the choice of which software to use
 is always influenced by a number of decisions, but some factors can be identified
 that are measurable. In particular, \emph{lines of code} is easily measured and it
