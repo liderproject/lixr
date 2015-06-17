@@ -20,3 +20,5 @@ libraryDependencies ++= Seq(
 )
 
 mainClass := Some("eu.liderproject.lixr.Main")
+
+test in assembly := {}

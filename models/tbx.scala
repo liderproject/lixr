@@ -270,11 +270,11 @@ new Model {
           prop(puri) > content
         )
         tag.when((att(attName) === value) and att("datatype").exists) --> (
-          prop(puri) > (content ^^ node(att("datatype"))())
+          prop(puri) > (content ^^ uri(att("datatype")))
         )
       case dataPropMappingLine(tag, attName, value, puri, _, dturi) =>
         tag.when(att(attName) === value) --> (
-          prop(puri) > (content ^^ node(att("datatype"))())
+          prop(puri) > (content ^^ uri(att("datatype")))
         )
       case line =>
         System.err.println("Bad line:" + line)

@@ -555,6 +555,14 @@ trait Model {
    */
   def node(about : TextGenerator)(triples : Generator*) = NodeGenerator(about, triples)
   /**
+   * Create a uri from a string
+   */
+  def uri(u : String) = NodeRequest(None, FixedTextGenerator(u))
+  /**
+   * Create a uri from a text generator
+   */
+  def uri(u : TextGenerator) = NodeRequest(None, u)
+  /**
    * Create a new node in the RDF graph
    */
   def node(about : String)(triples : Generator*) = NodeGenerator(FixedTextGenerator(about), triples)
