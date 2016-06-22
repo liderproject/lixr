@@ -17,3 +17,8 @@ project/plugins/project/
 .worksheet
 
 *.swp
+
+paper/iswc/lixr-iswc.aux
+paper/iswc/lixr-iswc.bbl
+paper/iswc/lixr-iswc.blg
+paper/iswc/lixr-iswc.pdf
