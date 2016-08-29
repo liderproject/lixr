@@ -25,7 +25,7 @@ It supports the definition of transformations of
 datasets from RDF to XML in a declarative fashion, while still maintaining the flexibility of a full
 programming language environment. We directly compare this system to other systems
 programmed in Java and XSLT and show that the LIXR implementations are significantly
-shorter in terms of lines of code, in addition to being bidirectional and conceptually simple to understand.
+shorter in terms of lines of code, in addition to being conceptually simple to understand.
 
 \end{abstract}
 
@@ -78,8 +78,8 @@ but to recast them under a new namespace, that is not compatible with RDF.
 %as LexVo~\cite{de2008language}. Such choices cannot be made with a 
 %generic converter.
 
-Further, transformation from XML to some other format are typically specified by means of  the  Extensible Stylesheet Language
-Transformations (XSLT), an extension of XSLT such as
+Further, transformation from XML to some other format are typically specified by means of  
+XSLT, an extension of XSLT such as
 Krextor~\cite{lange2009krextor}, a specific mapping language such as
 RML~\cite{dimou2014rml} or 
 by writing a short script in some programming language. Thus, these transformations
@@ -108,7 +108,9 @@ to RDF.
 
 The LIXR language was created as a domain-specific language based on the Scala
 Language. This choice was made as Scala has an exceptional amount of freedom in
-expression, allowing us to compactly and clearly state transformations.
+expression, allowing us to compactly and clearly state transformations, although
+there would be some learning curve for those not familiar with the Scala
+language.
 %in a manner
 %that would be more cumbersome in other languages such as a fully RDF
 %approach~\cite{dimou2014rml}. 
@@ -133,7 +135,7 @@ generating the triple \emph{s} {\tt dc:language} {\tt "}\emph{c}{\tt "},
 where \emph{s} is the current subject node, and \emph{c} is the text content of
 the node\footnote{Note that for technical reasons the {\tt .} is used to conjoin the namespace
 to the local name instead of the customary {\tt :}. This, in fact, is 
-a dynamic call a relatively recent feature of the Scala language.} More typically
+a dynamic call, a relatively recent feature of the Scala language.} More typically
 the converter works by means of two features: firstly, {\tt node}s instruct the RDF generation
 to create a new node in the RDF graph and use it as subject for all triples
 from this point in the generation. Secondly, the {\tt handle} tells the XML parser to look for all 
@@ -209,7 +211,7 @@ Github\footnote{\url{https://github.com/liderproject/lixr}}.
 
 %\section{Converting META-SHARE to RDF}
 %\label{sec:metashare}
-\begin{table*}
+\begin{table*}[h]
 \begin{center}
 \begin{tabular}{p{4cm}|cccc}
 Name & Tags & Implementation & LoC & LoC/Tag \\
@@ -227,6 +229,7 @@ MetaShare & 730 & LIXR & 2,487 & 3.41 \\
 \end{center}
 \caption{\label{tab:locs}Comparison of XML to RDF mapping implementations,
 by number of elements in XML schema, and non-trivial lines of code (LoC)}
+\vspace{-10mm}
 \end{table*}
 
 %META-SHARE is a part of the META-NET project for the management of language resources. 
@@ -335,7 +338,9 @@ writing a converter in a general purpose programming language (Java) and we see
 a halving of effort in comparison to using a specialist language (XSLT, Krextor
 or RML). In
 addition, we note that the reduction is such that only a few lines of code are
-needed for each element class.
+needed for each element class. We note that all of the systems ran quickly over
+the data we tested and thus we do not believe that processing time or memory are
+radically different between these implementations.
 %This is in addition to the obvious benefits of invertibility and
 %the fact that LIXR is likely more correct as the formalism is more concise and 
 %natural for XML to RDF conversion. 
@@ -347,7 +352,8 @@ We have presented a declarative yet flexible approach supporting the conversatio
 is based on a domain-specific language embedded in the Scala programming language. We have shown that this converter supports the implementation of concise and shorter conversion programs than with other transformation languages.
 
 In addition to the reduction in effort using this approach, we also note several
-other advantages of the LIXR approach, due to its declarative declaration,
+other advantages of the LIXR approach that could easily be added, 
+due to its declarative nature,
 including stream processing of XML, reverse mapping from RDF to XML and extraction
 of an ontology from the mapping.
 %\begin{itemize}
