@@ -27,6 +27,9 @@ Or with Java:
 
     java -jar target/scala-2.11/lixr-assembly-0.1.jar definition.scala input.xml
 
+Please not `definition.scala` is the LIXR conversion script written in the LIXR 
+language and `input.xml` is the input XML file you wish to convert.
+
 The LIXR Language
 -----------------
 
