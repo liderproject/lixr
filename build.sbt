@@ -1,7 +1,3 @@
-import AssemblyKeys._
-
-assemblySettings
-
 name := "lixr"
 
 organization in ThisBuild := "eu.liderproject"
@@ -20,5 +16,3 @@ libraryDependencies ++= Seq(
 )
 
 mainClass := Some("eu.liderproject.lixr.Main")
-
-test in assembly := {}

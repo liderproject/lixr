@@ -9,9 +9,9 @@ class OntologyExtractorTest extends WordSpec with Matchers {
   "The TBX model" should {
     "load" in {
       tbxModel = OntologyExtractor(tbx, 'martif).ontology
-      /*for(e <- tbxModel.entities) {
-        println(e) 
-      }*/
+      //for(e <- tbxModel.entities) {
+      //  println(e) 
+      //}
     }
     "contain the class dcat:Dataset" in {
       tbxModel.classes should contain (Class(URI.create(

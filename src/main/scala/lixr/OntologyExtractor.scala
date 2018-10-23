@@ -131,7 +131,7 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
 
   def handleClass(gen : Model#Generator) 
       : Option[Class] = gen match {
-    case OTripleGenerator(prop, value) if prop == rdf_type =>
+    case OTripleGenerator(prop, value) if tg2uri(prop) == nr2uri(rdf_type) =>
       Some(Class(nr2uri(value)))
     case RecursiveGenerator(request) => 
       handleClassRequest(request)
@@ -199,10 +199,10 @@ class OntologyExtractor(root : Seq[(Model#Handleable, Seq[Model#Generator])], mo
           tr2class(value)
         )
       )
-    case OTripleGenerator(prop, value) if prop == rdf_type =>
+    case OTripleGenerator(prop, value) if tg2uri(prop) == nr2uri(rdf_type) =>
       Seq(Class(nr2uri(value)))
     case OTripleGenerator(prop, value) 
-      if prop == (Namespace("http://www.w3.org/2002/07/owl#") + "sameAs") =>
+      if tg2uri(prop) == nr2uri(Namespace("http://www.w3.org/2002/07/owl#") + "sameAs") =>
     Seq(
       Individual(
         nr2uri(value),
