@@ -310,6 +310,10 @@ trait Model {
      * If this text generator does not match a non-empty string use the alternative
      */
     def or(alternative : TextGenerator) = TextAltGen(this, alternative)
+     /**
+     * If this text generator does not match a non-empty string use the alternative
+     */
+    def or(alternative : String) = TextAltGen(this, FixedTextGenerator(alternative))
     /**
      * Transform the result of this text generator by replacing all matches of 
      * regex with regex2
