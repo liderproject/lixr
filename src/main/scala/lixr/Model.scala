@@ -237,6 +237,8 @@ trait Model {
     override def flatten = first.flatten ++ second.flatten
   }
 
+  private[lixr] case class LinkedListGenerator(generators : Seq[Generator]) extends Generator
+
   /**
    * Generate the object of a data property triple
    */
@@ -618,6 +620,10 @@ trait Model {
    * Create a property from text
    */
   def prop(tg : TextGenerator) = new PropertyPartial(tg)
+  /**
+   * Create generators that create an RDF list
+   */
+  def list(generators : Generator*) = new LinkedListGenerator(generators)
 
   /**
    * A property without an object
@@ -739,6 +745,7 @@ case class URIGenResult(uri : URI) extends GenResult {
 trait TripleResult extends GenResult {
   lazy val asString = LiteralGenResult("")
   protected def reformat(string : String) = string.replaceAll("\\\\","\\\\\\\\").replaceAll("\\n","\\\\n").replaceAll("\\t","\\\\t").replaceAll("\"","\\\\\"")
+    def subj : URI
 }
 
 case class ObjTripleResult(subj : URI, property : URI, obj : URI) extends TripleResult {
@@ -757,6 +764,32 @@ case class LLTripleResult(subj : URI, property : URI, obj : String, lang : Strin
 case class TLTripleResult(subj : URI, property : URI, obj : String, datatype : URI) extends TripleResult {
   override def toString = "<%s> <%s> \"%s\"^^<%s> ." format (subj.toString, property.toString, 
     reformat(obj), datatype.toString)
+}
+
+case class LinkedListResult(subj : URI, property : URI, objs : Seq[TripleResult]) extends TripleResult {
+  override def toString = {
+    if(objs.isEmpty) {
+        "<%s> <%s> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> ." format (subj.toString, property.toString)
+    } else {
+        val sb = new StringBuilder()
+        var node = java.util.UUID.randomUUID().toString()
+        sb.append("<%s> <%s> _:%s .\n" format (subj.toString, property.toString, node))
+        var first = true;
+        for(obj <- objs) {
+            if(!first) {
+                val nextNode = java.util.UUID.randomUUID().toString()     
+                sb.append("_:%s <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:%s .\n" format (node, nextNode))
+                node = nextNode
+            } else {
+                first = false
+            }
+            sb.append("_:%s <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <%s> .\n" format (node, obj.subj))
+            sb.append(obj.toString).append("\n")
+        }
+        sb.append("_:%s <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil>" format node)
+        sb.toString
+    }
+  }
 }
 
 case class CommentGenResult(message : String) extends GenResult {
