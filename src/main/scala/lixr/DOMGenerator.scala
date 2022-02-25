@@ -159,7 +159,7 @@ class DOMGenerator {
         // Assume left or right is Some
         Some(left.getOrElse("") + genStringOpt(generator, state).getOrElse("") + right.getOrElse(""))
       case model.ConcatTextGenerator(tg1, tg2) =>
-        genStringOpt(tg1, state).flatMap(x => genStringOpt(tg1, state).map(y => x + y))
+        genStringOpt(tg1, state).flatMap(x => genStringOpt(tg2, state).map(y => x + y))
       case model.TransformTextGenerator(ptg, forward, _) =>
         genStringOpt(ptg, state).map(forward)
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccr.ae" format x.toString)
