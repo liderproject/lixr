@@ -315,6 +315,10 @@ class DOMGenerator {
         }
       case model.TextContentGenerator(body) => Seq()
       case model.XMLContentGenerator(elem) => Seq()
+      case model.LinkedListGenerator(gens) => {
+throw new UnsupportedOperationException("TODO")
+      }
+          
       case x => throw new UnsupportedOperationException("This is an error %s was generated please email john@mccra.e" format x.toString)
     }
   }
